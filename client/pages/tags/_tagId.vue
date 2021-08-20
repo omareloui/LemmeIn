@@ -1,11 +1,11 @@
 <template>
   <container>
-    <template #heading>{{ password.title }}</template>
+    <template #heading>{{ tag.title }}</template>
     <box tag="main">
-      {{ password }}
+      {{ tag }}
     </box>
     <button-base @click="deletePassword" is-cta width="200px">
-      delete password
+      delete tag
     </button-base>
   </container>
 </template>
@@ -14,10 +14,10 @@
 import Vue from "vue"
 
 export default Vue.extend({
-  async asyncData({ $axios, params: { passwordId }, error }) {
+  async asyncData({ $axios, params: { tagId }, error }) {
     try {
-      const { data: password } = await $axios.get(`/passwords/${passwordId}`)
-      return { password }
+      const { data: tag } = await $axios.get(`/tags/${tagId}`)
+      return { tag }
     } catch (e) {
       return error(e.response.data)
     }
@@ -26,9 +26,9 @@ export default Vue.extend({
   methods: {
     async deletePassword() {
       try {
-        await this.$axios.delete(`/passwords/${this.$route.params.passwordId}`)
-        this.$router.push("/passwords")
-        this.$notify.success("Deleted password successfully")
+        await this.$axios.delete(`/tags/${this.$route.params.tagId}`)
+        this.$router.push("/tags")
+        this.$notify.success("Deleted tag successfully")
       } catch (e) {
         throw new Error(e.response.data)
       }

@@ -1,6 +1,6 @@
 <template>
   <container>
-    <template #heading>add password</template>
+    <template #heading>add tag</template>
     <box tag="main">
       <form-generator
         v-bind="{ formFields }"
@@ -19,32 +19,23 @@ type Value = { fieldId: string; value: AcceptableValues }
 export default Vue.extend({
   async asyncData({ $axios, error }) {
     try {
-      const { data: passwords } = await $axios.get("/passwords")
-      return { passwords }
+      const { data: tags } = await $axios.get("/tags")
+      return { tags }
     } catch (e) {
       return error(e)
     }
   },
 
   data: () => ({
-    formFields: [
-      { id: "title", type: "text", value: "", label: "title" },
-      {
-        id: "password",
-        type: "password",
-        value: "",
-        label: "password",
-        props: { minLength: 2 }
-      }
-    ]
+    formFields: [{ id: "tag", type: "text", value: "", label: "tag" }]
   }),
 
   methods: {
     async submit(values: Value[]) {
       try {
-        await this.$axios.post("/passwords", values)
-        this.$notify.success("Add password successfully")
-        this.$router.push("/passwords")
+        await this.$axios.post("/tags", values)
+        this.$notify.success("Add tag successfully")
+        this.$router.push("/tags")
       } catch (e) {
         throw new Error(e.response.data)
       }

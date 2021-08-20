@@ -2,6 +2,7 @@
   <container>
     <template #heading>passwords</template>
     <box tag="main">
+      <div>{{ passwords }}</div>
       <div class="password" v-for="password in passwords" :key="password._id">
         <link-base :to="`/passwords/${password._id}`">
           {{ password.title }}
