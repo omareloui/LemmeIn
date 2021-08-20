@@ -1,0 +1,26 @@
+@use "sass:map";
+@use "../functions" as fns;
+@use "../variables/colors-generator" as clrs;
+
+@mixin clr($name, $property: color, $opacity: 100, $important: false) {
+  $color: #{fns.get-clr($name, $opacity)};
+  @if not $important {
+    #{$property}: $color;
+  } @else {
+    #{$property}: $color !important;
+  }
+}
+
+@mixin clr-txt($type: text, $opacity: 100, $important: false) {
+  @if $type == invert {
+    $type: text-invert;
+  }
+  @include clr($type, $opacity: $opacity, $important: $important);
+}
+
+@mixin clr-bg($type: background, $opacity: 100, $important: false) {
+  @if $type == invert {
+    $type: background-invert;
+  }
+  @include clr($type, background-color, $opacity, $important);
+}

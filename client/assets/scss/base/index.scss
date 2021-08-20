@@ -1,0 +1,34 @@
+@forward "transitions";
+
+@use "sass:math";
+@use "../mixins/focus" as f;
+@use "../mixins/clr" as c;
+@use "../mixins/fnt-s" as fs;
+@use "../mixins/fnt" as ff;
+@use "../mixins/zi";
+@use "../mixins/tran" as t;
+
+::selection {
+  @include c.clr(primary, background, 80);
+  @include c.clr(light);
+}
+
+* {
+  @include ff.fnt(main);
+  @include c.clr-txt;
+}
+
+body {
+  @include c.clr-bg;
+}
+
+@for $size-number from 1 through 6 {
+  h#{$size-number} {
+    @include fs.fnt-s(#{math.abs($size-number - 8)}xl);
+  }
+}
+
+a {
+  @include c.clr-txt(link);
+  @include f.focus-effect;
+}

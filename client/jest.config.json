@@ -1,0 +1,25 @@
+{
+  "rootDir": "./src",
+  "testMatch": ["<rootDir>/resources/__tests__/**/*.spec.ts"],
+
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/resources/$1",
+    "^~/(.*)$": "<rootDir>/resources/$1"
+  },
+
+  "transform": {
+    ".*\\.(vue)$": "vue-jest",
+    "^.+\\.tsx?$": "ts-jest"
+  },
+
+  "moduleFileExtensions": ["ts", "js", "vue", "json"],
+
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "<rootDir>/resources/layouts/**/*.vue",
+    "<rootDir>/resources/components/**/*.vue",
+    "<rootDir>/resources/plugins/**/*.ts",
+    "<rootDir>/resources/assets/**/*.ts",
+    "<rootDir>/resources/store/**/*.ts"
+  ]
+}

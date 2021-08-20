@@ -1,0 +1,16 @@
+@use "sass:map";
+@use "sass:list";
+@use "../variables/colors-generator" as clrs;
+
+@function get-clr($name, $opacity: 100) {
+  $keys: map.keys(clrs.$default);
+  @if not list.index($keys, $name) {
+    @error "#{$name} is invalid color name";
+  }
+
+  @if $opacity < 100 and $opacity >= 0 {
+    @return hsla(var(--clr-#{$name}) / #{$opacity * 1%});
+  } @else {
+    @return hsl(var(--clr-#{$name}));
+  }
+}

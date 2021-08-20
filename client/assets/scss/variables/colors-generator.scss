@@ -1,0 +1,46 @@
+@use "sass:map";
+@use "./colors" as *;
+@use "../functions/match-light-and-dark-colors" as *;
+@use "../functions/split-to-hue-saturation-lightness" as *;
+@use "../mixins/generate-variables" as *;
+
+// I'm adding the colors for readability
+// Validate that all light colors are in dark colors and vice versa
+$validating-result: match-light-and-dark-colors($light, $dark);
+@if $validating-result == "dark" {
+  @error "Dark colors is missing at least a color.";
+} @else if $validating-result == "light" {
+  @error "Light colors is missing at least a color.";
+}
+
+// Splitting the hues
+$splitted-shared: ();
+$splitted-light: ();
+$splitted-dark: ();
+
+@each $clr, $value in $shared {
+  $splitted-value: split-to-hue-saturation-lightness($value);
+  $splitted-shared: map.set($splitted-shared, $clr, $splitted-value);
+}
+
+@each $clr, $value in $light {
+  $splitted-value: split-to-hue-saturation-lightness($value);
+  $splitted-light: map.set($splitted-light, $clr, $splitted-value);
+}
+
+@each $clr, $value in $dark {
+  $splitted-value: split-to-hue-saturation-lightness($value);
+  $splitted-dark: map.set($splitted-dark, $clr, $splitted-value);
+}
+
+$default: map.merge($splitted-shared, $splitted-light);
+
+@mixin colors {
+  color-scheme: light dark; /* declare that dark and light are both supported */
+
+  @include generate-variables($default, clr);
+}
+
+@mixin colors-dark {
+  @include generate-variables($splitted-dark, clr);
+}

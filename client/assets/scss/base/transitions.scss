@@ -1,0 +1,43 @@
+@use "../mixins/tran" as t;
+
+// Fade transition
+.fade-enter-active,
+.fade-leave-active {
+  @include t.tran(opacity);
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// Slide down
+.slide-down-enter-active,
+.slide-down-leave-active {
+  @include t.tran;
+}
+.slide-down-enter,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+// Scale out
+.scale-out-enter-active,
+.scale-out-leave-active {
+  @include t.tran(all, 0.1s);
+}
+
+.scale-out-enter,
+.scale-out-leave-to {
+  transform: scale(0)
+}
+
+// Pages transition
+.page-enter-active,
+.page-leave-active {
+  @include t.tran(opacity, 0.2s);
+}
+.page-enter,
+.page-leave-to {
+  opacity: 0;
+}

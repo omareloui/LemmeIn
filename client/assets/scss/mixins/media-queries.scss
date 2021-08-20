@@ -1,0 +1,30 @@
+@use "sass:map";
+@use "../variables/screens";
+
+@mixin screen($size) {
+  @if $size == desktop or tablet or mobile {
+    @media only screen and (min-width: map.get(screens.$screens, $size)) {
+      @content;
+    }
+  } @else {
+    @media only screen and (min-width: $size) {
+      @content;
+    }
+  }
+}
+
+@mixin screen-larger-than-mobile {
+  @include screen("mobile") {
+    @content;
+  }
+}
+@mixin screen-larger-than-tablet {
+  @include screen("tablet") {
+    @content;
+  }
+}
+@mixin screen-larger-than-desktop {
+  @include screen("desktop") {
+    @content;
+  }
+}
