@@ -1,4 +1,4 @@
-function randomTextGenerator(length = 16) {
+export default function randomTextGenerator(length = 16) {
   let string = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
@@ -9,5 +9,3 @@ function randomTextGenerator(length = 16) {
 
   return string;
 }
-
-export default randomTextGenerator;

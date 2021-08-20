@@ -9,7 +9,7 @@ const PasswordControllerHelper = new ControllerHelper(Password, {
   privateFields: ["iv"],
 });
 
-class PasswordController {
+export default class PasswordController {
   async create(data: Partial<PasswordSchema>) {
     if (!data.password) throw new APIError("No password provided.", 400);
     const normalizedFields: Partial<PasswordSchema> = { ...data };
@@ -45,5 +45,3 @@ class PasswordController {
     return { ok: deletionCount > 0 };
   }
 }
-
-export default PasswordController;

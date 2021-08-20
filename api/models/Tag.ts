@@ -8,6 +8,4 @@ export interface TagSchema {
   tag: string;
 }
 
-const Tag = db.collection<TagSchema>("tags");
-
-export default Tag;
+export default db.collection<TagSchema>("tags");

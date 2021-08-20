@@ -4,7 +4,7 @@ import APIError from "../../lib/APIError.ts";
 
 import checkIfMongoId from "../utils/checkIfMongoId.ts";
 
-class ControllerHelper<Schema extends { _id: Bson.ObjectId }> {
+export default class ControllerHelper<Schema extends { _id: Bson.ObjectId }> {
   model: Collection<Schema>;
   requiredFields: (keyof Schema)[];
   privateFields: (keyof Schema)[];
@@ -82,5 +82,3 @@ class ControllerHelper<Schema extends { _id: Bson.ObjectId }> {
     }
   }
 }
-
-export default ControllerHelper;

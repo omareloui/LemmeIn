@@ -6,7 +6,7 @@ const TagControllerHelper = new ControllerHelper(Tag, {
   requiredFields: ["tag"],
 });
 
-class TagController {
+export default class TagController {
   async create(data: Partial<TagSchema>) {
     const insertId = await TagControllerHelper.add(data);
     return { ok: !!insertId };
@@ -32,5 +32,3 @@ class TagController {
     return { ok: deletionCount > 0 };
   }
 }
-
-export default TagController;

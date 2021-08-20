@@ -3,7 +3,7 @@ import randomTextGenerator from "../../utils/randomTextGenerator.ts";
 import convertToHex from "../../utils/convertUnit8ArrayToHex.ts";
 import convertToUnit8Array from "../../utils/convertHexToUnit8Array.ts";
 
-class EncryptionHandler {
+export default class EncryptionHandler {
   algorithm: typeof Aes256Cfb8;
   te: TextEncoder;
   td: TextDecoder;
@@ -43,5 +43,3 @@ class EncryptionHandler {
     return password;
   }
 }
-
-export default EncryptionHandler;

@@ -16,6 +16,4 @@ export interface PasswordSchema {
   tags: Bson.ObjectId[];
 }
 
-const Password = db.collection<PasswordSchema>("passwords");
-
-export default Password;
+export default db.collection<PasswordSchema>("passwords");

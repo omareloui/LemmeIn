@@ -1,6 +1,6 @@
 import { Context } from "../deps.ts";
 
-async function errorHandler({ response }: Context, next: () => void) {
+export default async function errorHandler({ response }: Context, next: () => void) {
   try {
     await next();
   } catch (e) {
@@ -8,4 +8,3 @@ async function errorHandler({ response }: Context, next: () => void) {
     response.status = e.status;
   }
 }
-export default errorHandler;
