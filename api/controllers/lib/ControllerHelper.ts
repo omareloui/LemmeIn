@@ -4,7 +4,7 @@ import APIError from "../../lib/APIError.ts";
 
 import checkIfMongoId from "../utils/checkIfMongoId.ts";
 
-class ControllerHelper<Schema> {
+class ControllerHelper<Schema extends { _id: Bson.ObjectId }> {
   model: Collection<Schema>;
   requiredFields: (keyof Schema)[];
   privateFields: (keyof Schema)[];
@@ -32,7 +32,7 @@ class ControllerHelper<Schema> {
   async viewAll(): Promise<Schema[]> {
     const allCollection = await this.model.find({}).toArray();
     allCollection.forEach(this.removePrivateFields.bind(this));
-    return allCollection;
+    return allCollection.map((x) => ({ ...x, createdAt: this.getTimestamp(x) }));
   }
 
   async viewById(id: string | undefined) {
@@ -41,7 +41,7 @@ class ControllerHelper<Schema> {
     const record = await this.model.findOne({ _id: new Bson.ObjectId(id) });
     if (!record) throw new APIError(`Can't find any ${this.model.name} with the provided id.`, 404);
     this.removePrivateFields(record);
-    return record;
+    return { ...record, createdAt: this.getTimestamp(record) };
   }
 
   async updateById(id: string | undefined, data: Partial<Schema>) {
@@ -61,6 +61,10 @@ class ControllerHelper<Schema> {
     const deletionCount = await this.model.deleteOne({ _id: new Bson.ObjectId(id) });
     if (deletionCount === 0) throw new APIError("No match for the provided id.", 404);
     return deletionCount;
+  }
+
+  getTimestamp(record: Schema) {
+    return record._id.getTimestamp();
   }
 
   validateRequiredFieldsArePresent(dataToValidate: Partial<Schema>) {

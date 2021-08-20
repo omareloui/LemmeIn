@@ -3,8 +3,8 @@ import db from "../config/db.ts";
 import { Bson } from "../deps.ts";
 
 export interface PasswordSchema {
-  _id: { $oid: string };
-  userId: Bson.ObjectId;
+  _id: Bson.ObjectId;
+  user: Bson.ObjectId;
   iv: string;
   password: string;
   title: string;
@@ -16,6 +16,6 @@ export interface PasswordSchema {
   tags: Bson.ObjectId[];
 }
 
-const passwords = db.collection<PasswordSchema>("passwords");
+const Password = db.collection<PasswordSchema>("passwords");
 
-export default passwords;
+export default Password;
