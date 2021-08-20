@@ -5,7 +5,7 @@
       "cmd": "deno run app.ts",
       "desc": "run my app.ts file",
       "unstable": true,
-      "allow": ["net"]
+      "allow": ["net", "read", "env"]
     }
   }
 }

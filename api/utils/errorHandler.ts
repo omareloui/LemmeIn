@@ -6,7 +6,6 @@ async function errorHandler({ response }: Context, next: () => void) {
   } catch (e) {
     response.body = e.message;
     response.status = e.status;
-    console.log(e.message);
   }
 }
 export default errorHandler;

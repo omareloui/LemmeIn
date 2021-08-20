@@ -6,25 +6,42 @@ import checkIfMongoId from "../utils/checkIfMongoId.ts";
 
 class ControllerHelper<Schema> {
   model: Collection<Schema>;
+  requiredFields: (keyof Schema)[];
+  privateFields: (keyof Schema)[];
 
-  constructor(Model: Collection<Schema>) {
+  constructor(
+    Model: Collection<Schema>,
+    options?: { requiredFields?: (keyof Schema)[]; privateFields?: (keyof Schema)[] }
+  ) {
     this.model = Model;
+
+    const requiredFields = options?.requiredFields;
+    this.requiredFields = requiredFields && requiredFields.length > 0 ? requiredFields : [];
+
+    const privateFields = options?.privateFields;
+    this.privateFields = privateFields && privateFields.length > 0 ? privateFields : [];
   }
 
   async add(data: Partial<Schema>) {
     if (Object.keys(data).length === 0) throw new APIError("Nothing to insert.", 400);
+    this.validateRequiredFieldsArePresent(data);
     const insertId = await this.model.insertOne(data);
     return insertId;
   }
 
-  async viewAll() {
-    return await this.model.find({}).toArray();
+  async viewAll(): Promise<Schema[]> {
+    const allCollection = await this.model.find({}).toArray();
+    allCollection.forEach(this.removePrivateFields.bind(this));
+    return allCollection;
   }
 
   async viewById(id: string | undefined) {
     if (!id) throw new APIError("No id provided.", 400);
     if (!checkIfMongoId(id)) throw new APIError("The provided id is invalid.", 400);
-    return await this.model.findOne({ _id: new Bson.ObjectId(id) });
+    const record = await this.model.findOne({ _id: new Bson.ObjectId(id) });
+    if (!record) throw new APIError(`Can't find any ${this.model.name} with the provided id.`, 404);
+    this.removePrivateFields(record);
+    return record;
   }
 
   async updateById(id: string | undefined, data: Partial<Schema>) {
@@ -44,6 +61,21 @@ class ControllerHelper<Schema> {
     const deletionCount = await this.model.deleteOne({ _id: new Bson.ObjectId(id) });
     if (deletionCount === 0) throw new APIError("No match for the provided id.", 404);
     return deletionCount;
+  }
+
+  validateRequiredFieldsArePresent(dataToValidate: Partial<Schema>) {
+    for (let i = 0; i < this.requiredFields.length; i++) {
+      const field = this.requiredFields[i];
+      if (!Object.hasOwn(dataToValidate, field))
+        throw new APIError(`The field "${field}" is required.`, 400);
+    }
+  }
+
+  removePrivateFields(record: Schema) {
+    for (let i = 0; i < this.privateFields.length; i++) {
+      const field = this.privateFields[i];
+      delete record[field];
+    }
   }
 }
 

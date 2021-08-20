@@ -5,6 +5,7 @@ import { Bson } from "../deps.ts";
 export interface PasswordSchema {
   _id: { $oid: string };
   userId: Bson.ObjectId;
+  iv: string;
   password: string;
   title: string;
   emailOrUsername: string;

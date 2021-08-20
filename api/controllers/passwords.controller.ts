@@ -1,15 +1,24 @@
 import Password, { PasswordSchema } from "../models/Password.ts";
 
 import ControllerHelper from "./lib/ControllerHelper.ts";
+import EncryptionHandler from "./lib/EncryptionHandler.ts";
+import APIError from "../lib/APIError.ts";
 
-const PasswordControllerHelper = new ControllerHelper(Password);
+const PasswordControllerHelper = new ControllerHelper<PasswordSchema>(Password, {
+  requiredFields: ["title", "password", "iv"],
+  privateFields: ["iv"],
+});
 
 class PasswordController {
-  async create({ note, password, title }: Partial<PasswordSchema>) {
-    const normalizedFields: Partial<PasswordSchema> = {};
-    if (note) normalizedFields.note = note;
-    if (password) normalizedFields.password = password; // TODO: encrypt the pass and stuff.
-    if (title) normalizedFields.title = title;
+  async create(data: Partial<PasswordSchema>) {
+    if (!data.password) throw new APIError("No password provided.", 400);
+    const normalizedFields: Partial<PasswordSchema> = { ...data };
+
+    const encryptHandler = new EncryptionHandler();
+    const { encryption, iv } = encryptHandler.encrypt(data.password);
+    normalizedFields.iv = iv;
+    normalizedFields.password = encryption;
+
     const insertId = await PasswordControllerHelper.add(normalizedFields);
     return { ok: !!insertId };
   }
