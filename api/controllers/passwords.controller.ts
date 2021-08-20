@@ -4,7 +4,7 @@ import ControllerHelper from "./lib/ControllerHelper.ts";
 import EncryptionHandler from "./lib/EncryptionHandler.ts";
 import APIError from "../lib/APIError.ts";
 
-const PasswordControllerHelper = new ControllerHelper<PasswordSchema>(Password, {
+const PasswordControllerHelper = new ControllerHelper(Password, {
   requiredFields: ["title", "password", "iv"],
   privateFields: ["iv"],
 });

@@ -1,0 +1,27 @@
+GET http://localhost:8000/tags
+
+###
+
+POST http://localhost:8000/tags
+Content-Type: application/json
+
+{
+  "tag": "socialmedia"
+}
+
+###
+
+DELETE http://localhost:8000/tags/611f5fc2443e1ea8826a6084
+
+###
+
+PUT http://localhost:8000/tags/611f5fc2443e1ea8826a6084
+Content-Type: application/json
+
+{
+  "tag": "noooo"
+}
+
+###
+
+DELETE  http://localhost:8000/tags/611f5fdd443e1ea8826a6085
