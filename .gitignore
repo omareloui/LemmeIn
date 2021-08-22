@@ -1,8 +1,13 @@
 node_modules
-.DS_Store
+coverage
 dist
 dist-ssr
 *.local
+.vscode
+.DS_Store
 .nuxt
-coverage
-.env
+.deno_plugins
+.idea
+.env.development
+.env.production
+.env.test
