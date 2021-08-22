@@ -6,22 +6,18 @@ POST http://localhost:8000/tags
 Content-Type: application/json
 
 {
-  "tag": "socialmedia"
+  "tag": "massar egbari"
 }
 
 ###
 
-DELETE http://localhost:8000/tags/611f5fc2443e1ea8826a6084
+DELETE http://localhost:8000/tags/d61219870b6e9c40fcdf36bd
 
 ###
 
-PUT http://localhost:8000/tags/611f5fc2443e1ea8826a6084
+PUT http://localhost:8000/tags/61219870b6e9c40fcdf36bc3
 Content-Type: application/json
 
 {
-  "tag": "noooo"
+  "tag": "noooo, did it change?!"
 }
-
-###
-
-DELETE  http://localhost:8000/tags/611f5fdd443e1ea8826a6085

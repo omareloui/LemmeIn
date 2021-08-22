@@ -1,16 +1,34 @@
-import { Application } from "./deps.ts";
-import { oakCors } from "./deps.ts";
+import { Application, oakCors } from "./deps.ts";
+import { errorHandler } from "./middlewares/errorHandler.middleware.ts";
 import logger from "./utils/logger.ts";
-import errorHandler from "./utils/errorHandler.ts";
-import routes from "./routes/main.ts";
-import { PORT } from "./config/main.ts";
+import log from "./middlewares/logger.middleware.ts";
+import configs from "./config/config.ts";
+import router from "./routers/index.ts";
 
-const app = new Application();
+const { url, port, clientUrl } = configs;
+
+const app: Application = new Application();
+
+const corsOptions = {
+  origin: clientUrl,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 200,
+  credentials: true,
+};
 
 logger(app);
+app.use(oakCors(corsOptions));
 app.use(errorHandler);
-app.use(oakCors());
-app.use(routes.routes());
 
-console.log(`Server is listening on ${PORT}...`);
-await app.listen({ port: PORT });
+router.init(app);
+
+app.addEventListener("listen", () => {
+  log.info(`Server listening at ${url}`);
+});
+
+if (import.meta.main) {
+  await app.listen({ port });
+}
+
+export { app };

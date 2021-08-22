@@ -3,5 +3,7 @@ export default function convertHexToUnit8Array(hex: string): Uint8Array {
   if (hex.length === 0 || hex.length % 2 !== 0) {
     throw new Error(`The string "${hex}" is not valid hex.`);
   }
-  return new Uint8Array(hex.match(/.{1,2}/g)!.map((byte: string) => parseInt(byte, 16)));
+  return new Uint8Array(
+    hex.match(/.{1,2}/g)!.map((byte: string) => parseInt(byte, 16)),
+  );
 }
