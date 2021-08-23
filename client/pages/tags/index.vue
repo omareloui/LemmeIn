@@ -22,7 +22,7 @@ export default Vue.extend({
       const { data: tags } = await $axios.get("/tags")
       return { tags }
     } catch (e) {
-      return error(e)
+      return error(e.response.data)
     }
   }
 })

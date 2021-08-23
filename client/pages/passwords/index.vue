@@ -22,7 +22,7 @@ export default Vue.extend({
       const { data: passwords } = await $axios.get("/passwords")
       return { passwords }
     } catch (e) {
-      return error(e)
+      return error(e.response.data)
     }
   }
 })
