@@ -22,12 +22,11 @@ class AuthService {
     });
     const isValidPass =
       user && (await HashHelper.compare(password, user.password));
-    if (!user?.password || !isValidPass) {
+    if (!user?.password || !isValidPass)
       return authErrorHelper.unauthorized({
         message: `email or password is not correct`,
         path: "login",
       });
-    }
     // Get the token
     const id = user._id.toString();
     const token = await TokenService.create(id);

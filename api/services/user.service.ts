@@ -1,7 +1,6 @@
 import { Document, ObjectId } from "../deps.ts";
 import HashHelper from "../helpers/hash.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
-import log from "../middlewares/logger.middleware.ts";
 import { User, UserSchema } from "../models/user.model.ts";
 import { UserHistory } from "../models/user_history.model.ts";
 import type {
@@ -21,11 +20,10 @@ class UserService {
 
     // Making sure the username and the email are unique
     const sameEmailUser = await User.findOne({ email, isDisabled: false });
-    if (sameEmailUser) {
+    if (sameEmailUser)
       userErrorHelper.badRequest({
         message: `This email is already in use. Try signing in instead.`,
       });
-    }
     const sameUsernameUser = await User.findOne({
       username,
       isDisabled: false,
@@ -47,10 +45,7 @@ class UserService {
       docVersion: 1,
     });
 
-    if (!user) {
-      log.error("Could not create user");
-      return userErrorHelper.badRequest({ action: "create" });
-    }
+    if (!user) return userErrorHelper.badRequest({ action: "create" });
 
     // Create the user history first entry
     await UserHistory.insertOne({
@@ -77,7 +72,6 @@ class UserService {
     if (getOnlyNonDisabled) query.isDisabled = false;
     const user: UserSchema | undefined = await User.findOne(query);
     if (!user) {
-      log.error("User not found");
       return userErrorHelper.notFound();
     }
     const { username, email, role, isDisabled, createdAt, updatedAt } = user;
@@ -88,10 +82,7 @@ class UserService {
     const user: UserSchema | undefined = await User.findOne({
       _id: new ObjectId(id),
     });
-    if (!user) {
-      log.error("User not found");
-      return userErrorHelper.notFound();
-    }
+    if (!user) return userErrorHelper.notFound();
     const { docVersion } = user;
     const newDocVersion = docVersion + 1;
     const { isDisabled, username, role } = options;
@@ -125,10 +116,7 @@ class UserService {
     const user: UserSchema | undefined = await User.findOne({
       _id: new ObjectId(id),
     });
-    if (!user) {
-      log.error("User not found");
-      return userErrorHelper.notFound();
-    }
+    if (!user) return userErrorHelper.notFound();
     const deleteCount: number = await User.deleteOne({ _id: new ObjectId(id) });
     if (!deleteCount) return userErrorHelper.badRequest({ action: "create" });
 

@@ -2,7 +2,6 @@ import { Password } from "../models/password.model.ts";
 import EncryptionHelper from "../helpers/encryption.helper.ts";
 import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
-import log from "../middlewares/logger.middleware.ts";
 import type { CreatePasswordOptions } from "../types/types.interface.ts";
 import normalizeDocuments from "../utils/normalizeDocuments.ts";
 
@@ -21,15 +20,9 @@ export default class PasswordService {
       password: encryption,
       iv,
     });
-    if (!passwordId) {
-      log.error("Could not create password");
+    if (!passwordId)
       return passwordErrorHelper.badRequest({ action: "create" });
-    }
     return passwordId;
-  }
-
-  public static getPasswords() {
-    return Password.find().toArray();
   }
 
   public static async getMyPasswords(userId: string) {
@@ -42,40 +35,8 @@ export default class PasswordService {
       _id: new ObjectId(id),
       user: userId,
     });
-    if (!passwordDoc) {
-      log.error("Password not found");
-      return passwordErrorHelper.notFound();
-    }
+    if (!passwordDoc) return passwordErrorHelper.notFound();
     return normalizeDocuments(passwordDoc);
-  }
-
-  public static async getPassword(id: string) {
-    const passwordDoc = await Password.findOne({ _id: new ObjectId(id) });
-    if (!passwordDoc) {
-      log.error("Password not found");
-      return passwordErrorHelper.notFound();
-    }
-    const {
-      user,
-      emailOrUsername,
-      icon,
-      note,
-      oAuthParty,
-      site,
-      tags,
-      title,
-    } = passwordDoc;
-    return {
-      id,
-      user,
-      emailOrUsername,
-      icon,
-      note,
-      oAuthParty,
-      site,
-      tags,
-      title,
-    };
   }
 
   // public static async decrypt(id: string) {
@@ -84,7 +45,6 @@ export default class PasswordService {
   // public static async updatePassword(id: string, options: { password: string }) {
   //   const passwordDoc = await Password.findOne({ _id: new ObjectId(id) });
   //   if (!passwordDoc) {
-  //     log.error("Password not found");
   //     return passwordErrorHelper.notFound();
   //   }
   //   const updateResult = await Password.updateOne(
@@ -107,16 +67,6 @@ export default class PasswordService {
       _id: new ObjectId(id),
       user: userId,
     });
-    if (!deleteCount) {
-      return passwordErrorHelper.badRequest({ action: "delete" });
-    }
-    return deleteCount;
-  }
-
-  public static async removePassword(id: string) {
-    const password = await Password.findOne({ _id: new ObjectId(id) });
-    if (!password) return passwordErrorHelper.notFound();
-    const deleteCount = await Password.deleteOne({ _id: new ObjectId(id) });
     if (!deleteCount) {
       return passwordErrorHelper.badRequest({ action: "delete" });
     }

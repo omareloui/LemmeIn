@@ -1,6 +1,5 @@
 import { roles } from "../config/roles.ts";
 import type { RouterContext } from "../deps.ts";
-import log from "../middlewares/logger.middleware.ts";
 import UserService from "../services/user.service.ts";
 
 class UserController {
@@ -10,7 +9,6 @@ class UserController {
   }: RouterContext): Promise<void> {
     const body = request.body();
     const { username, email, password, role, isDisabled } = await body.value;
-    log.debug("Creating user");
     response.body = await UserService.createUser({
       username,
       email,
@@ -21,18 +19,15 @@ class UserController {
   }
 
   public static async fetch({ response }: RouterContext): Promise<void> {
-    log.debug("Getting users list");
     response.body = await UserService.getUsers();
   }
 
   public static me({ state, response }: RouterContext): void {
-    log.debug("Getting me data");
     response.body = state;
   }
 
   public static async show({ params, response }: RouterContext): Promise<void> {
     const { id } = params;
-    log.debug("Getting user");
     response.body = await UserService.getUser(id as string);
   }
 
@@ -44,7 +39,6 @@ class UserController {
     const { id } = params;
     const body = request.body();
     const { username, role, isDisabled } = await body.value;
-    log.debug("Updating user");
     response.body = await UserService.updateUser(id as string, {
       username,
       role,
@@ -57,9 +51,8 @@ class UserController {
     response,
   }: RouterContext): Promise<void> {
     const { id } = params;
-    log.debug("Removing user");
     const deleteCount: number | Error = await UserService.removeUser(
-      id as string,
+      id as string
     );
     response.body = { deleted: deleteCount };
   }
