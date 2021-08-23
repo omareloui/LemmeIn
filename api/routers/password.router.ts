@@ -1,6 +1,6 @@
 import { Router } from "../deps.ts";
 import PasswordController from "../controllers/password.controller.ts";
-
+import { auth } from "../middlewares/auth.middleware.ts";
 import { validate } from "../middlewares/validate.middleware.ts";
 import {
   createPasswordValidation,
@@ -15,22 +15,23 @@ router
   .get(
     "/passwords",
     validate(getPasswordsValidation),
-    PasswordController.viewAll,
+    auth("getPasswords"),
+    PasswordController.viewAll
   )
   .post(
     "/passwords",
     validate(createPasswordValidation),
-    PasswordController.create,
+    PasswordController.create
   )
   .get(
     "/passwords/:id",
     validate(getPasswordValidation),
-    PasswordController.viewOne,
+    PasswordController.viewOne
   )
   .delete(
     "/passwords/:id",
     validate(deletePasswordValidation),
-    PasswordController.delete,
+    PasswordController.delete
   );
 
 export default router;
