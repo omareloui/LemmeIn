@@ -11,27 +11,32 @@ import {
 
 const router = new Router();
 
-router
-  .get(
-    "/passwords",
-    validate(getPasswordsValidation),
-    auth("getPasswords"),
-    PasswordController.viewAll
-  )
-  .post(
-    "/passwords",
-    validate(createPasswordValidation),
-    PasswordController.create
-  )
-  .get(
-    "/passwords/:id",
-    validate(getPasswordValidation),
-    PasswordController.viewOne
-  )
-  .delete(
-    "/passwords/:id",
-    validate(deletePasswordValidation),
-    PasswordController.delete
-  );
+router.get(
+  "/passwords",
+  validate(getPasswordsValidation),
+  auth("manageMyPasswords"),
+  PasswordController.viewAll
+);
+
+router.post(
+  "/passwords",
+  validate(createPasswordValidation),
+  auth("manageMyPasswords"),
+  PasswordController.create
+);
+
+router.get(
+  "/passwords/:id",
+  validate(getPasswordValidation),
+  auth("manageMyPasswords"),
+  PasswordController.viewOne
+);
+
+router.delete(
+  "/passwords/:id",
+  validate(deletePasswordValidation),
+  auth("manageMyPasswords"),
+  PasswordController.delete
+);
 
 export default router;

@@ -1,7 +1,7 @@
 export const roles = ["user", "admin"];
 export const roleRights = new Map();
 
-const userRights = ["getMe", "getPasswords"] as const;
+const userRights = ["getMe", "manageMyPasswords", "manageMyTags"] as const;
 const adminRights = [...userRights, "getUsers", "manageUsers"] as const;
 
 roleRights.set(roles[0], userRights);
