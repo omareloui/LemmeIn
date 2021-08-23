@@ -8,7 +8,7 @@ const tokenErrorHelper = new ErrorHelper("token");
 class TokenService {
   public static async create(userId?: string) {
     if (!userId)
-      return tokenErrorHelper.notFound({ message: "user id is invalid" });
+      return tokenErrorHelper.notFound({ message: "User id is invalid" });
     const expiration = config.jwtExpiration;
     const token = await JwtHelper.create(expiration, userId);
     return {

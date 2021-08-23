@@ -15,7 +15,7 @@ router.get(
   "/passwords",
   validate(getPasswordsValidation),
   auth("manageMyPasswords"),
-  PasswordController.viewAll
+  PasswordController.viewAllMine
 );
 
 router.post(
@@ -29,14 +29,14 @@ router.get(
   "/passwords/:id",
   validate(getPasswordValidation),
   auth("manageMyPasswords"),
-  PasswordController.viewOne
+  PasswordController.viewOneMine
 );
 
 router.delete(
   "/passwords/:id",
   validate(deletePasswordValidation),
   auth("manageMyPasswords"),
-  PasswordController.delete
+  PasswordController.deleteMine
 );
 
 export default router;

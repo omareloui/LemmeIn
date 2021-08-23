@@ -41,9 +41,14 @@ export default class APIError {
 
   constructor(public field: string) {}
 
-  public static throw(
-    { message, status, path, param, type, name }: Error,
-  ): never {
+  public static throw({
+    message,
+    status,
+    path,
+    param,
+    type,
+    name,
+  }: Error): never {
     throw { message, status, path, param, type, name };
   }
 
@@ -107,7 +112,7 @@ export default class APIError {
     throw {
       status: 401,
       name: options?.name || "Unauthorized",
-      message: options?.message || `Token is invalid`,
+      message: options?.message || `Invalid token`,
       type: "Unauthorized",
       path: options?.path || this.field,
       param: options?.param || this.field,
