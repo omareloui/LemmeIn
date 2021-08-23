@@ -7,7 +7,7 @@ export default class TagController {
     const body = request.body();
     const { tag } = await body.value;
     log.debug("Creating tag");
-    response.body = TagService.createTag({ tag }, state.user.id);
+    response.body = await TagService.createTag({ tag }, state.user.id);
   }
 
   public static async viewAllMine({ response, state }: RouterContext) {

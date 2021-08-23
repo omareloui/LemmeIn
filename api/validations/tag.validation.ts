@@ -8,8 +8,8 @@ export const createTagValidation = {
       .min(1)
       .max(256)
       .matches(
-        /[^\s.,<>`~+*!@#$%^&()[\]'"\/\/\\?:;-]/,
-        "You can't have special character in the tag name."
+        /^[^\s.,<>`~+*!@#$%^&()[\]'"\/\\?:;-]+$/,
+        "You can't have spaces or special character in the tag name."
       )
       .trim()
       .required(`Tag name is required`),
