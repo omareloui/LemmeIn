@@ -17,6 +17,11 @@ class AuthController {
     const authData = await AuthService.register({ email, username, password });
     response.body = authData;
   }
+
+  public static async me({ response, state }: RouterContext) {
+    const user = await AuthService.me(state.user.id);
+    response.body = user;
+  }
 }
 
 export default AuthController;

@@ -19,3 +19,5 @@ export const registerValidation = {
     password: yup.string().min(8).max(255).required(`password is required`),
   }),
 };
+
+export const meValidation = {};

@@ -69,7 +69,8 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
         if (hasError) throw new Error("not valid")
         await this.submitFunction(this.values)
       } catch (e) {
-        this.$notify.error(e.message)
+        if (e.response) this.$notify.error(e.response.data.message)
+        else this.$notify.error(e.message)
       } finally {
         this.endLoading()
       }

@@ -3,6 +3,7 @@ import ErrorHelper from "../helpers/error.helper.ts";
 import { User, UserSchema } from "../models/user.model.ts";
 import TokenService from "./token.service.ts";
 import UserService from "./user.service.ts";
+import { ObjectId } from "../deps.ts";
 import type { LoggingStructure } from "../types/types.interface.ts";
 
 const authErrorHelper = new ErrorHelper("auth");
@@ -63,6 +64,13 @@ class AuthService {
       token,
       user: { id, username, email, role, createdAt, updatedAt },
     };
+  }
+
+  public static async me(userId: string) {
+    const user = await User.findOne({ _id: new ObjectId(userId) });
+    if (!user) return authErrorHelper.notFound();
+    const { username, email, role, createdAt, updatedAt } = user;
+    return { id: userId, username, email, role, createdAt, updatedAt };
   }
 }
 

@@ -25,7 +25,10 @@ const nuxt: NuxtConfig = {
     "~/assets/scss/variables/index.scss",
     "~/assets/scss/base/index.scss"
   ],
-  plugins: [{ src: "~/plugins/notify", mode: "client" }],
+  plugins: [
+    { src: "~/plugins/axios" },
+    { src: "~/plugins/notify", mode: "client" }
+  ],
   components: true,
   buildModules: ["@nuxt/typescript-build", "nuxt-typed-vuex"],
   build: { additionalExtensions: ["vue", "ts"] },

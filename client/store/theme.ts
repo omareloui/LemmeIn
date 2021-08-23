@@ -44,7 +44,8 @@ export const actions = actionTree(
 
     setThemeToCookie({ state }, theme: ThemeOption) {
       this.app.$cookies.set(state.THEME_COOKIE_NAME, theme, {
-        sameSite: "lax"
+        sameSite: "lax",
+        path: "/"
       })
     },
 

@@ -24,6 +24,7 @@
     "import/extensions": "off",
     "import/no-extraneous-dependencies": "off",
     "import/no-unresolved": "off",
+    "dot-notation": "warn",
     "no-param-reassign": "off",
     "no-plusplus": "off",
     "no-shadow": "off",

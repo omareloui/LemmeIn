@@ -10,8 +10,6 @@ export const createUserValidation = {
   }),
 };
 
-export const meValidation = {};
-
 export const getUserValidation = {
   params: yup.object({
     id: yup.string().required().trim(),
