@@ -4,6 +4,8 @@ import randomTextGenerator from "../utils/randomTextGenerator.ts";
 import convertToHex from "../utils/convertUnit8ArrayToHex.ts";
 import convertToUnit8Array from "../utils/convertHexToUnit8Array.ts";
 
+const { passwordEncryptionSecret } = config;
+
 export default class EncryptionHandler {
   algorithm: typeof Aes256Cfb8;
   te: TextEncoder;
@@ -16,9 +18,8 @@ export default class EncryptionHandler {
   }
 
   encrypt(password: string): { encryption: string; iv: string } {
-    const envSecret = config.passwordEncryptionSecret;
-    if (!envSecret) throw new Error("No secret provided");
-    const secret = this.te.encode(envSecret);
+    if (!passwordEncryptionSecret) throw new Error("No secret provided");
+    const secret = this.te.encode(passwordEncryptionSecret);
     const iv = this.te.encode(randomTextGenerator());
     const encodedPassword = this.te.encode(password);
 

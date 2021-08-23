@@ -9,7 +9,14 @@ type StatusText =
   | "InternalServerError";
 type ErrorAction = "create" | "find" | "update" | "delete";
 
-type ErrorOptions = { param?: string; message?: string; action?: ErrorAction; name?: string };
+type ErrorOptions = {
+  param?: string;
+  message?: string;
+  action?: ErrorAction;
+  name?: string;
+  path?: string;
+};
+
 type HelperErrorMethod = (field: string, options?: ErrorOptions) => never;
 
 interface Error {
@@ -34,7 +41,9 @@ export default class APIError {
 
   constructor(public field: string) {}
 
-  public static throw({ message, status, path, param, type, name }: Error): never {
+  public static throw(
+    { message, status, path, param, type, name }: Error,
+  ): never {
     throw { message, status, path, param, type, name };
   }
 
@@ -42,7 +51,7 @@ export default class APIError {
     throw {
       status: 404,
       name: options?.name || "NotFound",
-      path: field,
+      path: options?.path || field,
       param: options?.param || field,
       message: options?.message || `${capitalize(field)} not found`,
       type: "NotFound",
@@ -53,7 +62,7 @@ export default class APIError {
     throw {
       status: 400,
       name: options?.name || "BadRequest",
-      path: field,
+      path: options?.path || field,
       param: options?.param || field,
       message: options?.message
         ? options.message
@@ -72,7 +81,7 @@ export default class APIError {
     throw {
       status: 400,
       name: options?.name || "BadRequest",
-      path: this.field,
+      path: options?.path || this.field,
       param: options?.param || this.field,
       message: options?.message || `${capitalize(this.field)} not found`,
       type: "BadRequest",
@@ -83,7 +92,7 @@ export default class APIError {
     throw {
       status: 400,
       name: options?.name || "BadRequest",
-      path: this.field,
+      path: options?.path || this.field,
       param: options?.param || this.field,
       message: options?.message
         ? options.message
@@ -100,7 +109,7 @@ export default class APIError {
       name: options?.name || "Unauthorized",
       message: options?.message || `Token is invalid`,
       type: "Unauthorized",
-      path: this.field,
+      path: options?.path || this.field,
       param: options?.param || this.field,
     };
   }
@@ -111,7 +120,7 @@ export default class APIError {
       name: options?.name || "Forbidden",
       message: options?.message || `Insufficient rights`,
       type: "Unauthorized",
-      path: this.field,
+      path: options?.path || this.field,
       param: options?.param || this.field,
     };
   }

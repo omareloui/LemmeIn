@@ -2,7 +2,7 @@ import db from "../db/db.ts";
 
 export interface UserSchema {
   _id: string;
-  name: string;
+  username: string;
   email: string;
   password: string;
   role: string;

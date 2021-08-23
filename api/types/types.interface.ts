@@ -7,7 +7,7 @@ export interface TokenStructure {
 
 export interface UserStructure {
   id: string;
-  name: string;
+  username: string;
   email: string;
   role: string;
   isDisabled: boolean;
@@ -21,7 +21,7 @@ export interface LoginStructure {
 }
 
 export interface CreateUserStructure {
-  name: string;
+  username: string;
   email: string;
   password: string;
   role: string;
@@ -29,7 +29,7 @@ export interface CreateUserStructure {
 }
 
 export interface UpdateUserStructure {
-  name?: string;
+  username?: string;
   role?: string;
   isDisabled?: boolean;
 }

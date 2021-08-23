@@ -4,9 +4,9 @@ import { Router } from "../deps.ts";
 import { validate } from "../middlewares/validate.middleware.ts";
 import {
   createTagValidation,
+  deleteTagValidation,
   getTagsValidation,
   getTagValidation,
-  deleteTagValidation,
   updateTagValidation,
 } from "../validations/tag.validation.ts";
 

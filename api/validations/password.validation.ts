@@ -3,8 +3,12 @@ import checkIfMongoId from "../utils/checkIfMongoId.ts";
 
 export const createPasswordValidation = {
   body: yup.object({
-    password: yup.string().min(3).max(256).trim().required(`Password is required`),
-    title: yup.string().min(3).min(3).max(256).trim().required(`Title is required`),
+    password: yup.string().min(3).max(256).trim().required(
+      `Password is required`,
+    ),
+    title: yup.string().min(3).min(3).max(256).trim().required(
+      `Title is required`,
+    ),
     emailOrUsername: yup.string().min(3).min(3).max(256).trim(),
     note: yup.string().min(3).min(3).max(256).trim(),
     site: yup.string().min(3).min(3).max(256).trim(),

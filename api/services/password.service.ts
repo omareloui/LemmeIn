@@ -11,7 +11,12 @@ export default class PasswordService {
   public static async createPassword(data: CreatePasswordOptions) {
     const encryptHelper = new EncryptionHelper();
     const { encryption, iv } = encryptHelper.encrypt(data.password);
-    const passwordId = await Password.insertOne({ ...data, password: encryption, iv, user: "" });
+    const passwordId = await Password.insertOne({
+      ...data,
+      password: encryption,
+      iv,
+      user: "",
+    });
     if (!passwordId) {
       log.error("Could not create password");
       return passwordErrorHelper.badRequest({ action: "create" });
@@ -29,8 +34,19 @@ export default class PasswordService {
       log.error("Password not found");
       return passwordErrorHelper.notFound();
     }
-    const { user, emailOrUsername, icon, note, oAuthParty, site, tags, title } = passwordDoc;
-    return { id, user, emailOrUsername, icon, note, oAuthParty, site, tags, title };
+    const { user, emailOrUsername, icon, note, oAuthParty, site, tags, title } =
+      passwordDoc;
+    return {
+      id,
+      user,
+      emailOrUsername,
+      icon,
+      note,
+      oAuthParty,
+      site,
+      tags,
+      title,
+    };
   }
 
   // public static async decrypt(id: string) {
@@ -56,7 +72,9 @@ export default class PasswordService {
     const password = await Password.findOne({ _id: new ObjectId(id) });
     if (!password) return passwordErrorHelper.notFound();
     const deleteCount = await Password.deleteOne({ _id: new ObjectId(id) });
-    if (!deleteCount) return passwordErrorHelper.badRequest({ action: "delete" });
+    if (!deleteCount) {
+      return passwordErrorHelper.badRequest({ action: "delete" });
+    }
     return deleteCount;
   }
 }

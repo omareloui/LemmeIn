@@ -7,7 +7,10 @@ import ErrorHelper from "../helpers/error.helper.ts";
 
 const authErrorHelper = new ErrorHelper("auth");
 
-const checkRights = (requiredRights: string[], user: UserStructure): boolean | Error => {
+const checkRights = (
+  requiredRights: string[],
+  user: UserStructure,
+): boolean | Error => {
   if (requiredRights.length) {
     const userRights = roleRights.get(user.role);
     const hasRequiredRights = requiredRights.every((requiredRight) =>
@@ -18,26 +21,26 @@ const checkRights = (requiredRights: string[], user: UserStructure): boolean | E
   return true;
 };
 
-export const auth = (...requiredRights: string[]) => async (
-  // deno-lint-ignore no-explicit-any
-  ctx: Context<State, Record<string, any>>,
-  next: () => Promise<unknown>
-): Promise<void> => {
-  let JWT: string;
-  const jwt: string = ctx.request.headers.get("Authorization")
-    ? ctx.request.headers.get("Authorization")!
-    : "";
-  if (jwt && jwt.includes("Bearer")) {
-    JWT = jwt.split("Bearer ")[1];
+export const auth = (...requiredRights: string[]) =>
+  async (
     // deno-lint-ignore no-explicit-any
-    const data: any | Error = await JwtHelper.getJwtPayload(JWT);
-    if (data) {
-      const user: UserStructure | Error = await UserService.getUser(data.id);
-      if (user && checkRights(requiredRights, user as UserStructure)) {
-        ctx.state = user;
-      }
-    } else return authErrorHelper.unauthorized();
-  } else return authErrorHelper.unauthorized();
+    ctx: Context<State, Record<string, any>>,
+    next: () => Promise<unknown>,
+  ): Promise<void> => {
+    const jwt: string = ctx.request.headers.get("Authorization")
+      ? ctx.request.headers.get("Authorization")!
+      : "";
 
-  await next();
-};
+    if (!jwt || !jwt.includes("Bearer")) return authErrorHelper.unauthorized();
+
+    const token = jwt.split("Bearer ")[1];
+    // deno-lint-ignore no-explicit-any
+    const data: any | Error = await JwtHelper.getJwtPayload(token);
+    if (!data) return authErrorHelper.unauthorized();
+
+    const user: UserStructure | Error = await UserService.getUser(data.id);
+    if (user && checkRights(requiredRights, user as UserStructure)) {ctx.state =
+        user;}
+
+    await next();
+  };

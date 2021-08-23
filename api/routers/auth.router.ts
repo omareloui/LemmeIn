@@ -4,14 +4,20 @@ import { validate } from "../middlewares/validate.middleware.ts";
 import {
   loginValidation,
   refreshTokenValidation,
+  registerValidation,
 } from "../validations/auth.validation.ts";
 
 const router: Router = new Router();
 
-router.post("/api/auth/login", validate(loginValidation), AuthController.login);
+router.post("/auth/login", validate(loginValidation), AuthController.login);
+router.post(
+  "/auth/register",
+  validate(registerValidation),
+  AuthController.register,
+);
 
 router.post(
-  "/api/auth/refresh-tokens",
+  "/auth/refresh-tokens",
   validate(refreshTokenValidation),
   AuthController.refreshTokens,
 );

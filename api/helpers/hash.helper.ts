@@ -1,4 +1,4 @@
-import { hash, compareHash, genSalt } from "../deps.ts";
+import { compareHash, genSalt, hash } from "../deps.ts";
 
 class HashHelper {
   public static async hash(str: string): Promise<string> {
