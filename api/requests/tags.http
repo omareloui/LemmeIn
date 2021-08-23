@@ -1,12 +1,25 @@
+# To login
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+
+{
+  "email": "omarelwy@hotmail.com",
+  "password": "12345678"
+}
+
+###
+
 GET http://localhost:8000/tags
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkand0IiwiaWF0IjoxNjI5NzE2OTk1MDMxLCJpZCI6IjYxMjMzOWFmMjc4ODRlNmE4OGE5MGM0NyIsImV4cCI6MTYzMjMwODk5NX0.7UDb0LZWs7y41e4HCr44js6_-85FGASRUnQcLSdtwWpekMmNPTdl2wsiZlUeouCsshTgXEKx1uPr13NZtAWzBA
 
 ###
 
 POST http://localhost:8000/tags
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkand0IiwiaWF0IjoxNjI5NzE2ODk2MzkxLCJpZCI6IjYxMjMzOWFmMjc4ODRlNmE4OGE5MGM0NyIsImV4cCI6MTYzMjMwODg5Nn0.bsbY4XgDHUVkSPjqf9g_BhGxzZ17MB2eQ5bRWluSYVaFrF73qjCzel2a7UK6PigTm3QvBWz8k2gxY8wvPC3qjg
 Content-Type: application/json
 
 {
-  "tag": "massar egbari"
+  "tag": "massar *egbari"
 }
 
 ###

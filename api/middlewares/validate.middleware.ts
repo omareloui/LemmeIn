@@ -23,10 +23,10 @@ const checkValidation = async (
     fields: any;
     validate: (
       arg0: unknown,
-      arg1: { stripUnknown: boolean; abortEarly: boolean },
+      arg1: { stripUnknown: boolean; abortEarly: boolean }
     ) => any;
   },
-  payload: any,
+  payload: any
 ): Promise<void> => {
   checkInvalidParams(schema.fields, payload);
   try {
@@ -36,44 +36,43 @@ const checkValidation = async (
   }
 };
 
-export const validate = (schema: any) =>
-  async (
-    ctx: RouterContext,
-    next: () => void,
-  ): Promise<void> => {
-    const { params: _params, queries: _query, body: _body } = schema;
-    const allQueries = [
-      {
-        type: "body",
-        _data: await ctx.request.body().value,
-        _schema: _body,
-      },
-      {
-        type: "param",
-        _data: ctx.params,
-        _schema: _params,
-      },
-      {
-        type: "query",
-        _data: helpers.getQuery(ctx),
-        _schema: _query,
-      },
-    ];
+export const validate = (schema: any) => async (
+  ctx: RouterContext,
+  next: () => void
+): Promise<void> => {
+  const { params: _params, queries: _query, body: _body } = schema;
+  const allQueries = [
+    {
+      type: "body",
+      _data: await ctx.request.body().value,
+      _schema: _body,
+    },
+    {
+      type: "param",
+      _data: ctx.params,
+      _schema: _params,
+    },
+    {
+      type: "query",
+      _data: helpers.getQuery(ctx),
+      _schema: _query,
+    },
+  ];
 
-    for (const _q of allQueries) {
-      if (_q._schema?.fields && _q._data) {
-        await checkValidation(_q._schema, _q._data);
-      } else if (
-        _q._data &&
-        Object.keys(_q._data).length &&
-        (!_q._schema || (_q._schema && !_q._schema.has("fields")))
-      ) {
-        return validateErrorHelper.badRequest({
-          name: "ValidationError",
-          message: `${_q.type} is not allowed`,
-          param: _q.type,
-        });
-      }
+  for (const _q of allQueries) {
+    if (_q._schema?.fields && _q._data) {
+      await checkValidation(_q._schema, _q._data);
+    } else if (
+      _q._data &&
+      Object.keys(_q._data).length &&
+      (!_q._schema || (_q._schema && !_q._schema.has("fields")))
+    ) {
+      return validateErrorHelper.badRequest({
+        name: "ValidationError",
+        message: `${_q.type} is not allowed`,
+        param: _q.type,
+      });
     }
-    await next();
-  };
+  }
+  await next();
+};

@@ -16,7 +16,7 @@ router.get(
   "/tags",
   validate(getTagsValidation),
   auth("manageMyTags"),
-  TagController.viewAll
+  TagController.viewAllMine
 );
 
 router.post(
@@ -30,21 +30,21 @@ router.get(
   "/tags/:id",
   validate(getTagValidation),
   auth("manageMyTags"),
-  TagController.viewOne
+  TagController.viewOneMine
 );
 
 router.put(
   "/tags/:id",
   validate(updateTagValidation),
   auth("manageMyTags"),
-  TagController.update
+  TagController.updateMine
 );
 
 router.delete(
   "/tags/:id",
   validate(deleteTagValidation),
   auth("manageMyTags"),
-  TagController.delete
+  TagController.deleteMine
 );
 
 export default router;

@@ -3,7 +3,16 @@ import checkIfMongoId from "../utils/checkIfMongoId.ts";
 
 export const createTagValidation = {
   body: yup.object({
-    tag: yup.string().min(1).max(256).trim().required(`Tag name is required`),
+    tag: yup
+      .string()
+      .min(1)
+      .max(256)
+      .matches(
+        /[^\s.,<>`~+*!@#$%^&()[\]'"\/\/\\?:;-]/,
+        "You can't have special character in the tag name."
+      )
+      .trim()
+      .required(`Tag name is required`),
   }),
 };
 
