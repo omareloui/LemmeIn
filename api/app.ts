@@ -7,7 +7,7 @@ import router from "./routers/index.ts";
 
 const { url, port, clientUrl } = configs;
 
-const app: Application = new Application();
+const app = new Application();
 
 const corsOptions = {
   origin: clientUrl,

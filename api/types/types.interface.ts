@@ -1,8 +1,8 @@
 import type { ObjectId } from "../deps.ts";
 
 export interface TokenStructure {
-  access: { expires: Date; token: string };
-  refresh: { expires: Date; token: string };
+  expires: Date;
+  token: string;
 }
 
 export interface UserStructure {
@@ -10,13 +10,13 @@ export interface UserStructure {
   username: string;
   email: string;
   role: string;
-  isDisabled: boolean;
+  isDisabled?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface LoginStructure {
-  tokens: TokenStructure | Error;
+export interface LoggingStructure {
+  token: TokenStructure;
   user: UserStructure;
 }
 

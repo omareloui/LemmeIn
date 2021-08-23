@@ -19,9 +19,3 @@ export const registerValidation = {
     password: yup.string().min(8).max(255).required(`password is required`),
   }),
 };
-
-export const refreshTokenValidation = {
-  body: yup.object({
-    refreshToken: yup.string().trim().required(`refresh_token is required`),
-  }),
-};

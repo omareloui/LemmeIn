@@ -6,11 +6,9 @@ const envConfig = dotEnv({
   path: envPath,
 });
 
-let mongoUrl = `mongodb://${envConfig.DB_USER}:${
-  encodeURIComponent(
-    envConfig.DB_PASS,
-  )
-}@${envConfig.DB_HOST}/${envConfig.DB_NAME}`;
+let mongoUrl = `mongodb://${envConfig.DB_USER}:${encodeURIComponent(
+  envConfig.DB_PASS
+)}@${envConfig.DB_HOST}/${envConfig.DB_NAME}`;
 if (env === "development" || env === "test") {
   if (envConfig.DB_USER === "" && envConfig.DB_PASS === "") {
     mongoUrl = `mongodb://${envConfig.DB_HOST}/${envConfig.DB_NAME}`;
@@ -20,9 +18,8 @@ if (env === "development" || env === "test") {
 const config: {
   env: string;
   appName: string;
+  jwtExpiration: number;
   key: string;
-  jwtAccessExpiration: number;
-  jwtRefreshExpiration: number;
   ip: string;
   host: string;
   port: number;
@@ -39,8 +36,7 @@ const config: {
   env,
   appName: envConfig.APP_NAME,
   key: envConfig.KEY,
-  jwtAccessExpiration: Number(envConfig.JWT_ACCESS_TOKEN_EXP),
-  jwtRefreshExpiration: Number(envConfig.JWT_REFRESH_TOKEN_EXP),
+  jwtExpiration: Number(envConfig.JWT_EXP),
   ip: envConfig.IP,
   host: envConfig.HOST,
   port: Number(envConfig.PORT),
@@ -51,8 +47,7 @@ const config: {
   clientPort: Number(envConfig.CLIENT_PORT),
   clientProtocol: envConfig.CLIENT_PROTOCOL,
   url: `${envConfig.PROTOCOL}://${envConfig.HOST}:${envConfig.PORT}`,
-  clientUrl:
-    `${envConfig.CLIENT_PROTOCOL}://${envConfig.CLIENT_HOST}:${envConfig.CLIENT_PORT}`,
+  clientUrl: `${envConfig.CLIENT_PROTOCOL}://${envConfig.CLIENT_HOST}:${envConfig.CLIENT_PORT}`,
   passwordEncryptionSecret: envConfig.PASSWORD_ENCRYPTION_SECRET,
 };
 

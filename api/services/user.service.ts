@@ -13,7 +13,7 @@ const userErrorHelper = new ErrorHelper("user");
 
 class UserService {
   public static async createUser(
-    options: CreateUserStructure,
+    options: CreateUserStructure
   ): Promise<Document | Error> {
     const { username, email, password, role, isDisabled } = options;
     const hashedPassword = await HashHelper.hash(password);
@@ -70,7 +70,7 @@ class UserService {
     return User.find().toArray();
   }
 
-  public static async getUser(id: string, getOnlyNonDisabled = false) {
+  public static async getUser(id: string, getOnlyNonDisabled = true) {
     const query: { _id: ObjectId; isDisabled?: boolean } = {
       _id: new ObjectId(id),
     };
@@ -106,7 +106,7 @@ class UserService {
           updatedAt,
           docVersion: newDocVersion,
         },
-      },
+      }
     );
 
     if (!result) return userErrorHelper.badRequest({ action: "update" });

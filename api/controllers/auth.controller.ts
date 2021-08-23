@@ -20,16 +20,6 @@ class AuthController {
     const authData = await AuthService.register({ email, username, password });
     response.body = authData;
   }
-
-  public static async refreshTokens({
-    request,
-    response,
-  }: RouterContext): Promise<void> {
-    const body = request.body();
-    const { refreshToken } = await body.value;
-    log.debug("Getting refresh token");
-    response.body = await AuthService.getRefreshToken(refreshToken);
-  }
 }
 
 export default AuthController;
