@@ -6,4 +6,4 @@ export interface TagSchema {
   tag: string;
 }
 
-export default db.getDatabase.collection<TagSchema>("tags");
+export const Tag = db.getDatabase.collection<TagSchema>("tags");

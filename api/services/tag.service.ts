@@ -1,4 +1,4 @@
-import Tag, { TagSchema } from "../models/tag.model.ts";
+import { Tag, TagSchema } from "../models/tag.model.ts";
 import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 import log from "../middlewares/logger.middleware.ts";
@@ -38,7 +38,7 @@ export default class TagService {
     if (tagDoc.tag === options.tag) return tagDoc; // Skip if the tag is the same
     const updateResult = await Tag.updateOne(
       { _id: new ObjectId(id) },
-      { $set: { tag: options.tag } },
+      { $set: { tag: options.tag } }
     );
     if (!updateResult) return tagErrorHelper.badRequest({ action: "update" });
 

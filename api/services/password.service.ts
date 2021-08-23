@@ -1,4 +1,4 @@
-import Password from "../models/password.model.ts";
+import { Password } from "../models/password.model.ts";
 import EncryptionHelper from "../helpers/encryption.helper.ts";
 import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
@@ -34,8 +34,16 @@ export default class PasswordService {
       log.error("Password not found");
       return passwordErrorHelper.notFound();
     }
-    const { user, emailOrUsername, icon, note, oAuthParty, site, tags, title } =
-      passwordDoc;
+    const {
+      user,
+      emailOrUsername,
+      icon,
+      note,
+      oAuthParty,
+      site,
+      tags,
+      title,
+    } = passwordDoc;
     return {
       id,
       user,

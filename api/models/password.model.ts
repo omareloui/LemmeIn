@@ -14,4 +14,4 @@ export interface PasswordSchema {
   tags: string[];
 }
 
-export default db.getDatabase.collection<PasswordSchema>("passwords");
+export const Password = db.getDatabase.collection<PasswordSchema>("passwords");
