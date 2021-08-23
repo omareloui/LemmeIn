@@ -1,7 +1,6 @@
 import { Tag } from "../models/tag.model.ts";
 import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
-import log from "../middlewares/logger.middleware.ts";
 import normalizeDocuments from "../utils/normalizeDocuments.ts";
 
 const tagErrorHelper = new ErrorHelper("tag");
@@ -15,10 +14,7 @@ export default class TagService {
     if (duplicatedTag)
       return tagErrorHelper.badRequest({ message: "The tag already exists" });
     const tagDoc = await Tag.insertOne({ tag, user: userId });
-    if (!tagDoc) {
-      log.error("Could not create tag");
-      return tagErrorHelper.badRequest({ action: "create" });
-    }
+    if (!tagDoc) return tagErrorHelper.badRequest({ action: "create" });
     return tagDoc;
   }
 
@@ -27,45 +23,13 @@ export default class TagService {
     return normalizeDocuments(passwords);
   }
 
-  public static getTags() {
-    return Tag.find().toArray();
-  }
-
   public static async getMyTag(id: string, userId: string) {
     const tagDoc = await Tag.findOne({
       _id: new ObjectId(id),
       user: userId,
     });
-    if (!tagDoc) {
-      log.error("Tag not found");
-      return tagErrorHelper.notFound();
-    }
+    if (!tagDoc) return tagErrorHelper.notFound();
     return normalizeDocuments(tagDoc);
-  }
-
-  public static async getTag(id: string) {
-    const tagDoc = await Tag.findOne({ _id: new ObjectId(id) });
-    if (!tagDoc) {
-      log.error("Tag not found");
-      return tagErrorHelper.notFound();
-    }
-    const { tag, user } = tagDoc;
-    return { id, tag, user };
-  }
-
-  public static async updateTag(id: string, options: { tag: string }) {
-    const tagDoc = await Tag.findOne({ _id: new ObjectId(id) });
-    if (!tagDoc) {
-      log.error("Tag not found");
-      return tagErrorHelper.notFound();
-    }
-    if (tagDoc.tag === options.tag) return tagDoc; // Skip if the tag is the same
-    const updateResult = await Tag.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { tag: options.tag } }
-    );
-    if (!updateResult) return tagErrorHelper.badRequest({ action: "update" });
-    return updateResult;
   }
 
   public static async updateMyTag(
@@ -77,25 +41,24 @@ export default class TagService {
       _id: new ObjectId(id),
       user: userId,
     });
-    if (!tagDoc) {
-      log.error("Tag not found");
-      return tagErrorHelper.notFound();
-    }
+    if (!tagDoc) return tagErrorHelper.notFound();
     if (tagDoc.tag === options.tag) return normalizeDocuments(tagDoc); // Skip if the tag is the same
+
+    const duplicatedTag = await Tag.findOne({
+      tag: new RegExp(`^${options.tag}$`, "i"),
+      user: userId,
+    });
+    if (duplicatedTag)
+      return tagErrorHelper.badRequest({
+        message: "There's a tag with the same name. It can't be duplicated.",
+      });
+
     const updateResult = await Tag.updateOne(
       { _id: new ObjectId(id), user: userId },
       { $set: { tag: options.tag } }
     );
     if (!updateResult) return tagErrorHelper.badRequest({ action: "update" });
     return updateResult;
-  }
-
-  public static async removeTag(id: string) {
-    const tag = await Tag.findOne({ _id: new ObjectId(id) });
-    if (!tag) return tagErrorHelper.notFound();
-    const deleteCount = await Tag.deleteOne({ _id: new ObjectId(id) });
-    if (!deleteCount) return tagErrorHelper.notFound();
-    return deleteCount;
   }
 
   public static async removeMyTag(id: string, userId: string) {
