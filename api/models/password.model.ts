@@ -5,13 +5,15 @@ export interface PasswordSchema {
   user: string;
   iv: string;
   password: string;
-  title: string;
-  emailOrUsername: string;
+  app: string;
+  accountIdentifier: string;
   site: string;
   note: string;
-  icon: string;
-  oAuthParty: string;
+  oAthPassword: string;
   tags: string[];
+  lastUsed: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const Password = db.getDatabase.collection<PasswordSchema>("passwords");

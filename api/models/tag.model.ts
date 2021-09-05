@@ -4,6 +4,9 @@ export interface TagSchema {
   _id: string;
   user: string;
   tag: string;
+  color: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const Tag = db.getDatabase.collection<TagSchema>("tags");
