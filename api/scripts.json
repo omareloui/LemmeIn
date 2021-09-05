@@ -8,7 +8,7 @@
       "desc": "run server",
       "env": { "ENV": "development" },
       "watch": true,
-      "tsconfig": "tsconfig.json"
+      "lock": "lock.json"
     },
 
     "test": {
@@ -17,7 +17,6 @@
       "unstable": true,
       "env": { "ENV": "test" },
       "watch": false,
-      "tsconfig": "tsconfig.json",
       "lock": "lock.json"
     },
 

@@ -3,7 +3,10 @@ import EncryptionHelper from "../helpers/encryption.helper.ts";
 import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 import type { CreatePasswordOptions } from "../types/types.interface.ts";
-import normalizeDocuments from "../utils/normalizeDocuments.ts";
+import {
+  normalizeDocument,
+  normalizeDocuments,
+} from "../utils/normalizeDocuments.ts";
 
 const passwordErrorHelper = new ErrorHelper("password");
 
@@ -36,7 +39,7 @@ export default class PasswordService {
       user: userId,
     });
     if (!passwordDoc) return passwordErrorHelper.notFound();
-    return normalizeDocuments(passwordDoc);
+    return normalizeDocument(passwordDoc);
   }
 
   // public static async decrypt(id: string) {

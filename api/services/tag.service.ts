@@ -1,7 +1,10 @@
 import { Tag } from "../models/tag.model.ts";
 import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
-import normalizeDocuments from "../utils/normalizeDocuments.ts";
+import {
+  normalizeDocument,
+  normalizeDocuments,
+} from "../utils/normalizeDocuments.ts";
 
 const tagErrorHelper = new ErrorHelper("tag");
 
@@ -29,7 +32,7 @@ export default class TagService {
       user: userId,
     });
     if (!tagDoc) return tagErrorHelper.notFound();
-    return normalizeDocuments(tagDoc);
+    return normalizeDocument(tagDoc);
   }
 
   public static async updateMyTag(
@@ -42,7 +45,7 @@ export default class TagService {
       user: userId,
     });
     if (!tagDoc) return tagErrorHelper.notFound();
-    if (tagDoc.tag === options.tag) return normalizeDocuments(tagDoc); // Skip if the tag is the same
+    if (tagDoc.tag === options.tag) return normalizeDocument(tagDoc); // Skip if the tag is the same
 
     const duplicatedTag = await Tag.findOne({
       tag: new RegExp(`^${options.tag}$`, "i"),
