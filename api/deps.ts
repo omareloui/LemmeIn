@@ -18,6 +18,7 @@ export {
   isHttpError,
   Router,
   send,
+  testing,
 } from "https://deno.land/x/oak@v9.0.0/mod.ts";
 export {
   compare as compareHash,
@@ -27,6 +28,7 @@ export {
 export type {
   RouterContext,
   State,
+  RouteParams,
 } from "https://deno.land/x/oak@v9.0.0/mod.ts";
 export { config as dotEnv } from "https://deno.land/x/dotenv@v3.0.0/mod.ts";
 export { MongoClient } from "https://deno.land/x/mongo@v0.25.0/mod.ts";

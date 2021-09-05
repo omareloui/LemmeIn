@@ -1,5 +1,6 @@
 // deno-lint-ignore-file
 
+import config from "../config/config.ts";
 import { helpers, RouterContext } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 const validateErrorHelper = new ErrorHelper("validate");
@@ -32,7 +33,7 @@ const checkValidation = async (
   try {
     await schema.validate(payload, { stripUnknown: true, abortEarly: true });
   } catch (validationErrors) {
-    throw { ...validationErrors };
+    throw validationErrors;
   }
 };
 
@@ -54,7 +55,7 @@ export const validate = (schema: any) => async (
     },
     {
       type: "query",
-      _data: helpers.getQuery(ctx),
+      _data: config.env !== "test" ? helpers.getQuery(ctx) : undefined,
       _schema: _query,
     },
   ];
