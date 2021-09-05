@@ -32,11 +32,11 @@ export default class EncryptionHandler {
     };
   }
 
-  decrypt(passwordEncryptionHex: string, ivSHex: string): string {
+  decrypt(passwordEncryptionHex: string, ivHex: string): string {
     const envSecret = Deno.env.get("PASSWORD_ENCRYPTION_SECRET");
     if (!envSecret) throw new Error("No secret provided");
     const secret = this.te.encode(envSecret);
-    const iv = convertToUnit8Array(ivSHex);
+    const iv = convertToUnit8Array(ivHex);
     const passwordUnit8Array = convertToUnit8Array(passwordEncryptionHex);
 
     const cypher = new this.algorithm(secret, iv);
