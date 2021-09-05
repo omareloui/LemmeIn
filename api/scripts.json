@@ -16,8 +16,7 @@
       "desc": "Test the server.",
       "unstable": true,
       "env": { "ENV": "test" },
-      "watch": false,
-      "lock": "lock.json"
+      "watch": false
     },
 
     "prod": {

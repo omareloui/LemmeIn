@@ -4,9 +4,9 @@ import generateRandomText from "../utils/generateRandomText.ts";
 import convertToHex from "../utils/convertUnit8ArrayToHex.ts";
 import convertToUnit8Array from "../utils/convertHexToUnit8Array.ts";
 
-const { passwordEncryptionSecret } = config;
+const { encryptionSecret } = config;
 
-export default class EncryptionHandler {
+export default class EncryptionHelper {
   algorithm: typeof Aes256Cfb8;
   te: TextEncoder;
   td: TextDecoder;
@@ -17,27 +17,24 @@ export default class EncryptionHandler {
     this.td = new TextDecoder();
   }
 
-  encrypt(password: string): { encryption: string; iv: string } {
-    if (!passwordEncryptionSecret) throw new Error("No secret provided");
-    const secret = this.te.encode(passwordEncryptionSecret);
+  encrypt(plainText: string): string {
+    if (!encryptionSecret) throw new Error("No secret provided");
+    const secret = this.te.encode(encryptionSecret);
     const iv = this.te.encode(generateRandomText());
-    const encodedPassword = this.te.encode(password);
+    const encodedPassword = this.te.encode(plainText);
 
     const cypher = new this.algorithm(secret, iv);
     cypher.encrypt(encodedPassword);
 
-    return {
-      encryption: convertToHex(encodedPassword),
-      iv: convertToHex(iv),
-    };
+    return `${convertToHex(iv)}.${convertToHex(encodedPassword)}`;
   }
 
-  decrypt(passwordEncryptionHex: string, ivHex: string): string {
-    const envSecret = Deno.env.get("PASSWORD_ENCRYPTION_SECRET");
-    if (!envSecret) throw new Error("No secret provided");
-    const secret = this.te.encode(envSecret);
+  decrypt(encryption: string): string {
+    const [ivHex, encryptionHex] = encryption.split(".");
+    if (!encryptionSecret) throw new Error("No secret provided");
+    const secret = this.te.encode(encryptionSecret);
     const iv = convertToUnit8Array(ivHex);
-    const passwordUnit8Array = convertToUnit8Array(passwordEncryptionHex);
+    const passwordUnit8Array = convertToUnit8Array(encryptionHex);
 
     const cypher = new this.algorithm(secret, iv);
     cypher.decrypt(passwordUnit8Array);

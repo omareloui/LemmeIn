@@ -3,7 +3,6 @@ import db from "../db/db.ts";
 export interface PasswordSchema {
   _id: string;
   user: string;
-  iv: string;
   password: string;
   app: string;
   accountIdentifier: string;

@@ -10,11 +10,11 @@ const jwtSecret = await crypto.subtle.generateKey(
 const header: Header = { alg: "HS512", typ: "JWT" };
 
 class JwtHelper {
-  public static create(expiresInSeconds: number, id?: string) {
+  public static create(expiresInSeconds: number, userId?: string) {
     const payload: Payload = {
       iss: "djwt",
       iat: Date.now(),
-      id,
+      id: userId,
       exp: getNumericDate(expiresInSeconds),
     };
     return create(header, payload, jwtSecret);

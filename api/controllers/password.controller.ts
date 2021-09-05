@@ -7,7 +7,7 @@ export default class PasswordController {
     const body = request.body();
     const data = (await body.value) as CreatePasswordOptions;
     const userId = state.user.id;
-    await PasswordService.createPassword({ ...data }, userId);
+    await PasswordService.createPassword(data, userId);
     response.status = 200;
   }
 

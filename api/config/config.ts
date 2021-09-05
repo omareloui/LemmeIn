@@ -31,7 +31,7 @@ const config: {
   clientProtocol: string;
   url: string;
   clientUrl: string;
-  passwordEncryptionSecret: string;
+  encryptionSecret: string;
 } = {
   env,
   appName: envConfig.APP_NAME,
@@ -48,7 +48,7 @@ const config: {
   clientProtocol: envConfig.CLIENT_PROTOCOL,
   url: `${envConfig.PROTOCOL}://${envConfig.HOST}:${envConfig.PORT}`,
   clientUrl: `${envConfig.CLIENT_PROTOCOL}://${envConfig.CLIENT_HOST}:${envConfig.CLIENT_PORT}`,
-  passwordEncryptionSecret: envConfig.PASSWORD_ENCRYPTION_SECRET,
+  encryptionSecret: envConfig.ENCRYPTION_SECRET,
 };
 
 export default config;
