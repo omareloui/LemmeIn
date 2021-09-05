@@ -47,7 +47,13 @@ const errorValidationData: ErrorValidationData[] = [
   {
     name: "should have 'app' as required on creating and updating password",
     values: { password: "valid pass" },
-    errorIncludes: "'app' is required",
+    errorIncludes: '"app" is required',
+  },
+  {
+    name:
+      "should have 'password' as required on creating and updating password",
+    values: { app: "google.com" },
+    errorIncludes: '"password" is required',
   },
   {
     name:
@@ -119,17 +125,6 @@ Deno.test({
       app: "google.com",
       password: "SomePassword",
       site: "https://google.com",
-    });
-  },
-});
-
-Deno.test({
-  name: `${NAME_PREFIX} should accept oAthPassword with valid mongo id`,
-  async fn() {
-    await validateHelper(createPasswordValidation, {
-      app: "google.com",
-      password: "SomePassword",
-      oAuthPassword: "ea22f9203c4ea22fa21123c4",
     });
   },
 });

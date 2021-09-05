@@ -1,5 +1,5 @@
 import { yup } from "../deps.ts";
-import { requiredId, notRequiredId } from "../utils/checkIfMongoId.ts";
+import { requiredId } from "../utils/checkIfMongoId.ts";
 
 const createAndUpdatePasswordBody = {
   app: yup
@@ -8,9 +8,13 @@ const createAndUpdatePasswordBody = {
     .min(3)
     .max(256)
     .trim()
-    .required(`Field 'app' is required`),
-  password: yup.string().min(3).max(256).trim(),
-  oAuthPassword: notRequiredId,
+    .required(`Field "app" is required`),
+  password: yup
+    .string()
+    .min(3)
+    .max(256)
+    .trim()
+    .required(`Field "password" is required`),
   accountIdentifier: yup.string().min(3).min(3).max(256).trim(),
   note: yup.string().min(3).min(3).max(256).trim(),
   site: yup.string().min(3).min(3).max(256).trim(),

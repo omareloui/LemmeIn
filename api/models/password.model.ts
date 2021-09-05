@@ -8,7 +8,6 @@ export interface PasswordSchema {
   accountIdentifier: string;
   site: string;
   note: string;
-  oAthPassword: string;
   tags: string[];
   lastUsed: Date;
   createdAt: Date;

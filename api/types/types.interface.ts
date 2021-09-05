@@ -59,10 +59,10 @@ export interface JwtPayload {
 /* Password Controller and Service */
 export interface CreatePasswordOptions {
   app: string;
-  password?: string;
-  oAuthPassword?: string;
+  password: string;
   accountIdentifier?: string;
   note?: string;
   site?: string;
   tags?: string[];
+  isOAuth?: boolean;
 }
