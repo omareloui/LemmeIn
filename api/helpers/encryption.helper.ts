@@ -1,6 +1,6 @@
 import { Aes256Cfb8 } from "../deps.ts";
 import config from "../config/config.ts";
-import randomTextGenerator from "../utils/randomTextGenerator.ts";
+import generateRandomText from "../utils/generateRandomText.ts";
 import convertToHex from "../utils/convertUnit8ArrayToHex.ts";
 import convertToUnit8Array from "../utils/convertHexToUnit8Array.ts";
 
@@ -20,7 +20,7 @@ export default class EncryptionHandler {
   encrypt(password: string): { encryption: string; iv: string } {
     if (!passwordEncryptionSecret) throw new Error("No secret provided");
     const secret = this.te.encode(passwordEncryptionSecret);
-    const iv = this.te.encode(randomTextGenerator());
+    const iv = this.te.encode(generateRandomText());
     const encodedPassword = this.te.encode(password);
 
     const cypher = new this.algorithm(secret, iv);
