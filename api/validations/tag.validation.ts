@@ -6,7 +6,7 @@ export const createTagValidation = {
     tag: yup
       .string()
       .min(1)
-      .max(256)
+      .max(16)
       .matches(
         /^[^\s.,<>`~+*!@#$%^&()[\]'"\/\\?:;-]+$/,
         "You can't have spaces or special character in the tag name."
