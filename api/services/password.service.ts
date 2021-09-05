@@ -1,15 +1,36 @@
-import { Password } from "../models/password.model.ts";
-import { Tag } from "../models/tag.model.ts";
+import { Password, PasswordSchema } from "../models/password.model.ts";
+import { Tag, TagSchema } from "../models/tag.model.ts";
 import EncryptionHelper from "../helpers/encryption.helper.ts";
 import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
-import type { CreatePasswordOptions } from "../types/types.interface.ts";
-import {
-  normalizeDocument,
-  normalizeDocuments,
-} from "../utils/normalizeDocuments.ts";
+import { normalizeDocuments } from "../utils/normalizeDocuments.ts";
 
 const passwordErrorHelper = new ErrorHelper("password");
+
+const notOAuthPasswordRegEx = /\./;
+
+interface CreatePasswordOptions {
+  app: string;
+  password: string;
+  accountIdentifier?: string;
+  note?: string;
+  site?: string;
+  tags?: string[];
+  isOAuth?: boolean;
+}
+
+interface PopulatedPassword {
+  id: string;
+  app: string;
+  accountIdentifier: string;
+  password?: PasswordSchema;
+  note?: string;
+  site?: string;
+  tags?: TagSchema[];
+  lastUsed?: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 export default class PasswordService {
   public static async createPassword(
@@ -45,38 +66,43 @@ export default class PasswordService {
       user: userId,
     });
     if (!passwordDoc) return passwordErrorHelper.notFound();
-    // TODO: if the tag doesn't match /\./ populate the password
-    // TODO: populate the tags
-    return normalizeDocument(passwordDoc);
+    const result: PopulatedPassword = {
+      id,
+      app: passwordDoc.app,
+      accountIdentifier: passwordDoc.accountIdentifier,
+      note: passwordDoc.note,
+      site: passwordDoc.site,
+      lastUsed: passwordDoc.lastUsed,
+      createdAt: passwordDoc.createdAt,
+      updatedAt: passwordDoc.updatedAt,
+    };
+    // Populate password if it's oAuth
+    if (!passwordDoc.password.match(notOAuthPasswordRegEx))
+      result.password = await Password.findOne({
+        _id: new ObjectId(passwordDoc.password),
+        user: userId,
+      });
+    // Populate the tags
+    if (passwordDoc.tags && passwordDoc.tags.length >= 1)
+      result.tags = await this.populateTags(passwordDoc.tags);
+    return result;
   }
 
   public static async decrypt(id: string, userId: string) {
-    const passwordDoc = await PasswordService.getMyPassword(id, userId);
-    if (passwordDoc.password.match(/\./)) {
-      const encryptionHelper = new EncryptionHelper();
-      const password = encryptionHelper.decrypt(passwordDoc.password);
-      await Password.updateOne(
-        { _id: new ObjectId(id), user: userId },
-        { $set: { lastUsed: new Date() } }
-      );
-      return password;
-    }
+    const passwordDoc = await Password.findOne({
+      _id: new ObjectId(id),
+      user: userId,
+      password: { $regex: notOAuthPasswordRegEx },
+    });
+    if (!passwordDoc) return passwordErrorHelper.notFound();
+    const encryptionHelper = new EncryptionHelper();
+    const password = encryptionHelper.decrypt(passwordDoc.password);
+    await Password.updateOne(
+      { _id: new ObjectId(id), user: userId },
+      { $set: { lastUsed: new Date() } }
+    );
+    return password;
   }
-
-  // public static async updatePassword(id: string, options: { password: string }) {
-  //   const passwordDoc = await Password.findOne({ _id: new ObjectId(id) });
-  //   if (!passwordDoc) {
-  //     return passwordErrorHelper.notFound();
-  //   }
-  //   const updateResult = await Password.updateOne(
-  //     { _id: new ObjectId(id) },
-  //     { $set: { password: options.password } }
-  //   );
-  //   if (!updateResult) {
-  //     return passwordErrorHelper.badRequest({ action: "update" });
-  //   }
-  //   return updateResult;
-  // }
 
   public static async removeMyPassword(id: string, userId: string) {
     const password = await Password.findOne({
@@ -97,6 +123,6 @@ export default class PasswordService {
   private static async populateTags(tags: string[]) {
     const tagsIds = tags.map((x) => new ObjectId(x));
     const tagsDocs = await Tag.find({ _id: { $in: tagsIds } });
-    return tagsDocs;
+    return tagsDocs.toArray();
   }
 }

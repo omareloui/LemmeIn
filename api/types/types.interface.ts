@@ -55,14 +55,3 @@ export interface JwtPayload {
   id: string;
   exp: number;
 }
-
-/* Password Controller and Service */
-export interface CreatePasswordOptions {
-  app: string;
-  password: string;
-  accountIdentifier?: string;
-  note?: string;
-  site?: string;
-  tags?: string[];
-  isOAuth?: boolean;
-}
