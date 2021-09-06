@@ -50,6 +50,17 @@ export default class TagService extends BaseService {
     return normalizeDocuments(passwords);
   }
 
+  public static async getMyPasswordAllTags(tagsIds: string[], userId: string) {
+    const ids = tagsIds.map((x) => new ObjectId(x));
+    const tagsDocs = await Tag.find({ _id: { $in: ids }, user: userId });
+    const tagsArray = await tagsDocs.toArray();
+    const normalizedTags = tagsArray.map((x) => {
+      x._id.toString();
+      return normalizeDocument(x);
+    });
+    return normalizedTags;
+  }
+
   public static async updateOneMine(
     id: string,
     options: Partial<CreateTagOptions>,

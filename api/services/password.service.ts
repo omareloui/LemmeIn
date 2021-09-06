@@ -2,11 +2,17 @@ import { ObjectId } from "../deps.ts";
 
 import EncryptionHelper from "../helpers/encryption.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
-import { normalizeDocuments } from "../utils/normalizeDocuments.ts";
+import {
+  normalizeDocuments,
+  normalizeDocument,
+} from "../utils/normalizeDocuments.ts";
 import { BaseService } from "./base.service.ts";
 
+import type { NormalizedDoc } from "../utils/normalizeDocuments.ts";
+
 import { Password, PasswordSchema } from "../models/password.model.ts";
-import { Tag, TagSchema } from "../models/tag.model.ts";
+import type { TagSchema } from "../models/tag.model.ts";
+import TagService from "./tag.service.ts";
 
 const passwordErrorHelper = new ErrorHelper("password");
 
@@ -26,10 +32,10 @@ interface PopulatedPassword {
   id: string;
   app: string;
   accountIdentifier: string;
-  password?: PasswordSchema;
+  password?: NormalizedDoc<PasswordSchema>;
   note?: string;
   site?: string;
-  tags?: TagSchema[];
+  tags?: NormalizedDoc<TagSchema>[];
   lastUsed?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -78,13 +84,16 @@ export default class PasswordService extends BaseService {
     };
     // Populate password if it's oAuth
     if (!passwordDoc.password.match(notOAuthPasswordRegEx))
-      result.password = await Password.findOne({
-        _id: new ObjectId(passwordDoc.password),
-        user: userId,
-      });
+      result.password = normalizeDocument(
+        (await Password.findOne({
+          _id: new ObjectId(passwordDoc.password),
+          user: userId,
+        }))!
+      );
     // Populate the tags
     if (passwordDoc.tags && passwordDoc.tags.length >= 1)
-      result.tags = await this.populateTags(passwordDoc.tags);
+      result.tags = await this.getMyPasswordTags(passwordDoc.tags, userId);
+
     return result;
   }
 
@@ -120,10 +129,7 @@ export default class PasswordService extends BaseService {
     return password;
   }
 
-  // TODO: get it from tag service
-  private static async populateTags(tags: string[]) {
-    const tagsIds = tags.map((x) => new ObjectId(x));
-    const tagsDocs = await Tag.find({ _id: { $in: tagsIds } });
-    return tagsDocs.toArray();
+  private static getMyPasswordTags(tags: string[], userId: string) {
+    return TagService.getMyPasswordAllTags(tags, userId);
   }
 }
