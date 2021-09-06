@@ -120,6 +120,7 @@ export default class PasswordService {
     return deleteCount;
   }
 
+  // TODO: get it from tag service
   private static async populateTags(tags: string[]) {
     const tagsIds = tags.map((x) => new ObjectId(x));
     const tagsDocs = await Tag.find({ _id: { $in: tagsIds } });
