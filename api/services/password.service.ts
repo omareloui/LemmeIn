@@ -1,9 +1,12 @@
-import { Password, PasswordSchema } from "../models/password.model.ts";
-import { Tag, TagSchema } from "../models/tag.model.ts";
-import EncryptionHelper from "../helpers/encryption.helper.ts";
 import { ObjectId } from "../deps.ts";
+
+import EncryptionHelper from "../helpers/encryption.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 import { normalizeDocuments } from "../utils/normalizeDocuments.ts";
+import { BaseService } from "./base.service.ts";
+
+import { Password, PasswordSchema } from "../models/password.model.ts";
+import { Tag, TagSchema } from "../models/tag.model.ts";
 
 const passwordErrorHelper = new ErrorHelper("password");
 
@@ -32,11 +35,8 @@ interface PopulatedPassword {
   updatedAt?: Date;
 }
 
-export default class PasswordService {
-  public static async createPassword(
-    data: CreatePasswordOptions,
-    userId: string
-  ) {
+export default class PasswordService extends BaseService {
+  public static async create(data: CreatePasswordOptions, userId: string) {
     const currentDate = new Date();
     const insertionData = {
       ...data,
@@ -52,15 +52,15 @@ export default class PasswordService {
     const passwordId = await Password.insertOne(insertionData);
     if (!passwordId)
       return passwordErrorHelper.badRequest({ action: "create" });
-    return passwordId;
+    return passwordId.toString();
   }
 
-  public static async getMyPasswords(userId: string) {
+  public static async getAllMine(userId: string) {
     const passwords = await Password.find({ user: userId }).toArray();
     return normalizeDocuments(passwords);
   }
 
-  public static async getMyPassword(id: string, userId: string) {
+  public static async getOneMine(id: string, userId: string) {
     const passwordDoc = await Password.findOne({
       _id: new ObjectId(id),
       user: userId,
@@ -88,6 +88,22 @@ export default class PasswordService {
     return result;
   }
 
+  public static async removeOneMine(id: string, userId: string) {
+    const password = await Password.findOne({
+      _id: new ObjectId(id),
+      user: userId,
+    });
+    if (!password) return passwordErrorHelper.notFound();
+    const deleteCount = await Password.deleteOne({
+      _id: new ObjectId(id),
+      user: userId,
+    });
+    if (!deleteCount) {
+      return passwordErrorHelper.badRequest({ action: "delete" });
+    }
+    return deleteCount;
+  }
+
   public static async decrypt(id: string, userId: string) {
     const passwordDoc = await Password.findOne({
       _id: new ObjectId(id),
@@ -102,22 +118,6 @@ export default class PasswordService {
       { $set: { lastUsed: new Date() } }
     );
     return password;
-  }
-
-  public static async removeMyPassword(id: string, userId: string) {
-    const password = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!password) return passwordErrorHelper.notFound();
-    const deleteCount = await Password.deleteOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!deleteCount) {
-      return passwordErrorHelper.badRequest({ action: "delete" });
-    }
-    return deleteCount;
   }
 
   // TODO: get it from tag service
