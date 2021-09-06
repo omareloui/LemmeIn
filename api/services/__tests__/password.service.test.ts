@@ -1,44 +1,25 @@
-import { assertEquals, assertMatch } from "../../deps.ts";
+import { ServiceTest } from "./service.test.helper.ts";
 import PasswordService from "../password.service.ts";
 
-const NAME_PREFIX = "services/password:";
+import { assertEquals } from "../../deps.ts";
 
-const USER_ID = "testing_user_id";
-const PASSWORD = "134.a2!4~234";
+const serviceTest = new ServiceTest("password", PasswordService);
 
-let currentPasswordId: string;
+const passwordToTestOn = "134.a2!4~234";
 
-Deno.test({
-  name: `${NAME_PREFIX} should create password`,
-  async fn() {
-    const passwordId = await PasswordService.createPassword(
-      { app: "google.com", password: PASSWORD },
-      USER_ID
-    );
-    const passwordIdString = passwordId.toString();
-    currentPasswordId = passwordIdString;
-    assertMatch(passwordIdString, /^[\da-f]{24}$/);
-  },
+serviceTest.testCreateRecord({ app: "google.com", password: passwordToTestOn });
+serviceTest.testGetOneMine();
+serviceTest.testGetAllMine();
+
+serviceTest.test("should decrypt password correctly", async () => {
+  const password = await PasswordService.decrypt(
+    serviceTest.createdRecordId!,
+    serviceTest.userId
+  );
+  assertEquals(password, passwordToTestOn);
 });
 
-Deno.test({
-  name: `${NAME_PREFIX} should decrypt password correctly`,
-  async fn() {
-    const password = await PasswordService.decrypt(currentPasswordId, USER_ID);
-    assertEquals(password, PASSWORD);
-  },
-});
+serviceTest.testRemovingOneMine();
 
-Deno.test({
-  name: `${NAME_PREFIX} should delete created password`,
-  async fn() {
-    const deletionCount = await PasswordService.removeMyPassword(
-      currentPasswordId,
-      USER_ID
-    );
-    assertEquals(deletionCount, 1);
-  },
-});
-
-// TODO: test oath passwords
-// TODO: test tags and make sure to be populated
+// // TODO: test oath passwords
+// // TODO: test tags and make sure to be populated
