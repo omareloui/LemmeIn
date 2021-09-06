@@ -6,7 +6,6 @@ import {
   createTagValidation,
   deleteTagValidation,
   getTagsValidation,
-  getTagValidation,
   updateTagValidation,
 } from "../validations/tag.validation.ts";
 
@@ -24,13 +23,6 @@ router.post(
   validate(createTagValidation),
   auth("manageMyTags"),
   TagController.create
-);
-
-router.get(
-  "/tags/:id",
-  validate(getTagValidation),
-  auth("manageMyTags"),
-  TagController.viewOneMine
 );
 
 router.put(

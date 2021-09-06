@@ -12,10 +12,6 @@ export default class TagController {
     response.body = await TagService.getMyTags(state.user.id);
   }
 
-  public static async viewOneMine({ response, params, state }: RouterContext) {
-    response.body = await TagService.getMyTag(params.id!, state.user.id);
-  }
-
   public static async updateMine({
     request,
     params,

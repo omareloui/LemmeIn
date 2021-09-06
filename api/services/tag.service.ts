@@ -26,15 +26,6 @@ export default class TagService {
     return normalizeDocuments(passwords);
   }
 
-  public static async getMyTag(id: string, userId: string) {
-    const tagDoc = await Tag.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!tagDoc) return tagErrorHelper.notFound();
-    return normalizeDocument(tagDoc);
-  }
-
   public static async updateMyTag(
     id: string,
     options: { tag: string },
