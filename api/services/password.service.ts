@@ -36,7 +36,7 @@ interface PopulatedPassword {
 }
 
 export default class PasswordService extends BaseService {
-  public static async create(data: CreatePasswordOptions, userId: string) {
+  public static async createForMe(data: CreatePasswordOptions, userId: string) {
     const currentDate = new Date();
     const insertionData = {
       ...data,

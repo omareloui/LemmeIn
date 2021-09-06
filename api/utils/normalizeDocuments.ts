@@ -1,4 +1,4 @@
-type NormalizedDoc<T> = { id: string } & Omit<T, "_id">;
+export type NormalizedDoc<T> = { id: string } & Omit<T, "_id">;
 
 function replaceUnderScoreIdWithId<T extends { _id: string }>(
   doc: T

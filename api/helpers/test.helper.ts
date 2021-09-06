@@ -22,14 +22,14 @@ export class Test {
     cb: () => unknown,
     errorMessageIncludes: string
   ) {
-    const promiseCallBack = (
+    const promiseCallBack = async (
       res: (value: unknown) => void,
       rej: (value: unknown) => void
     ) => {
       try {
-        res(cb());
+        res(await cb());
       } catch (e) {
-        rej(e.message);
+        rej(new Error(e.message));
       }
     };
 

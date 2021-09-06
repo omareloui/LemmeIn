@@ -17,9 +17,11 @@ export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
     this.createdRecordId = null;
   }
 
-  public testCreateRecord(data: Record<string, unknown>) {
+  public testCreateForMe(data: Record<string, unknown>) {
     this.test(`should create ${this.serviceName}`, async () => {
-      this.createdRecordId = await this.service.create(data, this.userId);
+      if (!this.service.createForMe)
+        throw new Error("This service doesn't have createForMe");
+      this.createdRecordId = await this.service.createForMe(data, this.userId);
       assertMatch(this.createdRecordId, /^[\da-f]{24}$/);
     });
   }
@@ -36,9 +38,9 @@ export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
   }
 
   public testGetOneMine() {
-    this.test("should get the created password", async () => {
+    this.test(`should get the created ${this.serviceName}`, async () => {
       if (!this.createdRecordId)
-        throw new Error("No record was provided to test deleting");
+        throw new Error("No record was provided to test getting it");
       if (!this.service.getOneMine)
         throw new Error("This service doesn't have getOneMine");
       const record = await this.service.getOneMine(
@@ -46,6 +48,23 @@ export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
         this.userId
       );
       assertEquals(Object.hasOwn(record, "id"), true);
+    });
+  }
+
+  public testUpdateOneMine(newData: Record<string, unknown>) {
+    this.test(`should update the created ${this.serviceName}`, async () => {
+      if (!this.createdRecordId)
+        throw new Error("No record was provided to test updating");
+      if (!this.service.updateOneMine)
+        throw new Error("This service doesn't have updateOneMine");
+      const newRecord = await this.service.updateOneMine(
+        this.createdRecordId,
+        newData,
+        this.userId
+      );
+      Object.keys(newData).forEach((key) => {
+        assertEquals(newRecord[key] === newData[key], true);
+      });
     });
   }
 

@@ -7,7 +7,10 @@ const serviceTest = new ServiceTest("password", PasswordService);
 
 const passwordToTestOn = "134.a2!4~234";
 
-serviceTest.testCreateRecord({ app: "google.com", password: passwordToTestOn });
+serviceTest.testCreateForMe({
+  app: "google.com",
+  password: passwordToTestOn,
+});
 serviceTest.testGetOneMine();
 serviceTest.testGetAllMine();
 
@@ -21,5 +24,5 @@ serviceTest.test("should decrypt password correctly", async () => {
 
 serviceTest.testRemovingOneMine();
 
-// // TODO: test oath passwords
-// // TODO: test tags and make sure to be populated
+// TODO: test oath passwords
+// TODO: test tags and make sure to be populated
