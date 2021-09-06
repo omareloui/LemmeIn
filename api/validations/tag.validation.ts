@@ -1,40 +1,40 @@
 import { yup } from "../deps.ts";
-import checkIfMongoId from "../utils/checkIfMongoId.ts";
+import { requiredId } from "../utils/checkIfMongoId.ts";
 
-export const createTagValidation = {
-  body: yup.object({
-    tag: yup
-      .string()
-      .min(1)
-      .max(16)
-      .matches(
-        /^[^\s.,<>`~+*!@#$%^&()[\]'"\/\\?:;-]+$/,
-        "You can't have spaces or special character in the tag name."
-      )
-      .trim()
-      .required(`Tag name is required`),
-  }),
+const createAndUpdateValidationBody = {
+  tag: yup
+    .string()
+    .min(1)
+    .max(16)
+    .matches(
+      /^[^\s.,<>`~+*!@#$%^&()[\]'"\/\\?:;-]+$/,
+      "You can't have spaces or special character in the tag name."
+    )
+    .trim()
+    .required("Field tag is required"),
+  color: yup
+    .string()
+    .min(4)
+    .max(28)
+    .matches(
+      /^(#[\da-fA-F]{3,8}|hsla?\(\d{1,3}, \d{1,3}%, \d{1,3}%(, \d{1,3}%)?\))$/,
+      "Field color must be hex color or hsl color"
+    )
+    .trim()
+    .required("Field color is required"),
 };
 
-export const getTagValidation = {
-  params: yup.object({
-    id: checkIfMongoId,
-  }),
+export const createTagValidation = {
+  body: yup.object(createAndUpdateValidationBody),
 };
 
 export const getTagsValidation = {};
 
 export const updateTagValidation = {
-  params: yup.object({
-    id: checkIfMongoId,
-  }),
-  body: yup.object({
-    tag: yup.string().min(1).max(256).trim().required(`Tag name is required`),
-  }),
+  params: yup.object({ id: requiredId }),
+  body: yup.object(createAndUpdateValidationBody),
 };
 
 export const deleteTagValidation = {
-  params: yup.object({
-    id: checkIfMongoId,
-  }),
+  params: yup.object({ id: requiredId }),
 };
