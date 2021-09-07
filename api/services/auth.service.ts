@@ -3,7 +3,7 @@ import ErrorHelper from "../helpers/error.helper.ts";
 
 import JwtService from "./jwt.service.ts";
 
-import { User, UserSchema } from "../models/user.model.ts";
+import { User } from "../models/user.model.ts";
 import { BaseService } from "./base.service.ts";
 import UserService from "./user.service.ts";
 import type { UserDoc } from "./user.service.ts";
@@ -36,10 +36,7 @@ export default class AuthService extends BaseService {
     password,
   }: LoginOptions): Promise<LoggingStructure> {
     // Get the user and validate him
-    const user: UserSchema | undefined = await User.findOne({
-      email: enteredEmail,
-      isDisabled: false,
-    });
+    const user = await User.findOne({ email: enteredEmail });
     const isValidPass =
       user && (await HashHelper.compare(password, user.password));
     if (!user?.password || !isValidPass)
