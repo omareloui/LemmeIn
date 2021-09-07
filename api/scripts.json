@@ -7,8 +7,7 @@
       "unstable": true,
       "desc": "run server",
       "env": { "ENV": "development" },
-      "watch": true,
-      "lock": "lock.json"
+      "watch": true
     },
 
     "test": {
