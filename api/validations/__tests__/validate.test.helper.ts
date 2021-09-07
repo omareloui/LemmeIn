@@ -5,16 +5,23 @@ import { validate } from "../../middlewares/validate.middleware.ts";
 
 export interface ErrorValidationData {
   description: string;
-  body: Record<string, unknown>;
+  schema: Record<string, unknown>;
+  body?: Record<string, unknown>;
+  params?: RouteParams;
   errorIncludes: string;
 }
 
-export type ValidData = {
+export type ErrorValidationDataForCreationAndUpdate = Omit<
+  ErrorValidationData,
+  "schema"
+>;
+
+export interface ValidData {
   description: string;
   schema: Record<string, unknown>;
   body?: Record<string, unknown>;
   params?: RouteParams;
-};
+}
 
 export class ValidationTest extends Test {
   constructor(modelName: string) {
@@ -40,28 +47,6 @@ export class ValidationTest extends Test {
     }
   }
 
-  public validateCreateAndUpdateErrors(
-    errorValidationData: ErrorValidationData[],
-    createSchema: Record<string, unknown>,
-    updateSchema: Record<string, unknown>
-  ) {
-    errorValidationData.forEach((data) =>
-      [createSchema, updateSchema].forEach((schema, schemaIndex) => {
-        const isCreating = schemaIndex === 0;
-        this.testAsyncError(
-          `(${isCreating ? "create" : "update"}) ${data.description}`,
-          () =>
-            this.validationMiddleware(
-              schema,
-              data.body,
-              !isCreating ? { id: "123456789abcdef123456789" } : undefined
-            ),
-          data.errorIncludes
-        );
-      })
-    );
-  }
-
   public testWithValidationMiddleware(
     description: string,
     schema: Record<string, unknown>,
@@ -73,7 +58,21 @@ export class ValidationTest extends Test {
     });
   }
 
-  public testWithValidationMiddlewareWithError() {}
+  public testWithValidationMiddlewareWithError(
+    errorData: ErrorValidationData[]
+  ) {
+    errorData.forEach(
+      ({ description, schema, body, params, errorIncludes }) => {
+        this.testAsyncError(
+          description,
+          async () => {
+            await this.validationMiddleware(schema, body, params);
+          },
+          errorIncludes
+        );
+      }
+    );
+  }
 
   public testValidData(data: ValidData[]) {
     data.forEach((x) => {
@@ -84,5 +83,36 @@ export class ValidationTest extends Test {
         x.params
       );
     });
+  }
+
+  public validateCreateAndUpdateErrors(
+    errorValidationData: ErrorValidationDataForCreationAndUpdate[],
+    createSchema: Record<string, unknown>,
+    updateSchema: Record<string, unknown>
+  ) {
+    const normalizedData: ErrorValidationData[] = errorValidationData.reduce(
+      (prev: ErrorValidationData[], curr) => {
+        const newData: ErrorValidationData[] = [createSchema, updateSchema].map(
+          (x, i) => {
+            const isCreating = i === 0;
+            return {
+              description: `(${isCreating ? "create" : "update"}) ${
+                curr.description
+              }`,
+              schema: x,
+              body: curr.body,
+              params:
+                curr.params || !isCreating
+                  ? { id: "123456789abcdef123456789" }
+                  : undefined,
+              errorIncludes: curr.errorIncludes,
+            };
+          }
+        );
+        return [...prev, ...newData];
+      },
+      []
+    );
+    this.testWithValidationMiddlewareWithError(normalizedData);
   }
 }

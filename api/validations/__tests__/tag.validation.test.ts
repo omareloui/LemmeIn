@@ -1,5 +1,5 @@
 import { ValidationTest, ValidData } from "./validate.test.helper.ts";
-import type { ErrorValidationData } from "./validate.test.helper.ts";
+import type { ErrorValidationDataForCreationAndUpdate } from "./validate.test.helper.ts";
 
 import {
   createTagValidation,
@@ -10,7 +10,7 @@ import {
 
 const tagTest = new ValidationTest("tag");
 
-const errorValidationData: ErrorValidationData[] = [
+const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
   {
     description: "should have tag as required",
     body: { color: "#333" },

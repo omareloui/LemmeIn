@@ -1,5 +1,8 @@
 import { ValidationTest } from "./validate.test.helper.ts";
-import type { ValidData, ErrorValidationData } from "./validate.test.helper.ts";
+import type {
+  ValidData,
+  ErrorValidationDataForCreationAndUpdate,
+} from "./validate.test.helper.ts";
 
 import {
   getPasswordValidation,
@@ -11,7 +14,7 @@ import {
 
 const passwordTest = new ValidationTest("password");
 
-const errorValidationData: ErrorValidationData[] = [
+const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
   {
     description:
       "should have 'app' as required on creating and updating password",
