@@ -1,5 +1,5 @@
 import { Application, oakCors } from "./deps.ts";
-import { errorHandler } from "./middlewares/errorHandler.middleware.ts";
+import { errorHandler } from "./middlewares/error-handler.middleware.ts";
 import logger from "./utils/logger.ts";
 import log from "./middlewares/logger.middleware.ts";
 import configs from "./config/config.ts";

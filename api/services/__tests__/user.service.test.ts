@@ -1,4 +1,4 @@
-import { UserHistory } from "../../models/user_history.model.ts";
+import { UserHistory } from "../../models/user-history.model.ts";
 import UserService from "../user.service.ts";
 import { ServiceTest } from "./service.test.helper.ts";
 import { assertEquals } from "../../deps.ts";

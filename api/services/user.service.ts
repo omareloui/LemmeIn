@@ -2,7 +2,7 @@ import { ObjectId } from "../deps.ts";
 import HashHelper from "../helpers/hash.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 import { User, UserSchema } from "../models/user.model.ts";
-import { UserHistory } from "../models/user_history.model.ts";
+import { UserHistory } from "../models/user-history.model.ts";
 import { normalizeDocument } from "../utils/normalizeDocuments.ts";
 import type { Role } from "../config/roles.ts";
 import { BaseService } from "./base.service.ts";
