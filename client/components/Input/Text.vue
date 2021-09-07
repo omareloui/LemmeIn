@@ -161,66 +161,66 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-@use "~/assets/scss/mixins" as *
+// @use "~/assets/scss/mixins" as *
 
-.input-wrapper
-  +pos-r
-  +tran
+// .input-wrapper
+//   +pos-r
+//   +tran
 
-  .input
-    +size(100% 45px)
-    +pa(10px)
-    +clr-txt
-    +clr-bg(input-background)
-    +tran
-    +input-search-reset
-    +br-md
-    +focus-effect(input)
-    +fnt-base
-    +brdr(input-border)
+//   .input
+//     +size(100% 45px)
+//     +pa(10px)
+//     +clr-txt
+//     +clr-bg(input-background)
+//     +tran
+//     +input-search-reset
+//     +br-md
+//     +focus-effect(input)
+//     +fnt-base
+//     +brdr(input-border)
 
-  &--has-label
-    +mt(15px)
+//   &--has-label
+//     +mt(15px)
 
-  .label
-    +tran
-    +center-v
-    +pos-a(left 10px)
-    +clr-txt
-    +fnt-medium
-    +no-select
-    opacity: 0.6
+//   .label
+//     +tran
+//     +center-v
+//     +pos-a(left 10px)
+//     +clr-txt
+//     +fnt-medium
+//     +no-select
+//     opacity: 0.6
 
-  &--hover-label
-    .label
-      top: -10px
-      left: 5px !important
-      opacity: 1
-      +fnt-xs
+//   &--hover-label
+//     .label
+//       top: -10px
+//       left: 5px !important
+//       opacity: 1
+//       +fnt-xs
 
-  &--has-error
-    +mb(15px)
-    .label
-      +clr-txt(error)
+//   &--has-error
+//     +mb(15px)
+//     .label
+//       +clr-txt(error)
 
-    .input
-      +clr(error, border-color)
+//     .input
+//       +clr(error, border-color)
 
-  .error
-    +pos-a(left 10px top 50px)
-    +clr-txt(error)
-    +fnt-xs
+//   .error
+//     +pos-a(left 10px top 50px)
+//     +clr-txt(error)
+//     +fnt-xs
 
-  &--has-left-icon
-    .label
-      left: 50px
+//   &--has-left-icon
+//     .label
+//       left: 50px
 
-  @each $side in right left
-    .icon--#{$side}
-      +center-v
-      #{$side}: 12px
+//   @each $side in right left
+//     .icon--#{$side}
+//       +center-v
+//       #{$side}: 12px
 
-    &--has-#{$side}-icon
-      .input
-        padding-#{$side}: 50px
+//     &--has-#{$side}-icon
+//       .input
+//         padding-#{$side}: 50px
 </style>

@@ -127,35 +127,35 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 </script>
 
 <style lang='sass' scoped>
-@use "~/assets/scss/mixins" as *
+// @use "~/assets/scss/mixins" as *
 
-.input-file-wrapper
-  +tran
-  +pos-r
-  &__heading
-    +clr-txt(primary,  70)
-    +tran(color, 0.1s)
-  .input-label
-    +clickable
-    +clr-bg(primary, 90)
-    +clr-txt(invert)
-    +pa(5px 10px)
-    +br-md
-    +focus-effect
-    display: inline-block
-  .input-field
-    display: none
+// .input-file-wrapper
+//   +tran
+//   +pos-r
+//   &__heading
+//     +clr-txt(primary,  70)
+//     +tran(color, 0.1s)
+//   .input-label
+//     +clickable
+//     +clr-bg(primary, 90)
+//     +clr-txt(invert)
+//     +pa(5px 10px)
+//     +br-md
+//     +focus-effect
+//     display: inline-block
+//   .input-field
+//     display: none
 
-  .error
-    +pos-a(left 25px bottom -20px)
-    +clr-txt(error)
-    +fnt-xs
-    line-height: 10px
+//   .error
+//     +pos-a(left 25px bottom -20px)
+//     +clr-txt(error)
+//     +fnt-xs
+//     line-height: 10px
 
-  &--has-error
-    +mb(30px)
-    .input-label
-      +clr-bg(error)
-    .input-file-wrapper__heading
-      +clr-txt(error)
+//   &--has-error
+//     +mb(30px)
+//     .input-label
+//       +clr-bg(error)
+//     .input-file-wrapper__heading
+//       +clr-txt(error)
 </style>

@@ -24,5 +24,5 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-@use "~/assets/scss/mixins" as *
+// @use "~/assets/scss/mixins" as *
 </style>

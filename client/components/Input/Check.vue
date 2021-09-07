@@ -128,51 +128,51 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-@use "~/assets/scss/mixins" as *
+// @use "~/assets/scss/mixins" as *
 
-$checker-size: 20px
+// $checker-size: 20px
 
-.checker-wrapper
-  +tran
-  +pos-r
-  &__heading
-    +clr-txt(primary, 70)
-    +tran(color, 0.1s)
-  &__options
-    display: grid
-    gap: 10px
-    .option
-      +pos-r
-      &__label
-        +clickable
-        +no-select
-        +ml($checker-size + 5px)
-        +tran(color, 0.1s)
-      &__checkbox
-        display: inline-block
-        +clr-bg
-        +center-v
-        +size($checker-size)
-        +br-sm
-        +brdr(input-checkbox)
-        +clickable
-        +focus-effect
-        +tran(all, 0.1s)
-        &--is-checked
-          +clr-bg(input-checkbox)
-  .error
-    +pos-a(left 25px bottom -20px)
-    +clr-txt(error)
-    +fnt-xs
-    line-height: 10px
+// .checker-wrapper
+//   +tran
+//   +pos-r
+//   &__heading
+//     +clr-txt(primary, 70)
+//     +tran(color, 0.1s)
+//   &__options
+//     display: grid
+//     gap: 10px
+//     .option
+//       +pos-r
+//       &__label
+//         +clickable
+//         +no-select
+//         +ml($checker-size + 5px)
+//         +tran(color, 0.1s)
+//       &__checkbox
+//         display: inline-block
+//         +clr-bg
+//         +center-v
+//         +size($checker-size)
+//         +br-sm
+//         +brdr(input-checkbox)
+//         +clickable
+//         +focus-effect
+//         +tran(all, 0.1s)
+//         &--is-checked
+//           +clr-bg(input-checkbox)
+//   .error
+//     +pos-a(left 25px bottom -20px)
+//     +clr-txt(error)
+//     +fnt-xs
+//     line-height: 10px
 
-  &--has-error
-    +mb(30px)
-    .checker-wrapper__heading
-      +clr-txt(error, 70)
-    .option
-      &__label
-        +clr-txt(error)
-      &__checkbox
-        +clr(error, border-color)
+//   &--has-error
+//     +mb(30px)
+//     .checker-wrapper__heading
+//       +clr-txt(error, 70)
+//     .option
+//       &__label
+//         +clr-txt(error)
+//       &__checkbox
+//         +clr(error, border-color)
 </style>

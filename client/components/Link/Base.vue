@@ -54,37 +54,37 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-@use "~/assets/scss/functions" as *
-@use "~/assets/scss/mixins" as *
+// @use "~/assets/scss/functions" as *
+// @use "~/assets/scss/mixins" as *
 
-.link
-  z-index: 0
-  overflow: hidden
-  vertical-align: bottom
-  +pos-r
-  +no-wrap
-  +clr-txt
-  +inline-block
-  +tran(color, 0.2s)
-  +link-reset(false)
-  +px(3px)
-  +mx(-1px)
+// .link
+//   z-index: 0
+//   overflow: hidden
+//   vertical-align: bottom
+//   +pos-r
+//   +no-wrap
+//   +clr-txt
+//   +inline-block
+//   +tran(color, 0.2s)
+//   +link-reset(false)
+//   +px(3px)
+//   +mx(-1px)
 
-  &::before
-    content: ""
-    z-index: -1
-    +pos-a(top 0 left 0)
-    +size(100%)
-    +clr-bg(link)
-    +tran(transform, 0.2s)
-    transform: translateY(calc(100% - 4px))
+//   &::before
+//     content: ""
+//     z-index: -1
+//     +pos-a(top 0 left 0)
+//     +size(100%)
+//     +clr-bg(link)
+//     +tran(transform, 0.2s)
+//     transform: translateY(calc(100% - 4px))
 
-  &:not(.link--disabled):hover
-    +clr-txt(invert)
-    &::before
-      transform: translateY(0)
+//   &:not(.link--disabled):hover
+//     +clr-txt(invert)
+//     &::before
+//       transform: translateY(0)
 
-  &--disabled
-    +not-allowed
-    opacity: 0.8
+//   &--disabled
+//     +not-allowed
+//     opacity: 0.8
 </style>

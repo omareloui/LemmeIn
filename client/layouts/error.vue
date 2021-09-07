@@ -24,11 +24,11 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-@use "~/assets/scss/mixins" as *
+// @use "~/assets/scss/mixins" as *
 
-.error
-  +e(message)
-    +fnt-3xl
-    +center-text
-    +mt(20px)
+// .error
+//   +e(message)
+//     +fnt-3xl
+//     +center-text
+//     +mt(20px)
 </style>

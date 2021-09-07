@@ -57,61 +57,61 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-@use "~/assets/scss/mixins" as *
+// @use "~/assets/scss/mixins" as *
 
-$width-on-base: 130px
-$width-on-large: 180px
+// $width-on-base: 130px
+// $width-on-large: 180px
 
-.button
-  +pos-r
-  +br-md
-  +focus-effect
-  +brdr(none)
-  +clr-bg(button)
-  +clickable
-  +block
-  +size(100% 40px)
-  text-align: center
-  overflow: hidden
+// .button
+//   +pos-r
+//   +br-md
+//   +focus-effect
+//   +brdr(none)
+//   +clr-bg(button)
+//   +clickable
+//   +block
+//   +size(100% 40px)
+//   text-align: center
+//   overflow: hidden
 
-  +screen-larger-than-mobile
-    +w($width-on-base)
-    +inline-block
-    +m(large)
-      +w($width-on-large)
+//   +screen-larger-than-mobile
+//     +w($width-on-base)
+//     +inline-block
+//     +m(large)
+//       +w($width-on-large)
 
-  +e(loader)
-    +center
-    +size(20px)
-  +e(text)
-    +center
-    +w(100%)
-    +fnt-base
-    white-space: nowrap
+//   +e(loader)
+//     +center
+//     +size(20px)
+//   +e(text)
+//     +center
+//     +w(100%)
+//     +fnt-base
+//     white-space: nowrap
 
-  &[disabled="disabled"]
-    +not-allowed
-    opacity: 0.8
+//   &[disabled="disabled"]
+//     +not-allowed
+//     opacity: 0.8
 
-  +m(loading)
-    +not-allowed
+//   +m(loading)
+//     +not-allowed
 
-  +m(cta)
-    +clr-bg(primary)
-    .button__text
-      +clr-txt(light)
+//   +m(cta)
+//     +clr-bg(primary)
+//     .button__text
+//       +clr-txt(light)
 
-  +m(large)
-    +h(50px)
-    .button__loader
-      +size(35px)
-    .button__text
-      +fnt-xl
+//   +m(large)
+//     +h(50px)
+//     .button__loader
+//       +size(35px)
+//     .button__text
+//       +fnt-xl
 
-  +m(dont-block-on-mobile)
-    +w($width-on-base)
+//   +m(dont-block-on-mobile)
+//     +w($width-on-base)
 
-  +m(block)
-    +block
-    +w(100%)
+//   +m(block)
+//     +block
+//     +w(100%)
 </style>

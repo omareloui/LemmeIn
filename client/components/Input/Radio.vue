@@ -98,60 +98,60 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-@use "~/assets/scss/mixins" as *
+// @use "~/assets/scss/mixins" as *
 
-$radio-size: 20px
+// $radio-size: 20px
 
-.radio-wrapper
-  +tran
-  +pos-r
-  &__heading
-    +clr-txt(primary, 70)
-    +tran(color, 0.1s)
-  &__options
-    display: grid
-    gap: 10px
-    .option
-      +pos-r
-      +list-reset
-      &__label
-        +clickable
-        +no-select
-        +ml($radio-size + 5)
-        +tran(color, 0.1s)
-      &__radio
-        display: inline-block
-        +center-v
-        +clr-bg
-        +size($radio-size)
-        +br-cr
-        +brdr(input-checkbox)
-        +clickable
-        +focus-effect
-        &:after
-          content: ""
-          +center
-          +size(0)
-          +clr-bg(input-checkbox)
-          +br-cr
-          +tran(all, 0.1s)
-        &--is-checked
-          &:after
-            +size($radio-size - 10px)
+// .radio-wrapper
+//   +tran
+//   +pos-r
+//   &__heading
+//     +clr-txt(primary, 70)
+//     +tran(color, 0.1s)
+//   &__options
+//     display: grid
+//     gap: 10px
+//     .option
+//       +pos-r
+//       +list-reset
+//       &__label
+//         +clickable
+//         +no-select
+//         +ml($radio-size + 5)
+//         +tran(color, 0.1s)
+//       &__radio
+//         display: inline-block
+//         +center-v
+//         +clr-bg
+//         +size($radio-size)
+//         +br-cr
+//         +brdr(input-checkbox)
+//         +clickable
+//         +focus-effect
+//         &:after
+//           content: ""
+//           +center
+//           +size(0)
+//           +clr-bg(input-checkbox)
+//           +br-cr
+//           +tran(all, 0.1s)
+//         &--is-checked
+//           &:after
+//             +size($radio-size - 10px)
 
-  .error
-    +pos-a(left 25px bottom -20px)
-    +clr-txt(error)
-    +fnt-xs
-    line-height: 10px
+//   .error
+//     +pos-a(left 25px bottom -20px)
+//     +clr-txt(error)
+//     +fnt-xs
+//     line-height: 10px
 
-  &--has-error
-    +mb(30px)
-    .radio-wrapper__heading
-      +clr-txt(error)
-    .option
-      &__label
-        +clr-txt(error)
-      &__radio
-        +clr(error, border-color)
+//   &--has-error
+//     +mb(30px)
+//     .radio-wrapper__heading
+//       +clr-txt(error)
+//     .option
+//       &__label
+//         +clr-txt(error)
+//       &__radio
+//         +clr(error, border-color)
 </style>
