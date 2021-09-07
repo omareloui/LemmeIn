@@ -10,7 +10,7 @@ class TokenService {
     if (!userId)
       return tokenErrorHelper.notFound({ message: "User id is invalid" });
     const expiration = config.jwtExpiration;
-    const token = await JwtHelper.create(expiration, userId);
+    const token = await JwtHelper.create(expiration, { id: userId });
     return {
       token,
       expires: getDateAfterSeconds(expiration),
