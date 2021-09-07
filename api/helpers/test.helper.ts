@@ -1,4 +1,4 @@
-import { assertThrowsAsync } from "../deps.ts";
+import { assertThrows, assertThrowsAsync } from "../deps.ts";
 
 type TestFunction = () => void | Promise<void>;
 
@@ -34,5 +34,21 @@ export class Test {
       assertThrowsAsync(assertionCallBack, Error, errorMessageIncludes);
 
     this.test(description, assertionFunction);
+  }
+
+  public testError(
+    description: string,
+    cb: () => unknown,
+    errorMessageIncludes: string
+  ) {
+    this.test(description, () => {
+      assertThrows(
+        () => {
+          cb();
+        },
+        Error,
+        errorMessageIncludes
+      );
+    });
   }
 }
