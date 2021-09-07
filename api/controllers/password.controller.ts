@@ -6,19 +6,16 @@ export default class PasswordController {
     const body = request.body();
     const data = await body.value;
     const userId = state.user.id;
-    await PasswordService.createPassword(data, userId);
+    await PasswordService.createMine(data, userId);
     response.status = 200;
   }
 
   public static async viewAllMine({ response, state }: RouterContext) {
-    response.body = await PasswordService.getMyPasswords(state.user.id);
+    response.body = await PasswordService.getAllMine(state.user.id);
   }
 
   public static async viewOneMine({ params, response, state }: RouterContext) {
-    response.body = await PasswordService.getMyPassword(
-      params.id!,
-      state.user.id
-    );
+    response.body = await PasswordService.getOneMine(params.id!, state.user.id);
   }
 
   public static async decrypt({ params, response, state }: RouterContext) {
@@ -26,7 +23,7 @@ export default class PasswordController {
   }
 
   public static async deleteMine({ response, params, state }: RouterContext) {
-    await PasswordService.removeMyPassword(params.id!, state.user.id);
+    await PasswordService.removeOneMine(params.id!, state.user.id);
     response.status = 200;
   }
 }

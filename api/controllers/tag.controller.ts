@@ -4,12 +4,12 @@ import TagService from "../services/tag.service.ts";
 export default class TagController {
   public static async create({ request, response, state }: RouterContext) {
     const body = request.body();
-    const { tag } = await body.value;
-    response.body = await TagService.createTag({ tag }, state.user.id);
+    const { tag, color } = await body.value;
+    response.body = await TagService.createMine({ tag, color }, state.user.id);
   }
 
   public static async viewAllMine({ response, state }: RouterContext) {
-    response.body = await TagService.getMyTags(state.user.id);
+    response.body = await TagService.getAllMine(state.user.id);
   }
 
   public static async updateMine({
@@ -19,13 +19,13 @@ export default class TagController {
     state,
   }: RouterContext) {
     const body = request.body();
-    const { tag } = await body.value;
-    await TagService.updateMyTag(params.id!, { tag }, state.user.id);
+    const { tag, color } = await body.value;
+    await TagService.updateOneMine(params.id!, { tag, color }, state.user.id);
     response.status = 200;
   }
 
   public static async deleteMine({ response, params, state }: RouterContext) {
-    await TagService.removeMyTag(params.id!, state.user.id);
+    await TagService.removeOneMine(params.id!, state.user.id);
     response.status = 200;
   }
 }

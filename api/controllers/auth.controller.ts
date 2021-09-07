@@ -13,9 +13,14 @@ class AuthController {
 
   public static async register({ request, response }: RouterContext) {
     const body = request.body();
-    const { email, username, password } = await body.value;
-    const authData = await AuthService.register({ email, username, password });
-    response.body = authData;
+    const { firstName, lastName, email, password, role } = await body.value;
+    response.body = await AuthService.register({
+      firstName,
+      lastName,
+      email,
+      password,
+      role,
+    });
   }
 
   public static async me({ response, state }: RouterContext) {
