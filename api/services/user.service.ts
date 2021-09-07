@@ -36,9 +36,9 @@ export default class UserService extends BaseService {
     const currentDate = new Date();
 
     // Making sure the email is unique
-    const sameEmailUser = await User.findOne({ email, isDisabled: false });
+    const sameEmailUser = await User.findOne({ email });
     if (sameEmailUser)
-      userErrorHelper.badRequest({
+      return userErrorHelper.badRequest({
         message: `This email is already in use. Try signing in instead.`,
       });
 
@@ -58,7 +58,12 @@ export default class UserService extends BaseService {
     if (!user) return userErrorHelper.badRequest({ action: "create" });
     const userId = user.toString();
     // Create the user history first entry
-    await UserHistory.insertOne({ id: userId, ...userData, version: 1 });
+    await UserHistory.insertOne({
+      id: userId,
+      ...userData,
+      isDisabled: false,
+      version: 1,
+    });
     return userId;
   }
 
@@ -153,7 +158,7 @@ export default class UserService extends BaseService {
     return deleteCount;
   }
 
-  private static async getUserHistory(userId: string) {
+  public static async getUserHistory(userId: string) {
     const userHistory = await UserHistory.find({ id: userId }).toArray();
     if (userHistory.length === 0)
       return userErrorHelper.notFound({ message: "Can't find user history" });

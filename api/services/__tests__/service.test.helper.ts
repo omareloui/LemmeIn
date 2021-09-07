@@ -17,6 +17,64 @@ export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
     this.createdRecordId = null;
   }
 
+  public testCreate(data: Record<string, unknown>) {
+    this.test(`should create ${this.serviceName}`, async () => {
+      if (!this.service.create)
+        throw new Error("This service doesn't have createForMe");
+      this.createdRecordId = await this.service.create(data);
+      assertMatch(this.createdRecordId, /^[\da-f]{24}$/);
+    });
+  }
+
+  public testGetAll() {
+    this.test(`should get all ${this.serviceName}`, async () => {
+      if (!this.createdRecordId)
+        throw new Error("No record was provided to test deleting");
+      if (!this.service.getAll)
+        throw new Error("This service doesn't have getOne");
+      const records = await this.service.getAll();
+      assertEquals(Object.hasOwn(records[0], "id"), true);
+    });
+  }
+
+  public testGetOne() {
+    this.test(`should get the created ${this.serviceName}`, async () => {
+      if (!this.createdRecordId)
+        throw new Error("No record was provided to test getting it");
+      if (!this.service.getOne)
+        throw new Error("This service doesn't have getOne");
+      const record = await this.service.getOne(this.createdRecordId);
+      assertEquals(Object.hasOwn(record, "id"), true);
+    });
+  }
+
+  public testUpdateOne(newData: Record<string, unknown>) {
+    this.test(`should update the created ${this.serviceName}`, async () => {
+      if (!this.createdRecordId)
+        throw new Error("No record was provided to test updating");
+      if (!this.service.updateOne)
+        throw new Error("This service doesn't have updateOne");
+      const newRecord = await this.service.updateOne(
+        this.createdRecordId,
+        newData
+      );
+      Object.keys(newData).forEach((key) => {
+        assertEquals(newRecord[key] === newData[key], true);
+      });
+    });
+  }
+
+  public testRemovingOne() {
+    this.test("should delete the created password", async () => {
+      if (!this.createdRecordId)
+        throw new Error("No record was provided to test deleting");
+      if (!this.service.removeOne)
+        throw new Error("This service doesn't have removeOne");
+      const deletionCount = await this.service.removeOne(this.createdRecordId);
+      assertEquals(deletionCount, 1);
+    });
+  }
+
   public testCreateMine(data: Record<string, unknown>) {
     this.test(`should create ${this.serviceName}`, async () => {
       if (!this.service.createMine)
