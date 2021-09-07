@@ -13,7 +13,8 @@ import Vue from "vue"
 export default Vue.extend({
   data: () => ({
     formFields: [
-      { id: "username", type: "text", label: "Username", value: "" },
+      { id: "firstName", type: "text", label: "First Name", value: "" },
+      { id: "lastName", type: "text", label: "Last Name", value: "" },
       { id: "email", type: "email", value: "" },
       { id: "password", type: "password", value: "" }
     ]
