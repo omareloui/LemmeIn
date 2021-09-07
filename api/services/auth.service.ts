@@ -1,21 +1,40 @@
 import HashHelper from "../helpers/hash.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
+
+import JwtService from "./jwt.service.ts";
+
 import { User, UserSchema } from "../models/user.model.ts";
-import TokenService from "./token.service.ts";
+import { BaseService } from "./base.service.ts";
 import UserService from "./user.service.ts";
-import { ObjectId } from "../deps.ts";
-import type { LoggingStructure } from "../types/types.interface.ts";
+import type { UserDoc } from "./user.service.ts";
+
+interface RegisterOptions {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+}
+
+interface LoginOptions {
+  email: string;
+  password: string;
+}
+
+export interface LoggingStructure {
+  user: UserDoc;
+  token: {
+    expires: Date;
+    token: string;
+  };
+}
 
 const authErrorHelper = new ErrorHelper("auth");
 
-class AuthService {
+export default class AuthService extends BaseService {
   public static async login({
     email: enteredEmail,
     password,
-  }: {
-    email: string;
-    password: string;
-  }): Promise<LoggingStructure> {
+  }: LoginOptions): Promise<LoggingStructure> {
     // Get the user and validate him
     const user: UserSchema | undefined = await User.findOne({
       email: enteredEmail,
@@ -30,48 +49,35 @@ class AuthService {
       });
     // Get the token
     const id = user._id.toString();
-    const token = await TokenService.create(id);
-    const { username, email, role, createdAt, updatedAt } = user;
+    const token = await JwtService.create(id);
+    const { firstName, lastName, email, role, createdAt, updatedAt } = user;
     return {
       token,
-      user: { id, username, email, role, createdAt, updatedAt },
+      user: { id, firstName, lastName, email, role, createdAt, updatedAt },
     };
   }
 
-  public static async register({
-    email: enteredEmail,
-    username: enteredUsername,
-    password,
-  }: {
-    email: string;
-    username: string;
-    password: string;
-  }): Promise<LoggingStructure> {
-    const userId = await UserService.createUser({
-      email: enteredEmail,
-      username: enteredUsername,
-      password,
-      isDisabled: false,
-      role: "user",
-    });
+  public static async register(
+    options: RegisterOptions
+  ): Promise<LoggingStructure> {
+    // Create the user
+    const userId = await UserService.create(options);
     if (!userId) return authErrorHelper.badRequest({ action: "create" });
     const id = userId.toString();
-    const user = await UserService.getUser(id);
+
+    const user = await UserService.getOne(id);
     if (!user) return authErrorHelper.notFound();
-    const { username, email, role, createdAt, updatedAt } = user;
-    const token = await TokenService.create(id);
+    const { firstName, lastName, email, role, createdAt, updatedAt } = user;
+    const token = await JwtService.create(id);
     return {
       token,
-      user: { id, username, email, role, createdAt, updatedAt },
+      user: { id, firstName, lastName, email, role, createdAt, updatedAt },
     };
   }
 
-  public static async me(userId: string) {
-    const user = await User.findOne({ _id: new ObjectId(userId) });
+  public static async me(userId: string): Promise<UserDoc> {
+    const user = await UserService.getOne(userId);
     if (!user) return authErrorHelper.notFound();
-    const { username, email, role, createdAt, updatedAt } = user;
-    return { id: userId, username, email, role, createdAt, updatedAt };
+    return user;
   }
 }
-
-export default AuthService;

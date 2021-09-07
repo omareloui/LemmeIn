@@ -1,6 +1,6 @@
 // deno-lint-ignore-file
 type ID = string;
-type Doc = Record<string, any>;
+type Doc = { id: string; [key: string]: any };
 type DeletionCount = number;
 
 type CreateReturn = Promise<ID>;

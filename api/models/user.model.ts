@@ -1,14 +1,14 @@
 import db from "../db/db.ts";
+import type { Role } from "../config/roles.ts";
 
 export interface UserSchema {
   _id: string;
-  username: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  isValidEmail: boolean;
   password: string;
-  role: string;
-  docVersion: number;
-  isDisabled: boolean;
+  isValidEmail: boolean;
+  role: Role;
   createdAt: Date;
   updatedAt: Date;
 }

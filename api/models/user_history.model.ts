@@ -1,17 +1,12 @@
 import db from "../db/db.ts";
+import type { UserSchema } from "./user.model.ts";
 
-export interface UserHistorySchema {
+export interface UserHistorySchema extends UserSchema {
   id: string;
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-  docVersion: number;
   isDisabled: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  version: number;
 }
 
 export const UserHistory = db.getDatabase.collection<UserHistorySchema>(
-  "users_history",
+  "users_history"
 );
