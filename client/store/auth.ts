@@ -64,9 +64,17 @@ export const actions = actionTree(
 
     async setMe({ commit, dispatch }) {
       if (!(await dispatch("getToken"))) return
-      const { data: me } = await this.$axios.get("/me")
-      commit("setUser", me)
-      commit("updateIsSigned", true)
+      try {
+        const { data: me } = await this.$axios.get("/me")
+        commit("setUser", me)
+        commit("updateIsSigned", true)
+      } catch (e) {
+        // @ts-ignore
+        if (e.response.data.status === 401) {
+          dispatch("signOut")
+          this.$router.push("/")
+        }
+      }
     },
 
     signOut({ dispatch, commit }) {
