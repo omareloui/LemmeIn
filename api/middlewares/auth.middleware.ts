@@ -19,19 +19,21 @@ function checkRights(requiredRights: Rights, user: UserDoc) {
   return true;
 }
 
-export const auth = (...requiredRights: Rights) => async (
-  ctx: Context,
-  next: () => Promise<unknown>
-): Promise<void> => {
-  const jwt: string = ctx.request.headers.get("Authorization")
-    ? ctx.request.headers.get("Authorization")!
-    : "";
+export function auth(...requiredRights: Rights) {
+  return async function (
+    ctx: Context,
+    next: () => Promise<unknown>
+  ): Promise<void> {
+    const jwt: string = ctx.request.headers.get("Authorization")
+      ? ctx.request.headers.get("Authorization")!
+      : "";
 
-  if (!jwt || !jwt.includes("Bearer")) return authErrorHelper.unauthorized();
-  const token = jwt.split("Bearer ")[1];
-  const data = await JwtHelper.getPayload(token);
+    if (!jwt || !jwt.includes("Bearer")) return authErrorHelper.unauthorized();
+    const token = jwt.split("Bearer ")[1];
+    const data = await JwtHelper.getPayload(token);
 
-  const user: UserDoc = await UserService.getOne(data.id as string);
-  if (user && checkRights(requiredRights, user)) ctx.state.user = user;
-  await next();
-};
+    const user = await UserService.getOne(data.id as string);
+    if (user && checkRights(requiredRights, user)) ctx.state.user = user;
+    await next();
+  };
+}
