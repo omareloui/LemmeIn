@@ -7,12 +7,14 @@ import { User } from "../models/user.model.ts";
 import { BaseService } from "./base.service.ts";
 import UserService from "./user.service.ts";
 import type { UserDoc } from "./user.service.ts";
+import type { Role } from "../config/roles.ts";
 
 interface RegisterOptions {
   email: string;
   firstName: string;
   lastName: string;
   password: string;
+  role?: Role;
 }
 
 interface LoginOptions {

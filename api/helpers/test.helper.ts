@@ -1,9 +1,19 @@
 import { assertThrows, assertThrowsAsync } from "../deps.ts";
+import type { Role } from "../config/roles.ts";
+
+import AuthService from "../services/auth.service.ts";
+import UserService from "../services/user.service.ts";
+
+import generateRandomText from "../utils/generateRandomText.ts";
 
 type TestFunction = () => void | Promise<void>;
 
 export class Test {
-  constructor(public namePrefix: string) {}
+  createdUsersId: string[];
+
+  constructor(public namePrefix: string) {
+    this.createdUsersId = [];
+  }
 
   public test(description: string, testFunction: TestFunction, isOnly = false) {
     Deno.test({
@@ -49,6 +59,30 @@ export class Test {
         Error,
         errorMessageIncludes
       );
+    });
+  }
+
+  public async getToken(role?: Role) {
+    const logData = {
+      email: `${generateRandomText()}@gmail.com`,
+      password: "123456789",
+    };
+    const createdUser = await AuthService.register({
+      firstName: generateRandomText(8),
+      lastName: generateRandomText(8),
+      role,
+      ...logData,
+    });
+    this.createdUsersId.push(createdUser.user.id);
+    const token = createdUser.token.token;
+    return token;
+  }
+
+  public removeCratedUsers() {
+    if (this.createdUsersId.length === 0)
+      throw new Error("No user created to remove");
+    this.createdUsersId.forEach(async (id) => {
+      await UserService.removeOne(id);
     });
   }
 }
