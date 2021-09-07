@@ -1,4 +1,4 @@
-import { create, getNumericDate, Header, Payload, verify } from "../deps.ts";
+import { create, getNumericDate, Header, verify } from "../deps.ts";
 import ErrorHelper from "./error.helper.ts";
 
 const jwtSecret = await crypto.subtle.generateKey(
@@ -10,14 +10,20 @@ const jwtSecret = await crypto.subtle.generateKey(
 const header: Header = { alg: "HS512", typ: "JWT" };
 
 class JwtHelper {
-  public static create(expiresInSeconds: number, userId?: string) {
-    const payload: Payload = {
-      iss: "djwt",
-      iat: Date.now(),
-      id: userId,
-      exp: getNumericDate(expiresInSeconds),
-    };
-    return create(header, payload, jwtSecret);
+  public static create(
+    expiresInSeconds: number,
+    payload?: Record<string, unknown>
+  ) {
+    return create(
+      header,
+      {
+        iss: "djwt",
+        iat: Date.now(),
+        exp: getNumericDate(expiresInSeconds),
+        ...payload,
+      },
+      jwtSecret
+    );
   }
 
   public static async verify(token: string) {

@@ -8,7 +8,7 @@ const NAME_PREFIX = "helpers/jwt:";
 Deno.test({
   name: `${NAME_PREFIX} should create a token`,
   async fn() {
-    const token = await JwtHelper.create(100, "2a2fec4798");
+    const token = await JwtHelper.create(100, { id: "2a2fec4798" });
     assertEquals(token.split(".").length, 3);
   },
 });
@@ -48,7 +48,7 @@ Deno.test({
   name: `${NAME_PREFIX} should get the payload as it was`,
   async fn() {
     const userId = "1e201324ffc09ac";
-    const token = await JwtHelper.create(10, userId);
+    const token = await JwtHelper.create(10, { id: userId });
     const tokenPayload = await JwtHelper.getPayload(token);
     assertEquals(tokenPayload.id, userId);
   },
