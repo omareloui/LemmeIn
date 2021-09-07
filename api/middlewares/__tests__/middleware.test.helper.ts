@@ -25,9 +25,8 @@ export class MiddlewareTest extends Test {
     const context = {
       ...testing.createMockContext({ path: path, params: params, state }),
     } as RouterContext;
-    if (body)
-      // @ts-ignore don't need to check for value's type
-      context.request.body = () => ({ value: body });
+    // @ts-ignore don't need to check for value's type
+    context.request.body = () => ({ value: body });
     if (authToken)
       context.request.headers.set("Authorization", `Bearer ${authToken}`);
     return context;
