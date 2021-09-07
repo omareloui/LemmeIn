@@ -15,25 +15,25 @@ const errorValidationData: ErrorValidationData[] = [
   {
     description:
       "should have 'app' as required on creating and updating password",
-    values: { password: "valid pass" },
+    body: { password: "valid pass" },
     errorIncludes: '"app" is required',
   },
   {
     description:
       "should have 'password' as required on creating and updating password",
-    values: { app: "google.com" },
+    body: { app: "google.com" },
     errorIncludes: '"password" is required',
   },
   {
     description:
       "should throw error on password less than 3 characters on creating and updating password",
-    values: { app: "some app", password: "no" },
+    body: { app: "some app", password: "no" },
     errorIncludes: "at least 3 characters",
   },
   {
     description:
       "should throw error on providing extra field on creating and updating password",
-    values: { app: "some app", password: "validPass", notValidField: false },
+    body: { app: "some app", password: "validPass", notValidField: false },
     errorIncludes: "notValidField is not allowed",
   },
 ];

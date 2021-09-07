@@ -5,7 +5,7 @@ import { validate } from "../../middlewares/validate.middleware.ts";
 
 export interface ErrorValidationData {
   description: string;
-  values: Record<string, unknown>;
+  body: Record<string, unknown>;
   errorIncludes: string;
 }
 
@@ -53,7 +53,7 @@ export class ValidationTest extends Test {
           () =>
             this.validationMiddleware(
               schema,
-              data.values,
+              data.body,
               !isCreating ? { id: "123456789abcdef123456789" } : undefined
             ),
           data.errorIncludes
