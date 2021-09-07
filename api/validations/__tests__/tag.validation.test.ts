@@ -12,27 +12,27 @@ const tagTest = new ValidationTest("tag");
 
 const errorValidationData: ErrorValidationData[] = [
   {
-    name: "should have tag as required",
+    description: "should have tag as required",
     values: { color: "#333" },
     errorIncludes: "Field tag is required",
   },
   {
-    name: "should have color as required",
+    description: "should have color as required",
     values: { tag: "validTag" },
     errorIncludes: "Field color is required",
   },
   {
-    name: "should not accept spaces in tags",
+    description: "should not accept spaces in tags",
     values: { tag: "invalid tag", color: "#333" },
     errorIncludes: "can't have spaces",
   },
   {
-    name: "should not accept special characters in tags",
+    description: "should not accept special characters in tags",
     values: { tag: "invalid-tag", color: "#333" },
     errorIncludes: "can't have spaces or special character",
   },
   {
-    name: "should accept only hsl and hex colors",
+    description: "should accept only hsl and hex colors",
     values: { tag: "validTag", color: "rgb(11, 11, 11)" },
     errorIncludes: "must be hex color or hsl color",
   },
@@ -46,11 +46,11 @@ tagTest.validateCreateAndUpdateErrors(
 
 const passingValidations: ValidData[] = [
   {
-    name: "should need nothing on getting tags",
+    description: "should need nothing on getting tags",
     schema: getTagsValidation,
   },
   {
-    name: "should take id on deleting a tag",
+    description: "should take id on deleting a tag",
     schema: deleteTagValidation,
     params: {
       id: "ea22f9203c4ea22fa21123c4",

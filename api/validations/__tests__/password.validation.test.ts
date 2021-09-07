@@ -13,24 +13,25 @@ const passwordTest = new ValidationTest("password");
 
 const errorValidationData: ErrorValidationData[] = [
   {
-    name: "should have 'app' as required on creating and updating password",
+    description:
+      "should have 'app' as required on creating and updating password",
     values: { password: "valid pass" },
     errorIncludes: '"app" is required',
   },
   {
-    name:
+    description:
       "should have 'password' as required on creating and updating password",
     values: { app: "google.com" },
     errorIncludes: '"password" is required',
   },
   {
-    name:
+    description:
       "should throw error on password less than 3 characters on creating and updating password",
     values: { app: "some app", password: "no" },
     errorIncludes: "at least 3 characters",
   },
   {
-    name:
+    description:
       "should throw error on providing extra field on creating and updating password",
     values: { app: "some app", password: "validPass", notValidField: false },
     errorIncludes: "notValidField is not allowed",
@@ -45,7 +46,8 @@ passwordTest.validateCreateAndUpdateErrors(
 
 const passingValidations: ValidData[] = [
   {
-    name: "should pass on providing only app and password on creating password",
+    description:
+      "should pass on providing only app and password on creating password",
     schema: createPasswordValidation,
     body: {
       app: "google.com",
@@ -53,7 +55,7 @@ const passingValidations: ValidData[] = [
     },
   },
   {
-    name: "should accept accountIdentifier",
+    description: "should accept accountIdentifier",
     schema: createPasswordValidation,
     body: {
       app: "google.com",
@@ -62,7 +64,7 @@ const passingValidations: ValidData[] = [
     },
   },
   {
-    name: "should accept note",
+    description: "should accept note",
     schema: createPasswordValidation,
     body: {
       app: "google.com",
@@ -71,7 +73,7 @@ const passingValidations: ValidData[] = [
     },
   },
   {
-    name: "should accept site",
+    description: "should accept site",
     schema: createPasswordValidation,
     body: {
       app: "google.com",
@@ -80,18 +82,18 @@ const passingValidations: ValidData[] = [
     },
   },
   {
-    name: "should take id on requesting a password",
+    description: "should take id on requesting a password",
     schema: getPasswordValidation,
     params: {
       id: "ea22f9203c4ea22fa21123c4",
     },
   },
   {
-    name: "should take nothing on requesting all passwords",
+    description: "should take nothing on requesting all passwords",
     schema: getPasswordsValidation,
   },
   {
-    name: "should take id for deleting password",
+    description: "should take id for deleting password",
     schema: deletePasswordValidation,
     params: {
       id: "ea22f9203c4ea22fa21123c4",

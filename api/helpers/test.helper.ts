@@ -5,20 +5,16 @@ type TestFunction = () => void | Promise<void>;
 export class Test {
   constructor(public namePrefix: string) {}
 
-  public test(
-    shouldTestWhat: string,
-    testFunction: TestFunction,
-    isOnly = false
-  ) {
+  public test(description: string, testFunction: TestFunction, isOnly = false) {
     Deno.test({
-      name: `${this.namePrefix} ${shouldTestWhat}`,
+      name: `${this.namePrefix} ${description}`,
       only: isOnly,
       fn: testFunction,
     });
   }
 
   public testAsyncError(
-    name: string,
+    description: string,
     cb: () => unknown,
     errorMessageIncludes: string
   ) {
@@ -37,6 +33,6 @@ export class Test {
     const assertionFunction = () =>
       assertThrowsAsync(assertionCallBack, Error, errorMessageIncludes);
 
-    this.test(name, assertionFunction);
+    this.test(description, assertionFunction);
   }
 }

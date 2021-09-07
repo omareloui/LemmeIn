@@ -4,13 +4,13 @@ import { RouterContext, testing, RouteParams } from "../../deps.ts";
 import { validate } from "../../middlewares/validate.middleware.ts";
 
 export interface ErrorValidationData {
-  name: string;
+  description: string;
   values: Record<string, unknown>;
   errorIncludes: string;
 }
 
 export type ValidData = {
-  name: string;
+  description: string;
   schema: Record<string, unknown>;
   body?: Record<string, unknown>;
   params?: RouteParams;
@@ -49,7 +49,7 @@ export class ValidationTest extends Test {
       [createSchema, updateSchema].forEach((schema, schemaIndex) => {
         const isCreating = schemaIndex === 0;
         this.testAsyncError(
-          `(${isCreating ? "create" : "update"}) ${data.name}`,
+          `(${isCreating ? "create" : "update"}) ${data.description}`,
           () =>
             this.validationMiddleware(
               schema,
@@ -63,19 +63,26 @@ export class ValidationTest extends Test {
   }
 
   public testWithValidationMiddleware(
-    shouldTestWhat: string,
+    description: string,
     schema: Record<string, unknown>,
     body?: Record<string, unknown>,
     params?: RouteParams
   ) {
-    this.test(shouldTestWhat, async () => {
+    this.test(description, async () => {
       await this.validationMiddleware(schema, body, params);
     });
   }
 
+  public testWithValidationMiddlewareWithError() {}
+
   public testValidData(data: ValidData[]) {
     data.forEach((x) => {
-      this.testWithValidationMiddleware(x.name, x.schema, x.body, x.params);
+      this.testWithValidationMiddleware(
+        x.description,
+        x.schema,
+        x.body,
+        x.params
+      );
     });
   }
 }
