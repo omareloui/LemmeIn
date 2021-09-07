@@ -8,5 +8,5 @@ export interface UserHistorySchema extends UserSchema {
 }
 
 export const UserHistory = db.getDatabase.collection<UserHistorySchema>(
-  "users_history"
+  "users-history"
 );
