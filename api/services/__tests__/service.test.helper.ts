@@ -17,11 +17,11 @@ export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
     this.createdRecordId = null;
   }
 
-  public testCreateForMe(data: Record<string, unknown>) {
+  public testCreateMine(data: Record<string, unknown>) {
     this.test(`should create ${this.serviceName}`, async () => {
-      if (!this.service.createForMe)
+      if (!this.service.createMine)
         throw new Error("This service doesn't have createForMe");
-      this.createdRecordId = await this.service.createForMe(data, this.userId);
+      this.createdRecordId = await this.service.createMine(data, this.userId);
       assertMatch(this.createdRecordId, /^[\da-f]{24}$/);
     });
   }

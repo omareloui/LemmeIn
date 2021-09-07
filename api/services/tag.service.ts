@@ -17,7 +17,7 @@ export interface CreateTagOptions {
 }
 
 export default class TagService extends BaseService {
-  public static async createForMe(
+  public static async createMine(
     { tag, color }: CreateTagOptions,
     userId: string
   ) {

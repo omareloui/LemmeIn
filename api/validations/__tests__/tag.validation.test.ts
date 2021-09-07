@@ -38,12 +38,6 @@ const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
   },
 ];
 
-tagTest.validateCreateAndUpdateErrors(
-  errorValidationData,
-  createTagValidation,
-  updateTagValidation
-);
-
 const passingValidations: ValidData[] = [
   {
     description: "should need nothing on getting tags",
@@ -58,4 +52,9 @@ const passingValidations: ValidData[] = [
   },
 ];
 
+tagTest.validateCreateAndUpdateErrors(
+  errorValidationData,
+  createTagValidation,
+  updateTagValidation
+);
 tagTest.testValidData(passingValidations);

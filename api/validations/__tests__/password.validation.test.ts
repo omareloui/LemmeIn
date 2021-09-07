@@ -41,12 +41,6 @@ const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
   },
 ];
 
-passwordTest.validateCreateAndUpdateErrors(
-  errorValidationData,
-  createPasswordValidation,
-  updatePasswordValidation
-);
-
 const passingValidations: ValidData[] = [
   {
     description:
@@ -104,4 +98,9 @@ const passingValidations: ValidData[] = [
   },
 ];
 
+passwordTest.validateCreateAndUpdateErrors(
+  errorValidationData,
+  createPasswordValidation,
+  updatePasswordValidation
+);
 passwordTest.testValidData(passingValidations);

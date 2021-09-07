@@ -4,14 +4,14 @@ import TagService from "../tag.service.ts";
 const serviceTest = new ServiceTest("tag", TagService);
 const serviceTestDuplication = new ServiceTest("tag", TagService);
 
-serviceTest.testCreateForMe({ tag: "testingTag", color: "#fff" });
+serviceTest.testCreateMine({ tag: "testingTag", color: "#fff" });
 serviceTest.testGetAllMine();
 serviceTest.testGetOneMine();
 
 serviceTest.testAsyncError(
   "should throw error on creating new testing with the same name",
   async () => {
-    await TagService.createForMe(
+    await TagService.createMine(
       { tag: "testingTag", color: "#123" },
       serviceTest.userId
     );
@@ -23,7 +23,7 @@ serviceTest.testUpdateOneMine({ tag: "testingTag" });
 serviceTest.testUpdateOneMine({ color: "#ooo" });
 serviceTest.testUpdateOneMine({ tag: "updatedTag" });
 
-serviceTestDuplication.testCreateForMe({ tag: "shouldNotDuplicate" });
+serviceTestDuplication.testCreateMine({ tag: "shouldNotDuplicate" });
 serviceTest.testAsyncError(
   "should throw error on updating tag with a name that another tag holds",
   async () => {

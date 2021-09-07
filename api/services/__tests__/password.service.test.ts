@@ -10,12 +10,12 @@ const oAuthServiceTest = new ServiceTest("password", PasswordService);
 
 const passwordToTestOn = "134.a2!4~234";
 
-const tagId = await TagService.createForMe(
+const tagId = await TagService.createMine(
   { tag: "testingWithPassword", color: "#333" },
   serviceTest.userId
 );
 
-serviceTest.testCreateForMe({
+serviceTest.testCreateMine({
   app: "google.com",
   password: passwordToTestOn,
   tags: [tagId],
@@ -47,7 +47,7 @@ oAuthServiceTest.test(
     if (!serviceTest.createdRecordId)
       throw new Error("No record created yet for the oAuth");
 
-    const newPasswordId = await PasswordService.createForMe(
+    const newPasswordId = await PasswordService.createMine(
       {
         app: "oAuthed app",
         password: serviceTest.createdRecordId,

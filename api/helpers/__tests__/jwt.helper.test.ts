@@ -38,7 +38,7 @@ Deno.test({
     const token = await JwtHelper.create(1);
     const validationResultBefore = await JwtHelper.verify(token);
     assertEquals(validationResultBefore, true);
-    await sleep(2);
+    await sleep(3);
     const validationResultAfter = await JwtHelper.verify(token);
     assertEquals(validationResultAfter, false);
   },
