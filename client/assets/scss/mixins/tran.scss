@@ -38,6 +38,5 @@ $timing-functions: (
       $separator: comma
     );
   }
-  @debug "#{$transitions}";
   transition: $transitions;
 }
