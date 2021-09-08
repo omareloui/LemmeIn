@@ -1,50 +1,40 @@
 @use "sass:map";
 
 $shared: (
-  primary: hsl(234, 77%, 43%),
-  secondary: hsl(213, 96%, 11%),
-  dark: hsl(0, 0%, 5%),
-  light: hsl(0, 0%, 97%),
-  grey-50: hsl(210, 20%, 98%),
-  grey-100: hsl(220, 14%, 96%),
-  grey-200: hsl(220, 13%, 91%),
-  grey-300: hsl(216, 12%, 84%),
-  grey-400: hsl(218, 11%, 65%),
-  grey-500: hsl(220, 9%, 46%),
-  grey-600: hsl(215, 14%, 34%),
-  grey-700: hsl(217, 19%, 27%),
-  grey-800: hsl(0, 0%, 14%),
-  grey-900: hsl(0, 0%, 10%),
-  link: hsl(204, 90%, 74%),
-  error: hsl(357, 96%, 60%),
-  success: hsl(112, 60%, 74%),
-  info: hsl(212, 100%, 53%),
-  warn: hsl(50, 100%, 68%),
-  selector: hsl(222, 28%, 91%),
-  input-background: hsl(228, 14%, 93%),
-  input-select-selected-bg: hsl(200, 99%, 64%),
-  input-border: hsl(223, 12%, 89%),
-  input-checkbox: hsl(234, 66%, 59%),
-  default-border: hsl(223, 12%, 89%),
-  hover-text-background: hsl(223, 12%, 89%),
-  focus: hsl(234, 77%, 43%, 40%),
-  icon-focus: hsl(234, 77%, 43%, 90%)
+  primary: hsl(234, 85%, 66%),
+  button-cta: hsl(234, 85%, 66%),
+  link: hsl(201, 100%, 67%),
+  text-light: hsl(360, 100%, 100%),
+  text-dark: hsl(0, 0%, 5%),
+  focus: hsla(234, 85%, 66%, 48%)
 );
 
 $light: (
-  text: map.get($shared, dark),
-  text-invert: map.get($shared, light),
-  background: map.get($shared, grey-50),
-  background-invert: map.get($shared, dark),
-  nav: map.get($shared, grey-100),
-  button: map.get($shared, grey-300)
+  text-main: map.get($shared, text-dark),
+  text-invert: map.get($shared, text-light),
+  background-main: hsl(0, 0%, 98%),
+  background-secondary: hsl(0, 0%, 93%),
+  background-tertiary: hsl(0, 0%, 100%),
+  background-invert: hsl(220, 11%, 11%),
+  button: hsl(0, 0%, 91%),
+  card: hsl(0, 0%, 100%),
+  danger: hsl(4, 91%, 59%),
+  warn: hsl(54, 96%, 55%),
+  safe: hsl(112, 92%, 49%),
+  info: hsl(201, 100%, 67%)
 );
 
 $dark: (
-  text: map.get($shared, light),
-  text-invert: map.get($shared, dark),
-  background: map.get($shared, grey-900),
-  background-invert: map.get($shared, light),
-  nav: map.get($shared, grey-800),
-  button: map.get($shared, grey-700)
+  text-main: map.get($shared, text-light),
+  text-invert: map.get($shared, text-dark),
+  background-main: hsl(220, 11%, 11%),
+  background-secondary: hsl(220, 9%, 20%),
+  background-tertiary: hsl(220, 9%, 14%),
+  background-invert: hsl(0, 0%, 98%),
+  button: hsl(224, 10%, 22%),
+  card: hsl(220, 9%, 14%),
+  danger: hsl(5, 74%, 48%),
+  warn: hsl(54, 59%, 46%),
+  safe: hsl(112, 87%, 33%),
+  info: hsl(201, 72%, 43%)
 );

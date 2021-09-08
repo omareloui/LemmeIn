@@ -2,11 +2,13 @@
 @use "../mixins/generate-variables" as *;
 
 $fonts-names: (
-  poppins: "'Poppins', sans-serif"
+  be-vietnam: '"Be Vietnam", sans-serif',
+  space-mono: '"Space Mono", monospace'
 );
 
 $fonts-families: (
-  main: map.get($fonts-names, "poppins")
+  heading: map.get($fonts-names, "be-vietnam"),
+  body: map.get($fonts-names, "space-mono")
 );
 
 $fonts-weights: (
@@ -22,19 +24,19 @@ $fonts-weights: (
 );
 
 $fonts-sizes: (
-  "xs" clamp(0.75rem, 1.5vw, 0.875rem) clamp(1rem, 1.8vw, 1.25rem),
-  "sm" clamp(0.875rem, 1.8vw, 1rem) clamp(1.25rem, 2vw, 1.5rem),
-  "base" clamp(1rem, 2vw, 1.125rem) clamp(1.5rem, 3vw, 1.75rem),
-  "lg" clamp(1.125rem, 3vw, 1.25rem) clamp(1.75rem, 4vw, 1.85rem),
-  "xl" clamp(1.25rem, 4vw, 1.5rem) clamp(1.85rem, 5vw, 2rem),
-  "2xl" clamp(1.5rem, 5vw, 1.875rem) clamp(2rem, 6vw, 2.25rem),
-  "3xl" clamp(1.875rem, 6vw, 2.25rem) clamp(2.25rem, 7vw, 2.5rem),
-  "4xl" clamp(2.25rem, 7vw, 3rem) clamp(2.5rem, 8vw, 3.25rem),
-  "5xl" clamp(3rem, 8vw, 3.75rem) clamp(3.25rem, 9vw, 4rem),
-  "6xl" clamp(3.75rem, 9vw, 4.5rem) clamp(4rem, 10vw, 4.85rem),
-  "7xl" clamp(4.5rem, 10vw, 6rem) clamp(4.85rem, 11vw, 6.25rem),
-  "8xl" clamp(6rem, 11vw, 8rem) clamp(6.25rem, 12vw, 8.5rem),
-  "9xl" clamp(8rem, 12vw, 9rem) clamp(8.5rem, 13vw, 9.5rem)
+  "xs" clamp(0.75rem, 1.5vw, 0.875rem) clamp(1.2rem, 1.8vw, 1.25rem),
+  "sm" clamp(0.875rem, 1.8vw, 1rem) clamp(1.3rem, 2.7vw, 1.4rem),
+  "base" clamp(1rem, 2vw, 1.125rem) clamp(1.4rem, 2.8vw, 1.7rem),
+  "lg" clamp(1.125rem, 3vw, 1.25rem) clamp(1.65rem, 4.2vw, 1.85rem),
+  "xl" clamp(1.25rem, 4vw, 1.5rem) clamp(1.75rem, 5.3vw, 2.1rem),
+  "2xl" clamp(1.5rem, 5vw, 1.875rem) clamp(2rem, 7.2vw, 2.55rem),
+  "3xl" clamp(1.875rem, 6vw, 2.25rem) clamp(2.65rem, 8.6vw, 3.1rem),
+  "4xl" clamp(2.25rem, 7vw, 3rem) clamp(3.1rem, 9.8vw, 4.25rem),
+  "5xl" clamp(3rem, 8vw, 3.75rem) clamp(4.25rem, 11.3vw, 5.4rem),
+  "6xl" clamp(3.75rem, 9vw, 4.5rem) clamp(5.4rem, 13vw, 6.45rem),
+  "7xl" clamp(4.5rem, 10vw, 6rem) clamp(6.3rem, 14vw, 8.45rem),
+  "8xl" clamp(6rem, 11vw, 8rem) clamp(8.25rem, 15vw, 11.2rem),
+  "9xl" clamp(8rem, 12vw, 9rem) clamp(11.2rem, 16.6vw, 12.6rem)
 );
 
 $fonts-sizes-names: "xs" "sm" "base" "lg" "xl" "2xl" "3xl" "4xl" "5xl" "6xl"

@@ -36,7 +36,8 @@ $splitted-dark: ();
 $default: map.merge($splitted-shared, $splitted-light);
 
 @mixin colors {
-  color-scheme: light dark; /* declare that dark and light are both supported */
+  // declare that dark and light are both supported
+  color-scheme: light dark;
 
   @include generate-variables($default, clr);
 }

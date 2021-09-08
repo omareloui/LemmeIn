@@ -1,4 +1,5 @@
 @use "sass:map";
+@use "sass:list";
 
 $timing-functions: (
   ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19),
@@ -27,6 +28,16 @@ $timing-functions: (
   ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55)
 );
 
-@mixin tran($target: all, $duration: 0.3s, $timing-function: ease-in-sine) {
-  transition: $target $duration map.get($timing-functions, $timing-function);
+@mixin tran($targets: all, $duration: 0.3s, $timing-function: ease-in-sine) {
+  $timing-function: map.get($timing-functions, $timing-function);
+  $transitions: ();
+  @each $target in $targets {
+    $transitions: list.append(
+      $transitions,
+      $target $duration $timing-function,
+      $separator: comma
+    );
+  }
+  @debug "#{$transitions}";
+  transition: $transitions;
 }

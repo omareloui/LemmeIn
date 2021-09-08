@@ -9,13 +9,15 @@
 @use "../mixins/tran" as t;
 
 ::selection {
-  @include c.clr(primary, background, 80);
-  @include c.clr(light);
+  @include c.clr-bg(primary);
+  @include c.clr-txt(light);
 }
 
 * {
-  @include ff.fnt(main);
+  @include ff.fnt(body);
+  @include fs.fnt-base;
   @include c.clr-txt;
+  @include t.tran(color background);
 }
 
 body {
@@ -24,6 +26,7 @@ body {
 
 @for $size-number from 1 through 6 {
   h#{$size-number} {
+    @include ff.fnt(heading);
     @include fs.fnt-s(#{math.abs($size-number - 8)}xl);
   }
 }

@@ -1,4 +1,5 @@
 @use "sass:map";
+@use "sass:list";
 @use "../functions" as fns;
 @use "../variables/colors-generator" as clrs;
 
@@ -11,16 +12,16 @@
   }
 }
 
-@mixin clr-txt($type: text, $opacity: 100, $important: false) {
-  @if $type == invert {
-    $type: text-invert;
+@mixin clr-txt($type: main, $opacity: 100, $important: false) {
+  @if list.index(main light dark invert, $type) {
+    $type: text-#{$type};
   }
   @include clr($type, $opacity: $opacity, $important: $important);
 }
 
-@mixin clr-bg($type: background, $opacity: 100, $important: false) {
-  @if $type == invert {
-    $type: background-invert;
+@mixin clr-bg($type: main, $opacity: 100, $important: false) {
+  @if list.index(main secondary tertiary invert, $type) {
+    $type: background-#{$type};
   }
   @include clr($type, background-color, $opacity, $important);
 }

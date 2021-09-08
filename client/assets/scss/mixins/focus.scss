@@ -10,7 +10,6 @@
       @if ($state == focus) {
         outline: none;
       }
-
       @if ($effect == box-shadow) {
         @include bxs.bxs(focus, 0, 0, 3px, 2px);
       } @else if ($effect == background) {
@@ -19,7 +18,7 @@
         @include c.clr(focus, border-color);
         @include c.clr(light, background);
       } @else if ($effect == icon) {
-        @include c.clr(icon-focus, fill);
+        @include c.clr(focus, fill);
       } @else {
         @error "Invalid focus effect value: #{$effect}.";
       }
