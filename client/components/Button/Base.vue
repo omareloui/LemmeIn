@@ -2,14 +2,8 @@
   <button
     :type="type"
     class="button"
-    :class="{
-      'button--cta': isCta,
-      'button--block': isBlock,
-      'button--dont-block-on-mobile': dontBlockOnMobile,
-      'button--large': isLarge,
-      'button--loading': isLoading
-    }"
-    :style="{ width }"
+    :class="{ 'button--loading': isLoading }"
+    :style="{ width: width || size, height: height || size }"
     :disabled="isDisabled"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
@@ -17,15 +11,15 @@
     <transition name="fade">
       <span class="button__loader" v-if="isLoading">
         <loader-primary
-          :size="isLarge ? 35 : 20"
-          :stroke-width="isLarge ? 3 : 2"
-          :color="isCta ? 'text-light' : 'primary'"
+          :size="large ? 35 : 20"
+          :stroke-width="large ? 3 : 2"
+          :color="cta ? 'text-light' : 'primary'"
         ></loader-primary>
       </span>
     </transition>
 
     <transition name="fade">
-      <span v-if="!isLoading" class="button__text">
+      <span v-if="!isLoading" class="button__content">
         <slot></slot>
       </span>
     </transition>
@@ -39,12 +33,10 @@ export default Vue.extend({
   props: {
     type: { type: String, default: "button" },
     width: { type: String },
+    height: { type: String },
+    size: { type: String },
     isLoading: { type: Boolean, default: false },
-    isDisabled: { type: Boolean, default: false },
-    isCta: { type: Boolean, default: false },
-    isLarge: { type: Boolean, default: false },
-    isBlock: { type: Boolean, default: false },
-    dontBlockOnMobile: { type: Boolean, default: false }
+    isDisabled: { type: Boolean, default: false }
   },
 
   methods: {
@@ -59,60 +51,21 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-$width-on-base: max(20vw,140px)
-$width-on-large: max(30vw,160px)
-
 .button
   +pos-r
-  +br-md
   +focus-effect
   +brdr(none)
-  +clr-bg(button)
   +clickable
-  +block
-  +size(100% 40px)
-  text-align: center
+  +center-text
+  +w(min 40px)
+  +h(min 30px)
+  background: none
   overflow: hidden
 
-  +lt-mobile
-    +w($width-on-base)
-    +inline-block
-    +m(large)
-      +w($width-on-large)
-
-  +e(loader)
-    +center
-    +size(20px)
-
-  +e(text)
-    +center
-    +w(100%)
-    +fnt-base
-    white-space: nowrap
-
   &[disabled="disabled"]
-    +not-allowed
     opacity: 0.8
+    +not-allowed
 
   +m(loading)
     +not-allowed
-
-  +m(cta)
-    +clr-bg(primary)
-    .button__text
-      +clr-txt(light)
-
-  +m(large)
-    +h(50px)
-    .button__loader
-      +size(35px)
-    .button__text
-      +fnt-xl
-
-  +m(dont-block-on-mobile)
-    +w($width-on-base)
-
-  +m(block)
-    +block
-    +w(100%)
 </style>

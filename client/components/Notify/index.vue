@@ -35,7 +35,6 @@ $offset: 10px
   grid-template-columns: 1fr
   +pos-f(bottom $offset right $offset)
   +w(100%)
-  +clr-txt(light)
   +not-clickable
 
   .notification
@@ -51,9 +50,10 @@ $offset: 10px
       max-width: calc(var(--screen-tablet) - #{$offset * 2})
       text-align: left
 
-    &__content
+    +e(content)
       +br-sm
       +pa(10px 20px)
+      +clr-txt(light)
 
     // Set notifications colors
     @each $type in success error warn info

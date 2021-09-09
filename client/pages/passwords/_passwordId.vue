@@ -4,7 +4,7 @@
     <box tag="main">
       {{ password }}
     </box>
-    <button-base @click="deletePassword" is-cta width="200px">
+    <button-base @click="deletePassword" cta width="200px">
       delete password
     </button-base>
   </container>

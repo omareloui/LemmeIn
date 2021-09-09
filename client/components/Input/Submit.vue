@@ -1,14 +1,15 @@
 <template>
-  <button-base
+  <button-main
     type="submit"
     class="submit"
-    is-cta
-    is-large
+    cta
+    large
+    block
     @keyup.enter="$emit('enter')"
     v-bind="{ isLoading }"
   >
     <slot>Submit</slot>
-  </button-base>
+  </button-main>
 </template>
 
 <script lang="ts">

@@ -110,9 +110,9 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// form
-//   display: grid
-//   gap: 15px
+form
+  display: grid
+  gap: 15px
 </style>

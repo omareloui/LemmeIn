@@ -2,12 +2,12 @@
   <i
     class="icon-wrapper"
     :class="{ 'icon-wrapper--is-clickable': isClickable }"
-    :style="{ width: size, height: size }"
+    :style="{ width: width || size, height: height || size }"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
   >
     <svg
-      :viewBox="`0 0 ${viewBox} ${viewBox}`"
+      :viewBox="`0 0 ${viewBox}`"
       :style="{ fill, stroke }"
       :tabindex="isFocusable ? 0 : -1"
     >
@@ -25,7 +25,9 @@ export default Vue.extend({
   props: {
     name: { type: String, required: true },
     size: { type: String, default: "25px" },
-    viewBox: { type: Number, default: 32 },
+    width: { type: String },
+    height: { type: String },
+    viewBox: { type: String, default: "32 32" },
     fill: { type: String },
     stroke: { type: String },
     isClickable: { type: Boolean, default: false },
@@ -44,10 +46,13 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .icon-wrapper
+  +pos-r
   +inline-block
   svg
+    +center
     +focus-effect(icon)
     +clr(text-main, fill)
+    +size(100%)
 
   +m(is-clickable)
     +clickable
