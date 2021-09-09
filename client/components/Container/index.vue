@@ -33,31 +33,31 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// .container
-//   +px(10px)
+.container
+  +px(10px)
 
-//   +screen-larger-than-desktop
-//     --container-width: calc(var(--screen-desktop) - 20px)
-//     +ma(auto)
-//     +px(0)
-//     min-width: var(--container-width)
-//     max-width: var(--container-width)
-//     width: var(--container-width)
+  +lt-desktop
+    --container-width: calc(var(--screen-desktop) - 20px)
+    +ma(auto)
+    +px(0)
+    min-width: var(--container-width)
+    max-width: var(--container-width)
+    width: var(--container-width)
 
-//     &--custom
-//       min-width: var(--custom-width)
-//       max-width: var(--custom-width)
-//       width: var(--custom-width)
+    +m(custom)
+      min-width: var(--custom-width)
+      max-width: var(--custom-width)
+      width: var(--custom-width)
 
-//     &--has-padding-bottom
-//       +pb(30px)
+    +m(has-padding-bottom)
+      +pb(30px)
 
-//   &__heading
-//     +clr-txt(primary)
-//     text-align: center
-//     overflow: hidden
-//     +screen-larger-than-tablet
-//       text-align: left
+  +e(heading)
+    +clr-txt(primary)
+    text-align: center
+    overflow: hidden
+    +lt-tablet
+      text-align: left
 </style>

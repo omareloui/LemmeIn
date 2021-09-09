@@ -19,7 +19,7 @@
         <loader-primary
           :size="isLarge ? 35 : 20"
           :stroke-width="isLarge ? 3 : 2"
-          :color="isCta ? 'light' : 'primary'"
+          :color="isCta ? 'text-light' : 'primary'"
         ></loader-primary>
       </span>
     </transition>
@@ -57,61 +57,62 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// $width-on-base: 130px
-// $width-on-large: 180px
+$width-on-base: max(20vw,140px)
+$width-on-large: max(30vw,160px)
 
-// .button
-//   +pos-r
-//   +br-md
-//   +focus-effect
-//   +brdr(none)
-//   +clr-bg(button)
-//   +clickable
-//   +block
-//   +size(100% 40px)
-//   text-align: center
-//   overflow: hidden
+.button
+  +pos-r
+  +br-md
+  +focus-effect
+  +brdr(none)
+  +clr-bg(button)
+  +clickable
+  +block
+  +size(100% 40px)
+  text-align: center
+  overflow: hidden
 
-//   +screen-larger-than-mobile
-//     +w($width-on-base)
-//     +inline-block
-//     +m(large)
-//       +w($width-on-large)
+  +lt-mobile
+    +w($width-on-base)
+    +inline-block
+    +m(large)
+      +w($width-on-large)
 
-//   +e(loader)
-//     +center
-//     +size(20px)
-//   +e(text)
-//     +center
-//     +w(100%)
-//     +fnt-base
-//     white-space: nowrap
+  +e(loader)
+    +center
+    +size(20px)
 
-//   &[disabled="disabled"]
-//     +not-allowed
-//     opacity: 0.8
+  +e(text)
+    +center
+    +w(100%)
+    +fnt-base
+    white-space: nowrap
 
-//   +m(loading)
-//     +not-allowed
+  &[disabled="disabled"]
+    +not-allowed
+    opacity: 0.8
 
-//   +m(cta)
-//     +clr-bg(primary)
-//     .button__text
-//       +clr-txt(light)
+  +m(loading)
+    +not-allowed
 
-//   +m(large)
-//     +h(50px)
-//     .button__loader
-//       +size(35px)
-//     .button__text
-//       +fnt-xl
+  +m(cta)
+    +clr-bg(primary)
+    .button__text
+      +clr-txt(light)
 
-//   +m(dont-block-on-mobile)
-//     +w($width-on-base)
+  +m(large)
+    +h(50px)
+    .button__loader
+      +size(35px)
+    .button__text
+      +fnt-xl
 
-//   +m(block)
-//     +block
-//     +w(100%)
+  +m(dont-block-on-mobile)
+    +w($width-on-base)
+
+  +m(block)
+    +block
+    +w(100%)
 </style>

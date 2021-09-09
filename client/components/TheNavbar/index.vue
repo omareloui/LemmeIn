@@ -2,24 +2,30 @@
   <header>
     <container no-heading>
       <div class="home">
-        <nuxt-link to="/">lemme in</nuxt-link>
+        <nuxt-link to="/">
+          <icon name="logo" size="50px" fill="hsl(var(--clr-primary))"></icon>
+        </nuxt-link>
       </div>
 
+      <span class="gap"></span>
+
       <!-- <div class="theme">
-        <button-base @click="$accessor.theme.toggleTheme()"
-          >toggle theme</button-base
-        >
-      </div> -->
+        <button-base @click="$accessor.theme.toggleTheme()">
+          toggle theme
+        </button-base>
+      </div>
+      -->
 
       <nav class="auth">
-        <button-base v-if="$accessor.auth.isSigned" @click="signout"
-          >Signout</button-base
+        <nuxt-link to="/signin" v-if="!$accessor.auth.isSigned"
+          >Sign in</nuxt-link
         >
-        <link-button to="/signin" v-if="!$accessor.auth.isSigned"
-          >Sign in</link-button
-        >
-        <link-button to="/sign-up" v-if="!$accessor.auth.isSigned" is-cta
-          >Sign up</link-button
+        <nuxt-link
+          class="cta"
+          to="/sign-up"
+          v-if="!$accessor.auth.isSigned"
+          is-cta
+          >Sign up</nuxt-link
         >
       </nav>
     </container>
@@ -40,39 +46,44 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// header
-//   +py(10px)
-//   +pos-s(top 0)
-//   +zi(nav)
-//   +clr-bg(nav)
-//   +bxs(dark, 0px, -7px, 11px)
+header
+  +py(10px)
+  +pos-s(top 0)
+  +zi(nav)
+  *
+    +fnt(nav)
 
-//   &::v-deep .container
-//     display: grid
-//     grid-template-columns: 1fr 1fr
-//     // grid-template-columns: 1fr 4fr 1fr 2fr
-//     // grid-template-areas: "home - theme auth"
-//     gap: 10px
+  &::v-deep .container
+    display: grid
+    grid-template-columns: 1fr auto 2fr
+    grid-template-areas: "home - auth"
+    gap: 10px
+    place-items: center
 
-//     // Add grid area
-//     // @each $grid-area in home theme auth
-//     //   .#{$grid-area}
-//     //     grid-area: #{$grid-area}
+  // Add grid area
+  @each $grid-area in home auth
+    .#{$grid-area}
+      grid-area: #{$grid-area}
 
-//   .auth
-//     justify-self: right
-//     display: grid
-//     grid-template-columns: 1fr 1fr
-//     gap: 5px
+  .home
+    justify-self: start
+    +size(50px)
+    a
+      display: inline-block
+      +size(100%)
 
-//   .home
-//     +fnt-xl
-//     justify-self: left
-
-//     // +center-text
-//     a
-//       +clr-txt(primary)
-//       text-decoration: none
+  .auth
+    justify-self: right
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 15px
+    +no-wrap
+    a
+      +no-underline
+      +clr-txt
+      +fnt-xl
+      &.cta
+        +clr-txt(primary)
 </style>

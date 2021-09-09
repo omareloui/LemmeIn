@@ -13,17 +13,17 @@
   }
 }
 
-@mixin screen-larger-than-mobile {
+@mixin lt-mobile {
   @include screen("mobile") {
     @content;
   }
 }
-@mixin screen-larger-than-tablet {
+@mixin lt-tablet {
   @include screen("tablet") {
     @content;
   }
 }
-@mixin screen-larger-than-desktop {
+@mixin lt-desktop {
   @include screen("desktop") {
     @content;
   }

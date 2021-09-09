@@ -31,31 +31,31 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// svg
-//   width: var(--loader-primary-size)
-//   height: var(--loader-primary-size)
-//   animation: rotate calc(var(--loader-primary-speed) / 2) linear infinite
+svg
+  width: var(--loader-primary-size)
+  height: var(--loader-primary-size)
+  animation: rotate calc(var(--loader-primary-speed) / 2) linear infinite
 
-//   circle
-//     +size(100%)
-//     fill: none
-//     stroke: var(--stroke-clr)
-//     stroke-width: var(--stroke-width)
-//     stroke-dasharray: calc(var(--loader-primary-size) * 3)
-//     stroke-dashoffset: calc(var(--loader-primary-size) * 3)
-//     animation: primary-loader var(--loader-primary-speed) linear infinite
+  circle
+    +size(100%)
+    fill: none
+    stroke: var(--stroke-clr)
+    stroke-width: var(--stroke-width)
+    stroke-dasharray: calc(var(--loader-primary-size) * 3)
+    stroke-dashoffset: calc(var(--loader-primary-size) * 3)
+    animation: primary-loader var(--loader-primary-speed) linear infinite
 
-// @keyframes primary-loader
-//   0%, 100%
-//     stroke-dashoffset: calc(var(--loader-primary-size) * 3)
-//   50%
-//     stroke-dashoffset: 0
-//   50.1%
-//     stroke-dashoffset: calc(var(--loader-primary-size) * 6)
+@keyframes primary-loader
+  0%, 100%
+    stroke-dashoffset: calc(var(--loader-primary-size) * 3)
+  50%
+    stroke-dashoffset: 0
+  50.1%
+    stroke-dashoffset: calc(var(--loader-primary-size) * 6)
 
-// @keyframes rotate
-//   to
-//     transform: rotate(360deg)
+@keyframes rotate
+  to
+    transform: rotate(360deg)
 </style>

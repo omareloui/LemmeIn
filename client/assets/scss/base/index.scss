@@ -17,11 +17,12 @@
   @include ff.fnt(body);
   @include fs.fnt-base;
   @include c.clr-txt;
-  @include t.tran(color background);
+  @include t.tran(color background fill);
 }
 
 body {
   @include c.clr-bg;
+  scroll-padding-top: var(--header-height);
 }
 
 @for $size-number from 1 through 6 {

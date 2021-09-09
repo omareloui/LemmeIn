@@ -41,13 +41,14 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// .icon-wrapper
-//   +inline-block
-//   svg
-//     +focus-effect(icon)
+.icon-wrapper
+  +inline-block
+  svg
+    +focus-effect(icon)
+    +clr(text-main, fill)
 
-//   &--is-clickable
-//     +clickable
+  +m(is-clickable)
+    +clickable
 </style>

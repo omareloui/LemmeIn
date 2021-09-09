@@ -8,6 +8,7 @@ $fonts-names: (
 
 $fonts-families: (
   heading: map.get($fonts-names, "be-vietnam"),
+  nav: map.get($fonts-names, "be-vietnam"),
   body: map.get($fonts-names, "space-mono")
 );
 

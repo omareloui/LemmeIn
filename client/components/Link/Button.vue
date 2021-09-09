@@ -26,26 +26,27 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// ::v-deep.link
-
-//   &.link-button
-//     +br-sm
-//     +ma(0)
-//     +pa(5px 10px)
-//     +clr-bg(button)
-//     +brdr(none)
-//     +clickable
-//     text-align: center
-//     &:not(.link-button--cta):hover
-//       +clr-txt
-//     &::before
-//       +remove
-//     &--cta
-//       +clr-bg(primary)
-//       +clr-txt(light)
-//     &--disabled
-//       opacity: 0.8
-//       +not-allowed
+::v-deep.link
+  &.link-button
+    +br-sm
+    +ma(0)
+    +pa(5px 10px)
+    +clr-bg(button)
+    +brdr(none)
+    +clickable
+    +no-underline
+    +clr-txt
+    +center-text
+    &:not(.link-button--cta):hover
+      +clr-txt
+    &::before
+      +remove
+    &--cta
+      +clr-bg(primary)
+      +clr-txt(light)
+    &--disabled
+      opacity: 0.8
+      +not-allowed
 </style>
