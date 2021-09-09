@@ -36,7 +36,8 @@ const nuxt: NuxtConfig = {
   css: [
     "~/assets/scss/core/index.scss",
     "~/assets/scss/variables/index.scss",
-    "~/assets/scss/base/index.scss"
+    "~/assets/scss/base/index.scss",
+    "~/assets/scss/utilities/index.scss"
   ],
   plugins: [
     { src: "~/plugins/axios" },

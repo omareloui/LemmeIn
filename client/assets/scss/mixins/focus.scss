@@ -18,7 +18,7 @@
         @include c.clr(focus, border-color);
         @include c.clr(light, background);
       } @else if ($effect == icon) {
-        @include c.clr(focus, fill);
+        @include c.clr(focus-icon, fill);
       } @else {
         @error "Invalid focus effect value: #{$effect}.";
       }

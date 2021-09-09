@@ -1,9 +1,14 @@
 <template>
   <header>
     <container no-heading>
-      <div class="home">
+      <div class="home header--left">
         <nuxt-link to="/">
-          <icon name="logo" size="50px" fill="hsl(var(--clr-primary))"></icon>
+          <icon
+            name="logo"
+            size="50px"
+            fill="hsl(var(--clr-primary))"
+            view-box="32 30"
+          ></icon>
         </nuxt-link>
       </div>
 
@@ -13,20 +18,37 @@
         <button-base @click="$accessor.theme.toggleTheme()">
           toggle theme
         </button-base>
-      </div>
-      -->
+      </div> -->
 
-      <nav class="auth">
-        <nuxt-link to="/signin" v-if="!$accessor.auth.isSigned"
-          >Sign in</nuxt-link
-        >
-        <nuxt-link
-          class="cta"
-          to="/sign-up"
-          v-if="!$accessor.auth.isSigned"
-          is-cta
-          >Sign up</nuxt-link
-        >
+      <div class="menu header--right" v-if="$accessor.auth.isSigned">
+        <button-nav
+          class="menu__button"
+          icon="nav-menu"
+          icon-view-box="32 7.5"
+        />
+
+        <nav class="menu__options">
+          <button-nav
+            :icon="
+              $accessor.theme.currentTheme === 'light'
+                ? 'dark-theme'
+                : 'light-theme'
+            "
+            :icon-view-box="
+              $accessor.theme.currentTheme === 'light' ? '30.9 32' : '32 32'
+            "
+            @click="$accessor.theme.toggleTheme"
+            :description="`${
+              $accessor.theme.currentTheme === 'dark' ? 'light' : 'dark'
+            } theme`"
+          />
+          <button-nav icon="logout" @click="signout" description="logout" />
+        </nav>
+      </div>
+
+      <nav class="auth header--right" v-else>
+        <nuxt-link to="/signin">Sign in</nuxt-link>
+        <nuxt-link class="cta" to="/sign-up" is-cta>Sign up</nuxt-link>
       </nav>
     </container>
   </header>
@@ -51,31 +73,39 @@ export default Vue.extend({
 header
   +py(10px)
   +pos-s(top 0)
+  // +pos-f(top 0)
+  // +w(100%)
   +zi(nav)
+  overflow-x: hidden
+  overflow-y: unset
   *
     +fnt(nav)
 
   &::v-deep .container
     display: grid
     grid-template-columns: 1fr auto 2fr
-    grid-template-areas: "home - auth"
+    grid-template-areas: "header-left - header-right"
     gap: 10px
     place-items: center
 
-  // Add grid area
-  @each $grid-area in home auth
-    .#{$grid-area}
-      grid-area: #{$grid-area}
+  // Add grid areas
+  @each $grid-area in left right
+    .header--#{$grid-area}
+      grid-area: header-#{$grid-area}
+
+  .header
+    +m(left)
+      justify-self: start
+    +m(right)
+      justify-self: right
 
   .home
-    justify-self: start
-    +size(50px)
+    +size(50px 46px)
     a
       display: inline-block
       +size(100%)
 
   .auth
-    justify-self: right
     display: grid
     grid-template-columns: 1fr 1fr
     gap: 15px
