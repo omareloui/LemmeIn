@@ -25,25 +25,28 @@
           class="menu__button"
           icon="nav-menu"
           icon-view-box="32 7.5"
+          @click="toggleMenu"
         />
 
-        <nav class="menu__options">
-          <button-nav
-            :icon="
-              $accessor.theme.currentTheme === 'light'
-                ? 'dark-theme'
-                : 'light-theme'
-            "
-            :icon-view-box="
-              $accessor.theme.currentTheme === 'light' ? '30.9 32' : '32 32'
-            "
-            @click="$accessor.theme.toggleTheme"
-            :description="`${
-              $accessor.theme.currentTheme === 'dark' ? 'light' : 'dark'
-            } theme`"
-          />
-          <button-nav icon="logout" @click="signout" description="logout" />
-        </nav>
+        <transition name="nav-menu">
+          <nav class="menu__options" v-if="isOptionsShown">
+            <button-nav
+              :icon="
+                $accessor.theme.currentTheme === 'light'
+                  ? 'dark-theme'
+                  : 'light-theme'
+              "
+              :icon-view-box="
+                $accessor.theme.currentTheme === 'light' ? '30.9 32' : '32 32'
+              "
+              @click="$accessor.theme.toggleTheme"
+              :description="`${
+                $accessor.theme.currentTheme === 'dark' ? 'light' : 'dark'
+              } theme`"
+            />
+            <button-nav icon="logout" @click="signout" description="logout" />
+          </nav>
+        </transition>
       </div>
 
       <nav class="auth header--right" v-else>
@@ -58,10 +61,24 @@
 import Vue from "vue"
 
 export default Vue.extend({
+  data: () => ({
+    isOptionsShown: false
+  }),
+
   methods: {
     async signout() {
       await this.$accessor.auth.signOut()
       this.$router.push("/")
+    },
+    closeMenu() {
+      this.isOptionsShown = false
+    },
+    openMenu() {
+      this.isOptionsShown = true
+    },
+    toggleMenu() {
+      if (this.isOptionsShown) this.closeMenu()
+      else this.openMenu()
     }
   }
 })
@@ -72,14 +89,9 @@ export default Vue.extend({
 
 header
   +py(10px)
-  +pos-s(top 0)
-  // +pos-f(top 0)
-  // +w(100%)
   +zi(nav)
-  overflow-x: hidden
-  overflow-y: unset
-  *
-    +fnt(nav)
+  +pos-s(top 0)
+  height: var(--header-height)
 
   &::v-deep .container
     display: grid
@@ -105,6 +117,13 @@ header
       display: inline-block
       +size(100%)
 
+  .menu
+    +e(options)
+      +pos-a
+      top: calc(var(--header-height) + 10px)
+      display: grid
+      gap: 10px
+
   .auth
     display: grid
     grid-template-columns: 1fr 1fr
@@ -113,6 +132,7 @@ header
     a
       +no-underline
       +clr-txt
+      +fnt(nav)
       +fnt-xl
       &.cta
         +clr-txt(primary)

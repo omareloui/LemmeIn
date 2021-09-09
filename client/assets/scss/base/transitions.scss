@@ -41,3 +41,14 @@
 .page-leave-to {
   opacity: 0;
 }
+
+// navbar menu
+.nav-menu-enter-active,
+.nav-menu-leave-active {
+  @include t.tran(transform opacity);
+}
+.nav-menu-enter,
+.nav-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-100%);
+}

@@ -63,6 +63,7 @@ export default Vue.extend({
 .button-nav
   +pos-r
   +e(button)
+    +pos-unset
     +br-cr
     ::v-deep
       .button__content
@@ -76,10 +77,11 @@ export default Vue.extend({
     +pos-a(top 50% right 120%)
     +no-select
     opacity: 0
-    transform: translate(100% , -50%)
+    transform: translate(50px , -50%)
     +tran
     +w(max-content)
     span
+      +fnt(nav)
       +inline-block
       +pa(5px)
       +fnt-xs
