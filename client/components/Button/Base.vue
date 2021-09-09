@@ -2,27 +2,12 @@
   <button
     :type="type"
     class="button"
-    :class="{ 'button--loading': isLoading }"
     :style="{ width: width || size, height: height || size }"
     :disabled="isDisabled"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
   >
-    <transition name="fade">
-      <span class="button__loader" v-if="isLoading">
-        <loader-primary
-          :size="large ? 35 : 20"
-          :stroke-width="large ? 3 : 2"
-          :color="cta ? 'text-light' : 'primary'"
-        ></loader-primary>
-      </span>
-    </transition>
-
-    <transition name="fade">
-      <span v-if="!isLoading" class="button__content">
-        <slot></slot>
-      </span>
-    </transition>
+    <slot></slot>
   </button>
 </template>
 
@@ -35,7 +20,6 @@ export default Vue.extend({
     width: { type: String },
     height: { type: String },
     size: { type: String },
-    isLoading: { type: Boolean, default: false },
     isDisabled: { type: Boolean, default: false }
   },
 
@@ -64,8 +48,5 @@ export default Vue.extend({
 
   &[disabled="disabled"]
     opacity: 0.8
-    +not-allowed
-
-  +m(loading)
     +not-allowed
 </style>

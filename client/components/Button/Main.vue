@@ -7,16 +7,25 @@
       'button-main--large': large,
       'button-main--dont-block-on-mobile': dontBlockOnMobile
     }"
-    v-bind="{
-      type,
-      width,
-      isLoading,
-      isDisabled
-    }"
+    v-bind="{ type, width, isDisabled }"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
   >
-    <slot></slot>
+    <transition name="fade">
+      <span class="button-main__loader" v-if="isLoading">
+        <loader-primary
+          :size="large ? 35 : 20"
+          :stroke-width="large ? 3 : 2"
+          :color="cta ? 'text-light' : 'primary'"
+        ></loader-primary>
+      </span>
+    </transition>
+
+    <transition name="fade">
+      <span v-if="!isLoading" class="button-main__content">
+        <slot></slot>
+      </span>
+    </transition>
   </button-base>
 </template>
 
@@ -61,11 +70,11 @@ $width-on-large: max(30vw,160px)
     +m(large)
       +w($width-on-large)
 
-  ::v-deep .button__loader
+  +e(loader)
+    +not-allowed
     +center
-    +size(20px)
 
-  ::v-deep .button__content
+  +e(content)
     +inline-block
     +center
     +w(100%)
@@ -73,18 +82,19 @@ $width-on-large: max(30vw,160px)
 
   +m(cta)
     +clr-bg(primary)
-    ::v-deep .button__content
+    .button-main__content
       +clr-txt(light)
 
   +m(large)
     +h(50px)
-    ::v-deep .button__loader
+    .button-main__loader
       +size(35px)
-    ::v-deep .button__content
+    .button-main__content
       +fnt-xl
 
   +m(dont-block-on-mobile)
     +w($width-on-base)
+
   +lt-mobile
     +m(block)
       +block
