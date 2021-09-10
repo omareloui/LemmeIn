@@ -2,14 +2,16 @@
   <header>
     <container no-heading>
       <div class="home header--left">
-        <nuxt-link to="/">
-          <icon
-            name="logo"
-            size="50px"
-            fill="hsl(var(--clr-primary))"
-            view-box="32 30"
-          ></icon>
-        </nuxt-link>
+        <glass-card class="glass-nav" no-back-shape tint="background-main">
+          <nuxt-link to="/">
+            <icon
+              name="logo"
+              size="100%"
+              fill="hsl(var(--clr-primary))"
+              view-box="32 30"
+            ></icon>
+          </nuxt-link>
+        </glass-card>
       </div>
 
       <span class="gap"></span>
@@ -38,8 +40,10 @@
 
       <transition name="fade">
         <nav class="auth header--right" v-if="!isSigned">
-          <nuxt-link to="/signin">Sign in</nuxt-link>
-          <nuxt-link class="cta" to="/sign-up" is-cta>Sign up</nuxt-link>
+          <glass-card class="glass-nav" no-back-shape tint="background-main">
+            <nuxt-link to="/signin">Sign in</nuxt-link>
+            <nuxt-link class="cta" to="/sign-up" is-cta>Sign up</nuxt-link>
+          </glass-card>
         </nav>
       </transition>
     </container>
@@ -180,12 +184,19 @@ header
   +pos-s(top 0)
   height: var(--header-height)
 
+  .glass-nav
+    +size(100%)
+    &::v-deep .glass__body
+      +size(100%)
+      +pa(5px)
+
   &::v-deep .container
     display: grid
     grid-template-columns: 1fr auto 2fr
     grid-template-areas: "header-left - header-right"
     gap: 10px
     place-items: center
+    height: 100%
 
   // Add grid areas
   @each $grid-area in left right
@@ -199,7 +210,7 @@ header
       justify-self: right
 
   .home
-    +size(50px 46px)
+    +size(76px 70px)
     a
       display: inline-block
       +size(100%)
@@ -212,10 +223,12 @@ header
       gap: 10px
 
   .auth
-    display: grid
-    grid-template-columns: 1fr 1fr
-    gap: 15px
-    +no-wrap
+    .glass-nav
+      +w(min-content)
+      display: grid
+      grid-template-columns: 1fr 1fr
+      gap: 15px
+      +no-wrap
     a
       +no-underline
       +clr-txt
