@@ -73,7 +73,7 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 
   computed: {
     fields(): FormField[] {
-      return this.formFields.filter(x => x === GAP) as FormField[]
+      return this.formFields.filter(x => x !== GAP) as FormField[]
     },
     values(): Values {
       const neededResult: Values = {}
