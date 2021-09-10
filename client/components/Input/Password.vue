@@ -36,7 +36,7 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
     value: { type: String, required: true },
     identifier: { type: String, default: "password" },
     name: { type: String },
-    placeholder: { type: String, default: "Make sure it's long and secure" },
+    placeholder: { type: String, default: "*********" },
     hint: { type: String },
     label: { type: String, default: "Password" },
     minLength: { type: Number, default: 8 },
