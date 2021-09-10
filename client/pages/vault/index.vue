@@ -1,7 +1,7 @@
  <template>
   <container>
     <template #heading>The vault</template>
-    <box tag="main">
+    <main>
       <container no-heading custom-max-width="600px">
         <form-generator
           v-bind="{ formFields }"
@@ -15,7 +15,7 @@
           {{ password.title }}
         </link-base>
       </div>
-    </box>
+    </main>
   </container>
 </template>
 
