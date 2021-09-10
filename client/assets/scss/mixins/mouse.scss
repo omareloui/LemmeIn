@@ -4,6 +4,7 @@
 
 @mixin clickable {
   cursor: pointer;
+  pointer-events: all;
 }
 
 @mixin no-select {

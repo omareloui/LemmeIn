@@ -193,6 +193,7 @@ header
   +py(10px)
   +zi(nav)
   +pos-s(top 0)
+  +not-clickable
   height: var(--header-height)
 
   .glass-nav
@@ -225,6 +226,7 @@ header
     a
       display: inline-block
       +size(100%)
+      +clickable
 
   .menu
     +e(options)
