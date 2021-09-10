@@ -81,7 +81,6 @@ export default Vue.extend({
     +tran
     +w(max-content)
     span
-      +fnt(nav)
       +inline-block
       +pa(5px)
       +fnt-xs
