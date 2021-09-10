@@ -28,7 +28,7 @@
           <transition name="nav-menu">
             <nav class="menu__options" v-if="isOptionsShown">
               <button-nav
-                v-for="(option, index) in menuOptions"
+                v-for="(option, index) in menuOptions.filter(x => !x.doNotShow)"
                 :key="index"
                 v-bind="option.button"
                 @click="option.onClick"
@@ -88,6 +88,17 @@ export default Vue.extend({
             iconViewBox: "31.1 32"
           },
           onClick: () => this.$router.push("/passwords-health")
+        },
+        {
+          button: {
+            icon: "dashboard",
+            description: "dashboard",
+            iconViewBox: "32 26.7"
+          },
+          onClick: () => this.$router.push("/dashboard"),
+          doNotShow:
+            !this.$accessor.auth.isSigned ||
+            this.$accessor.auth.user?.role !== "admin"
         },
         {
           button: {
