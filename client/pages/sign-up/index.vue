@@ -9,15 +9,28 @@
 
 <script lang="ts">
 import Vue from "vue"
+import { FormField } from "~/components/Form/Generator.vue"
 
 export default Vue.extend({
   data: () => ({
     formFields: [
-      { id: "firstName", type: "text", label: "First Name", value: "" },
-      { id: "lastName", type: "text", label: "Last Name", value: "" },
+      {
+        id: "firstName",
+        type: "text",
+        label: "First Name",
+        value: "",
+        style: "half"
+      },
+      {
+        id: "lastName",
+        type: "text",
+        label: "Last Name",
+        value: "",
+        style: "half"
+      },
       { id: "email", type: "email", value: "" },
       { id: "password", type: "password", value: "" }
-    ]
+    ] as FormField[]
   }),
   methods: {
     async register(values: { [fieldId: string]: unknown }) {

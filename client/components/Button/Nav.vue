@@ -3,7 +3,7 @@
     <glass-circle
       v-bind="{ size }"
       float
-      back-shape-size="40%"
+      back-shape-size="58%"
       tint="background-main"
       back-shape-color="info"
       :blur="2"
@@ -45,7 +45,7 @@ export default Vue.extend({
     description: { type: String },
     icon: { type: String, required: true },
     iconViewBox: { type: String, default: "32 32" },
-    iconSize: { type: String, default: "20px" }
+    iconSize: { type: String, default: "18px" }
   },
 
   methods: {

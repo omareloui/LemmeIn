@@ -9,22 +9,30 @@
       'input-wrapper--has-right-icon': !!rightIcon
     }"
   >
+    <glass-card
+      tint="background-tertiary"
+      no-back-shape
+      :opacity="40"
+      :blur="5"
+      border-radius="md"
+    >
+      <input
+        @focus="onFocus"
+        @blur="onBlur"
+        :type="type"
+        :id="identifier"
+        :name="name || identifier"
+        :placeholder="placeholderValue"
+        :autocomplete="noAutocomplete ? 'off' : 'on'"
+        :value="value"
+        @input="onInput"
+        class="input"
+      />
+    </glass-card>
+
     <label v-if="label" :for="identifier" class="label">
       {{ label }}
     </label>
-
-    <input
-      @focus="onFocus"
-      @blur="onBlur"
-      :type="type"
-      :id="identifier"
-      :name="name || identifier"
-      :placeholder="placeholder || ''"
-      :autocomplete="noAutocomplete ? 'off' : 'on'"
-      :value="value"
-      @input="onInput"
-      class="input"
-    />
 
     <transition name="fade">
       <span v-if="!!errorMessage" class="error">{{ errorMessage }}</span>
@@ -67,6 +75,7 @@ export default Vue.extend({
     name: { type: String },
     type: { type: String, default: "text" },
     placeholder: { type: String },
+    hint: { type: String },
     label: { type: String },
 
     minLength: { type: Number, default: 3 },
@@ -99,6 +108,13 @@ export default Vue.extend({
 
     trimmedValue(): string {
       return this.value.trim()
+    },
+    placeholderValue(): string {
+      if (this.isFocus && !this.value) {
+        if (this.placeholder) return this.placeholder
+        if (this.hint) return `eg. ${this.hint}`
+      }
+      return ""
     }
   },
 
@@ -161,66 +177,64 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// .input-wrapper
-//   +pos-r
-//   +tran
+.input-wrapper
+  +pos-r
+  +tran
 
-//   .input
-//     +size(100% 45px)
-//     +pa(10px)
-//     +clr-txt
-//     +clr-bg(input-background)
-//     +tran
-//     +input-search-reset
-//     +br-md
-//     +focus-effect(input)
-//     +fnt-base
-//     +brdr(input-border)
+  .input
+    +size(100% 45px)
+    +clr-bg(none)
+    +brdr(none)
+    +pa(10px 20px)
+    +tran
+    +input-search-reset
+    +br-md
+    +focus-effect(input, focus focus-visible)
 
-//   &--has-label
-//     +mt(15px)
+  +m(has-label)
+    +mt(15px)
 
-//   .label
-//     +tran
-//     +center-v
-//     +pos-a(left 10px)
-//     +clr-txt
-//     +fnt-medium
-//     +no-select
-//     opacity: 0.6
+  .label
+    +tran
+    +center-v
+    +pos-a(left 10px)
+    +clr-txt
+    +fnt-medium
+    +no-select
+    opacity: 0.6
 
-//   &--hover-label
-//     .label
-//       top: -10px
-//       left: 5px !important
-//       opacity: 1
-//       +fnt-xs
+  +m(hover-label)
+    .label
+      top: -10px
+      left: 5px !important
+      opacity: 1
+      +fnt-xs
 
-//   &--has-error
-//     +mb(15px)
-//     .label
-//       +clr-txt(error)
+  +m(has-error)
+    +mb(15px)
+    .label
+      +clr-txt(error)
 
-//     .input
-//       +clr(error, border-color)
+    .input
+      +clr(error, border-color)
 
-//   .error
-//     +pos-a(left 10px top 50px)
-//     +clr-txt(error)
-//     +fnt-xs
+  .error
+    +pos-a(left 10px top 50px)
+    +clr-txt(error)
+    +fnt-xs
 
-//   &--has-left-icon
-//     .label
-//       left: 50px
+  +m(has-left-icon)
+    .label
+      left: 50px
 
-//   @each $side in right left
-//     .icon--#{$side}
-//       +center-v
-//       #{$side}: 12px
+  @each $side in right left
+    .icon--#{$side}
+      +center-v
+      #{$side}: 12px
 
-//     &--has-#{$side}-icon
-//       .input
-//         padding-#{$side}: 50px
+    &--has-#{$side}-icon
+      .input
+        padding-#{$side}: 50px
 </style>

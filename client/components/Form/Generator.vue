@@ -1,7 +1,17 @@
 <template>
   <form @submit.prevent="onSubmit" @keydown.enter.prevent>
-    <box v-for="(field, index) in formFields" :key="index">
+    <div
+      v-for="(field, index) in formFields"
+      :key="index"
+      class="form-field"
+      :class="{
+        'form-field--gap': field === 'gap',
+        'form-field--input': field !== 'gap',
+        'form-field--half': field.style === 'half'
+      }"
+    >
       <component
+        v-if="field !== 'gap'"
         :is="`input-${field.type}`"
         v-model="field.value"
         :ref="field.id"
@@ -9,8 +19,8 @@
         :label="field.label"
         v-bind="{ ...field.props }"
       ></component>
-    </box>
-    <input-submit v-bind="{ isLoading }" @enter="onSubmit">
+    </div>
+    <input-submit v-bind="{ isLoading }" @enter="onSubmit" class="submit">
       {{ submitButtonText }}
     </input-submit>
   </form>
@@ -22,12 +32,24 @@ import { ExtendVueRefs } from "~/@types"
 
 type AcceptableValues = string | string[] | File[]
 type Values = { [fieldId: string]: AcceptableValues }
-interface FormFieldType {
+
+export type Gap = "gap"
+export const GAP: Gap = "gap"
+
+export interface FormField {
   id: string
   type: "text" | "email" | "password" | "select" | "radio" | "check" | "file"
   value: AcceptableValues
   label?: string
-  props?: Partial<{ notRequired: boolean; leftIcon: string }>
+  props?: Partial<{
+    notRequired: boolean
+    leftIcon: string
+    placeholder: string
+    hint: string
+    minLength: number
+    maxLength: number
+  }>
+  style?: "half"
 }
 
 type InputComponent = Vue & { validate: () => void; errorMessage: string }
@@ -36,12 +58,13 @@ type SubmitFunction = (values: Values) => void
 
 export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
   props: {
-    formFields: { type: Array as PropType<FormFieldType[]> },
+    formFields: { type: Array as PropType<(FormField | Gap)[]> },
     submitButtonText: { type: String, default: "Submit" },
     submitFunction: {
       type: Function as PropType<SubmitFunction>,
       required: true
-    }
+    },
+    gridLayout: { type: String }
   },
 
   data: () => ({
@@ -49,9 +72,12 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
   }),
 
   computed: {
+    fields(): FormField[] {
+      return this.formFields.filter(x => x === GAP) as FormField[]
+    },
     values(): Values {
       const neededResult: Values = {}
-      this.formFields.forEach((x: FormFieldType) => {
+      this.fields.forEach((x: FormField) => {
         neededResult[x.id] = x.value
       })
       return neededResult
@@ -85,9 +111,9 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
     },
 
     validate() {
-      const getInputComponent = (x: FormFieldType) =>
+      const getInputComponent = (x: FormField) =>
         (this.$refs[x.id] as InputComponent[])[0]
-      const inputComponents = this.formFields.map(getInputComponent.bind(this))
+      const inputComponents = this.fields.map(getInputComponent.bind(this))
       const validateInput = (inputComponent: InputComponent) =>
         inputComponent.validate()
 
@@ -95,9 +121,9 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
     },
 
     checkIfComponentsHaveError() {
-      const getInputComponent = (x: FormFieldType) =>
+      const getInputComponent = (x: FormField) =>
         (this.$refs[x.id] as InputComponent[])[0]
-      const inputComponents = this.formFields.map(getInputComponent.bind(this))
+      const inputComponents = this.fields.map(getInputComponent.bind(this))
 
       for (let i = 1; i < inputComponents.length; i++) {
         const inputComponent = inputComponents[i]
@@ -115,4 +141,20 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 form
   display: grid
   gap: 15px
+  grid-template-columns: 1fr 1fr
+  .form-field
+    +m(gap)
+      height: 0.7rem
+      grid-column: 1 / 3
+
+    +m(input)
+      grid-column: 1 / 3
+
+    +lt-mobile
+      grid-column: unset
+      &:not(.form-field--half)
+        grid-column: 1 / 3
+
+  .submit
+    grid-column: 1 / 3
 </style>

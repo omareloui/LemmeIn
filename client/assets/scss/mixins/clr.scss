@@ -4,11 +4,17 @@
 @use "../variables/colors-generator" as clrs;
 
 @mixin clr($name, $property: color, $opacity: 100, $important: false) {
-  $color: #{fns.get-clr($name, $opacity)};
-  @if not $important {
-    #{$property}: $color;
+  @if $name == none and not $important {
+    #{$property}: transparent;
+  } @else if $name == none and $important {
+    #{$property}: transparent !important;
   } @else {
-    #{$property}: $color !important;
+    $color: #{fns.get-clr($name, $opacity)};
+    @if not $important {
+      #{$property}: $color;
+    } @else {
+      #{$property}: $color !important;
+    }
   }
 }
 

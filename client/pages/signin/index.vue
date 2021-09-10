@@ -9,14 +9,16 @@
 
 <script lang="ts">
 import Vue from "vue"
+import { FormField } from "~/components/Form/Generator.vue"
 
 export default Vue.extend({
   data: () => ({
     formFields: [
       { id: "email", type: "email", value: "" },
       { id: "password", type: "password", value: "" }
-    ]
+    ] as FormField[]
   }),
+
   methods: {
     async signin(values: { [fieldId: string]: unknown }) {
       const { data: result } = await this.$axios.post("/auth/login", {

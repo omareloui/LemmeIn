@@ -16,7 +16,7 @@
         @include c.clr(focus, background);
       } @else if ($effect == input) {
         @include c.clr(focus, border-color);
-        @include c.clr(light, background);
+        // @include c.clr-bg(tertiary);
       } @else if ($effect == icon) {
         @include c.clr(focus-icon, fill);
       } @else {
