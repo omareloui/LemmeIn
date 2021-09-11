@@ -1,6 +1,6 @@
 <template>
   <div class="floating-menu" :class="{ 'floating-menu--open': isOpen }">
-    <button-nav
+    <button-glass
       class="open-menu"
       icon="add"
       size="50px"
@@ -10,7 +10,7 @@
 
     <transition name="floating-menu">
       <div class="options" v-if="isOpen">
-        <button-nav
+        <button-glass
           v-for="(option, index) in options"
           :key="index"
           class="options__button"

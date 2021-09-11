@@ -18,7 +18,7 @@
 
       <transition name="fade">
         <div class="menu header--right" v-if="isSigned">
-          <button-nav
+          <button-glass
             class="menu__button"
             icon="nav-menu"
             icon-view-box="32 7.5"
@@ -27,7 +27,7 @@
 
           <transition name="nav-menu">
             <nav class="menu__options" v-if="isOptionsShown">
-              <button-nav
+              <button-glass
                 v-for="(option, index) in menuOptions.filter(x => !x.doNotShow)"
                 :key="index"
                 v-bind="option.button"
