@@ -1,3 +1,5 @@
+@use "./paddings-margins.scss" as pm;
+
 @mixin position($position, $args) {
   position: $position;
   @each $o in top right bottom left {
@@ -36,6 +38,11 @@
 @mixin center {
   @include pos-a(top 50% left 50%);
   transform: translate(-50%, -50%);
+}
+@mixin center-inset {
+  @include pos-a;
+  @include pm.ma(auto);
+  inset: 0;
 }
 
 @mixin center-grid {

@@ -8,27 +8,40 @@
     </component>
     <div class="checker-wrapper__options">
       <div v-for="option in options" :key="option.value" class="option">
-        <span
+        <glass-card
           class="option__checkbox"
           :class="{ 'option__checkbox--is-checked': option.isChecked }"
-          tabindex="0"
-          :aria-labelledby="option.id"
           role="checkbox"
-          :aria-checked="option.isChecked ? 'true' : 'false'"
+          :aria="{
+            'aria-labelledby': option.id,
+            'aria-checked': option.isChecked ? 'true' : 'false'
+          }"
+          focusable
           @click="changeCheckbox(option)"
-          @keyup.space="changeCheckbox(option)"
-          @keydown.space.prevent
+          @keyup:space="changeCheckbox(option)"
+          size="35px"
+          tint="background-tertiary"
+          back-shape="circle"
+          :back-shape-color="
+            isErred
+              ? 'error'
+              : option.isChecked
+              ? 'success'
+              : 'background-tertiary'
+          "
+          float
+          center-content
         >
-          <transition name="scale-out">
+          <transition name="input-check">
             <icon
               v-if="option.isChecked"
               name="check"
-              fill="hsla(var(--clr-light))"
+              fill="hsla(var(--clr-text-main))"
               class="option__checkbox-icon"
-              size="15px"
+              size="20px"
             ></icon>
           </transition>
-        </span>
+        </glass-card>
         <label
           class="option__label"
           :id="option.id"
@@ -128,51 +141,45 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// $checker-size: 20px
+$checker-size: 20px
 
-// .checker-wrapper
-//   +tran
-//   +pos-r
-//   &__heading
-//     +clr-txt(primary, 70)
-//     +tran(color, 0.1s)
-//   &__options
-//     display: grid
-//     gap: 10px
-//     .option
-//       +pos-r
-//       &__label
-//         +clickable
-//         +no-select
-//         +ml($checker-size + 5px)
-//         +tran(color, 0.1s)
-//       &__checkbox
-//         display: inline-block
-//         +clr-bg
-//         +center-v
-//         +size($checker-size)
-//         +br-sm
-//         +brdr(input-checkbox)
-//         +clickable
-//         +focus-effect
-//         +tran(all, 0.1s)
-//         &--is-checked
-//           +clr-bg(input-checkbox)
-//   .error
-//     +pos-a(left 25px bottom -20px)
-//     +clr-txt(error)
-//     +fnt-xs
-//     line-height: 10px
+.checker-wrapper
+  +pos-r
+  +tran
+  +e(heading)
 
-//   &--has-error
-//     +mb(30px)
-//     .checker-wrapper__heading
-//       +clr-txt(error, 70)
-//     .option
-//       &__label
-//         +clr-txt(error)
-//       &__checkbox
-//         +clr(error, border-color)
+  +e(options)
+    display: grid
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr))
+    gap: 20px
+
+  .option
+    display: grid
+    place-items: center
+    +pa(10px)
+    +e(checkbox)
+      +pos-r
+      +mb(10px)
+      +clickable
+      ::v-deep .option__checkbox-icon
+        +center-inset
+    +e(label)
+      +clickable
+      +center-text
+
+  .error
+    +pos-a(left 25px bottom -20px)
+    +clr-txt(error)
+    +fnt-xs
+    line-height: 10px
+
+  +m(has-error)
+    +mb(30px)
+    .checker-wrapper__heading
+      +clr-txt(error)
+    .option
+      +e(label)
+        +clr-txt(error)
 </style>

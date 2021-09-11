@@ -19,7 +19,7 @@
     </div>
 
     <div class="password-generator__options">
-      <input-range v-model="length" @input="generate" :min="4" :max="30" />
+      <input-range v-model="length" @input="generate" :min="4" :max="84" />
       <input-check :options="checkBoxes" not-required @input="generate" />
     </div>
   </div>
@@ -215,10 +215,10 @@ export default Vue.extend({
 
     .generated-password
       +fnt-xl
-      +w(min-content)
-      +ma(auto)
+      +my(auto)
       +mb(20px)
-      +no-wrap
+      +break-word
+      +center-text
 
     .regenerate
       +pos-a(top 10px right 15px)

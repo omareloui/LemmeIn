@@ -6,6 +6,10 @@
   white-space: nowrap;
 }
 
+@mixin break-word {
+  word-wrap: break-word;
+}
+
 @mixin center-text {
   text-align: center;
 }

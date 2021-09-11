@@ -26,11 +26,16 @@
     <div
       class="glass__body"
       :class="bodyClasses"
+      :tabindex="focusable ? 0 : -1"
+      @click="$emit('click')"
+      @keyup.space="$emit('keyup:space')"
+      @keydown.space.prevent
       :style="{
         'background-color': `hsl(var(--clr-${tint}) / ${opacity}%)`,
         'backdrop-filter': `blur(${blur}px)`,
         color: `hsl(var(--clr-${textColor}))`
       }"
+      v-bind="{ role, ...aria }"
     >
       <slot></slot>
     </div>
@@ -63,6 +68,10 @@ export default Vue.extend({
         ["none", "sm", "md", "lg", "xl"].indexOf(v) > -1,
       default: "md"
     },
+
+    focusable: { type: Boolean, default: false },
+    role: { type: String },
+    aria: { type: Object },
 
     noBackShape: { type: Boolean, default: false },
     backShape: {
@@ -110,6 +119,7 @@ export default Vue.extend({
 
   +e(body)
     +size(100%)
+    +focus-effect
 
   +e(back-shape)
     +inline-block

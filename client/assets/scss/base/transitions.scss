@@ -72,3 +72,13 @@
   opacity: 0;
   transform: translateY(100%);
 }
+
+// Input check
+.input-check-enter-active,
+.input-check-leave-active {
+  @include t.tran(transform, 150ms);
+}
+.input-check-enter,
+.input-check-leave-to {
+  transform: scale(0);
+}
