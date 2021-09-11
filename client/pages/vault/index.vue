@@ -10,8 +10,9 @@
       </container>
 
       <div>{{ passwords }}</div>
-      <div class="password" v-for="password in passwords" :key="password._id">
-        <link-base :to="`/passwords/${password._id}`">
+
+      <div class="password" v-for="password in passwords" :key="password.id">
+        <link-base :to="`/passwords/${password.id}`">
           {{ password.title }}
         </link-base>
       </div>

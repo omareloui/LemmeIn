@@ -17,6 +17,8 @@ interface AxiosError {
 }
 
 export default Vue.extend({
+  layout: "no-floating-menu",
+
   props: {
     error: { type: Object as PropType<AxiosError> }
   }

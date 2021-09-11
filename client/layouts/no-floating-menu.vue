@@ -3,7 +3,6 @@
     <the-navbar />
     <nuxt />
     <notify />
-    <floating-menu />
   </div>
 </template>
 

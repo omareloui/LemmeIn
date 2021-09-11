@@ -5,7 +5,7 @@
       float
       back-shape-size="58%"
       tint="background-main"
-      back-shape-color="info"
+      :back-shape-color="color"
       :blur="2"
       :opacity="40"
     >
@@ -45,7 +45,9 @@ export default Vue.extend({
     description: { type: String },
     icon: { type: String, required: true },
     iconViewBox: { type: String, default: "32 32" },
-    iconSize: { type: String, default: "18px" }
+    iconSize: { type: String, default: "18px" },
+
+    color: { type: String, default: "info" }
   },
 
   methods: {

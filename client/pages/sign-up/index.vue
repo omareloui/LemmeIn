@@ -12,6 +12,8 @@ import Vue from "vue"
 import { FormField } from "~/components/Form/Generator.vue"
 
 export default Vue.extend({
+  layout: "no-floating-menu",
+
   data: () => ({
     formFields: [
       {

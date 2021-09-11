@@ -42,6 +42,16 @@
   opacity: 0;
 }
 
+// Layout transition
+.layout-enter-active,
+.layout-leave-active {
+  @include t.tran(opacity, 0.2s);
+}
+.layout-enter,
+.layout-leave-to {
+  opacity: 0;
+}
+
 // navbar menu
 .nav-menu-enter-active,
 .nav-menu-leave-active {
@@ -51,4 +61,14 @@
 .nav-menu-leave-to {
   opacity: 0;
   transform: translateY(-100%);
+}
+
+.floating-menu-enter-active,
+.floating-menu-leave-active {
+  @include t.tran(transform opacity);
+}
+.floating-menu-enter,
+.floating-menu-leave-to {
+  opacity: 0;
+  transform: translateY(100%);
 }
