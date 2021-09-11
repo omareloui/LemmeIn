@@ -47,7 +47,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 
-interface OptionType {
+export interface OptionType {
   id: string
   value: string
   isChecked: boolean

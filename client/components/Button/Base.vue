@@ -41,10 +41,7 @@ export default Vue.extend({
   +brdr(none)
   +clickable
   +center-text
-  +w(min 40px)
-  +h(min 30px)
   background: none
-  overflow: hidden
 
   &[disabled="disabled"]
     opacity: 0.8
