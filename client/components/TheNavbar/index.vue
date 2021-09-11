@@ -247,6 +247,7 @@ header
       +clr-txt
       +fnt(nav)
       +fnt-xl
+      +clickable
       &.cta
         +clr-txt(primary)
 </style>
