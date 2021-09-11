@@ -19,8 +19,19 @@
     </div>
 
     <div class="password-generator__options">
-      <input-range v-model="length" @input="generate" :min="4" :max="84" />
-      <input-check :options="checkBoxes" not-required @input="generate" />
+      <input-range
+        v-model="length"
+        @input="generate"
+        identifier="passwordLength"
+        :min="minLength"
+        :max="84"
+      />
+      <input-check
+        :options="checkBoxes"
+        not-required
+        @input="generate"
+        must-have-one-at-least
+      />
     </div>
   </div>
 </template>
@@ -82,16 +93,31 @@ export default Vue.extend({
     },
     includeSymbols(): boolean {
       return this.getCheckboxValue("symbols")
+    },
+
+    minLength(): number {
+      let minLength = 0
+      if (this.includeLowerCase) minLength += 1
+      if (this.includeUpperCase) minLength += 1
+      if (this.includeNumbers) minLength += 1
+      if (this.includeSymbols) minLength += 1
+      return minLength
+    },
+
+    characterSpace(): string {
+      let characters = ""
+      if (this.includeLowerCase) characters += this.characters.lower
+      if (this.includeUpperCase) characters += this.characters.upper
+      if (this.includeNumbers) characters += this.characters.numbers
+      if (this.includeSymbols) characters += this.characters.symbols
+      return characters
     }
   },
 
   methods: {
     generate() {
       try {
-        this.validatePasswordRequirements()
-        const characters = this.shuffleArray(
-          this.getCharactersSpace().split("")
-        )
+        const characters = this.shuffleArray(this.characterSpace.split(""))
         const generatedPassword: string[] = []
         const {
           includeLowerCase,
@@ -139,24 +165,10 @@ export default Vue.extend({
 
     // Password generator utils //
     validatePasswordRequirements() {
-      let minLength = 0
-      if (this.includeLowerCase) minLength += 1
-      if (this.includeUpperCase) minLength += 1
-      if (this.includeNumbers) minLength += 1
-      if (this.includeSymbols) minLength += 1
-      if (this.length < minLength)
+      if (this.length < this.minLength)
         throw new Error(
           `You can't set the length to "${this.length}" with the selected options`
         )
-    },
-
-    getCharactersSpace() {
-      let characters = ""
-      if (this.includeLowerCase) characters += this.characters.lower
-      if (this.includeUpperCase) characters += this.characters.upper
-      if (this.includeNumbers) characters += this.characters.numbers
-      if (this.includeSymbols) characters += this.characters.symbols
-      return characters
     },
 
     getRandomCharacter(

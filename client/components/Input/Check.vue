@@ -89,7 +89,8 @@ export default Vue.extend({
         }
         return isValid
       }
-    }
+    },
+    mustHaveOneAtLeast: { type: Boolean, default: false }
   },
 
   data: () => ({
@@ -105,9 +106,14 @@ export default Vue.extend({
   methods: {
     changeCheckbox(option: OptionType) {
       if (this.isErred) this.clearError()
-      option.isChecked = !option.isChecked
-      this.$emit("input", this.getChecked())
-      this.focusOnCheckbox(option.id)
+      const hasOneTrue = !!this.options.find(x => x !== option && x.isChecked)
+      if (this.mustHaveOneAtLeast && !hasOneTrue)
+        this.$notify.error("Must have at least one selected")
+      else {
+        option.isChecked = !option.isChecked
+        this.$emit("input", this.getChecked())
+        this.focusOnCheckbox(option.id)
+      }
     },
 
     focusOnCheckbox(id: string) {

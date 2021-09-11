@@ -23,3 +23,6 @@
 @mixin br-cr {
   border-radius: 50%;
 }
+@mixin br-bl {
+  border-radius: 9999px;
+}

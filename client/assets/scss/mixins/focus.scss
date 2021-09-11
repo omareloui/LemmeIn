@@ -10,13 +10,15 @@
       @if ($state == focus) {
         outline: none;
       }
+
       @if ($effect == box-shadow) {
         @include bxs.bxs(focus, 0, 0, 3px, 2px);
       } @else if ($effect == background) {
         @include c.clr(focus, background);
       } @else if ($effect == input) {
         @include c.clr(focus, border-color);
-        // @include c.clr-bg(tertiary);
+      } @else if ($effect == input-range) {
+        opacity: 1;
       } @else if ($effect == icon) {
         @include c.clr(focus-icon, fill);
       } @else {

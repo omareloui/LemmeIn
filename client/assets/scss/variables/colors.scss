@@ -29,7 +29,9 @@ $light: (
   safe: hsl(112, 92%, 49%),
   success: hsl(112, 92%, 49%),
   info: hsl(201, 100%, 67%),
-  focus-icon: hsl(219, 11%, 29%)
+  focus-icon: hsl(219, 11%, 29%),
+  input-range-track: hsl(0, 0%, 77%),
+  input-range-thumb: hsl(234, 85%, 66%, 40%)
 );
 
 $dark: (
@@ -50,5 +52,7 @@ $dark: (
   safe: hsl(112, 87%, 33%),
   success: hsl(112, 87%, 33%),
   info: hsl(201, 72%, 43%),
-  focus-icon: hsl(0, 0%, 88%)
+  focus-icon: hsl(0, 0%, 88%),
+  input-range-track: hsl(220, 11%, 30%),
+  input-range-thumb: hsl(234, 85%, 66%, 40%)
 );

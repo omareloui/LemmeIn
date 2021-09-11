@@ -1,21 +1,53 @@
 <template>
-  <input type="range" v-bind="{ min, max }" :value="value" @input="onInput" />
+  <div
+    class="input-range-container"
+    :class="{ 'input-range-container--show-value': !doNotShowValue }"
+    :style="{ '--range-percentage': ((value - min) / (max + min)) * 100 }"
+  >
+    <input
+      :id="identifier"
+      class="input-range"
+      type="range"
+      v-bind="{ min, max, step }"
+      :value="value"
+      @input="onInput($event.target.value)"
+    />
+
+    <!-- <label v-if="label" :for="identifier">
+      {{ label }}
+    </label> -->
+
+    <output v-if="!doNotShowValue" class="input-value" :for="identifier">
+      <glass-card no-back-shape tint="primary">
+        {{ value }}
+      </glass-card>
+    </output>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue"
-import { HTMLInputEvent } from "~/@types/index"
 
 export default Vue.extend({
   props: {
     value: { type: Number, required: true },
+    identifier: { type: String, required: true },
+    label: { type: String },
     min: { type: Number, default: 4 },
-    max: { type: Number, default: 30 }
+    max: { type: Number, default: 30 },
+    step: { type: Number, default: 1 },
+    doNotShowValue: { type: Boolean, default: false }
   },
 
   methods: {
-    onInput(e: HTMLInputEvent) {
-      this.$emit("input", parseInt(e.target.value, 10))
+    onInput(value: string) {
+      this.$emit("input", parseInt(value, 10))
+    }
+  },
+  watch: {
+    min(newValue: number, oldValue: number) {
+      if (newValue > oldValue && this.value === oldValue)
+        this.onInput(newValue.toString())
     }
   }
 })
@@ -23,4 +55,91 @@ export default Vue.extend({
 
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
+
+=track
+  +clickable
+  +tran
+  +size(var(--track-width) var(--track-height))
+
+=progress
+  +clr-bg(primary)
+  +h(var(--track-height))
+  +br-bl
+
+=thumb
+  +clr-bg(input-range-thumb)
+  +br-cr
+  +size(var(--thumb-size))
+  backdrop-filter: blur(2px)
+
+.input-range-container
+  +pos-r
+  +w(min-content)
+
+  +m(show-value)
+    +mt(25px)
+
+  .input-value
+    +pos-a(top -10px)
+    left: calc(var(--range-percentage) * 1%)
+    +fnt-lg
+    +tran
+    transform: translateY(-50%)
+    ::v-deep .glass .glass__body
+      +pa(3px 5px)
+
+  .input-range
+    --thumb-size: 25px
+    --track-width: 330px
+    --track-height: 10px
+
+    +input-reset-appearance
+    +my(calc(var(--thumb-size) / 4 + 10px))
+    +w(var(--track-width))
+    +focus-effect(input-range)
+    +clr-bg(main)
+    +br-bl
+    opacity: 0.8
+
+    // The Track //
+    &::-webkit-slider-runnable-track
+      +track
+      +clr-bg(input-range-track)
+      +br-bl
+
+    &::-moz-range-track
+      +track
+      +clr-bg(input-range-track)
+      +br-bl
+
+    &::-ms-track
+      +track
+      +clr-bg(none)
+      +clr-txt(none)
+      +brdr(none, 0)
+    &::-ms-fill-lower
+      +clr-bg(input-range-track)
+      +br-sm
+    &::-ms-fill-upper
+      +clr-bg(input-range-track)
+      +br-sm
+
+    // The Progress //
+    &::-moz-range-progress
+      +progress
+      // +clr-bg(primary)
+
+    // The Thumb //
+    &::-webkit-slider-thumb
+      +thumb
+      +input-reset-appearance
+      +mt(calc(var(--track-height) / 2 * -1))
+
+    &::-moz-range-thumb
+      +thumb
+      +brdr(none, 0)
+
+    &::-ms-thumb
+      +thumb
+      +brdr(none, 0)
 </style>
