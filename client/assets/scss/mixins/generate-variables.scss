@@ -1,5 +1,5 @@
 @mixin generate-variables($map, $prefix) {
   @each $name, $value in $map {
-    --#{$prefix}-#{$name}: #{$value};
+    --#{$prefix}-#{"" + $name}: #{$value};
   }
 }
