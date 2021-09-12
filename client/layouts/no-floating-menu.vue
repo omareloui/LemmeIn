@@ -11,7 +11,7 @@ import Vue from "vue"
 
 export default Vue.extend({
   beforeMount() {
-    this.$accessor.theme.loadSetTheme()
+    this.$accessor.theme.load()
   }
 })
 </script>

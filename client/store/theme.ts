@@ -18,22 +18,27 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, mutations },
   {
-    async toggleTheme({ state, dispatch }) {
+    load({ dispatch }) {
+      dispatch("loadSetTheme")
+      dispatch("listenForDefaultChange")
+    },
+
+    toggleTheme({ state, dispatch }) {
       const neededTheme = state.currentTheme === "dark" ? "light" : "dark"
-      await dispatch("changeTheme", neededTheme)
+      dispatch("changeTheme", neededTheme)
     },
 
     async changeTheme({ commit, dispatch }, theme: ThemeOption) {
       await dispatch("applyTheme", theme)
       commit("setThemeState", theme)
-      await dispatch("setThemeToCookie", theme)
+      dispatch("setThemeToCookie", theme)
     },
 
     async loadSetTheme({ dispatch }) {
       let cookie: ThemeOption
       cookie = await dispatch("getThemeFromCookie")
       if (!cookie) cookie = await dispatch("getThemeFromMediaQuery")
-      await dispatch("changeTheme", cookie)
+      dispatch("changeTheme", cookie)
     },
 
     applyTheme(_vuexContext, theme: ThemeOption) {
@@ -60,15 +65,14 @@ export const actions = actionTree(
       )
         return "dark"
       return "light"
-    }
+    },
 
-    // listenForDefaultChange({dispatch}) {
-    //   window
-    //     .matchMedia("(prefers-color-scheme: dark)")
-    //     .addEventListener("change", e => {
-    //       const newColorScheme = e.matches ? "dark" : "light"
-    //       // TODO: await dispatch("applyTheme", newColorScheme)
-    //     })
-    // }
+    listenForDefaultChange({ dispatch }) {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", e => {
+          dispatch("changeTheme", e.matches ? "dark" : "light")
+        })
+    }
   }
 )
