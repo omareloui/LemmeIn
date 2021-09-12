@@ -70,7 +70,7 @@ export const actions = actionTree(
         commit("updateIsSigned", true)
       } catch (e) {
         // @ts-ignore
-        if (e.response.data.status === 401) {
+        if (!e.response || e.response.data.status === 401) {
           dispatch("signOut")
           this.$router.push("/")
         }
