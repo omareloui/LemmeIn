@@ -220,6 +220,7 @@ export default Vue.extend({
     +px(5%)
     +py(35px)
     +ma(auto)
+    +mb(45px)
     +br-md
     +w(85%)
     +lt-mobile
@@ -245,4 +246,17 @@ export default Vue.extend({
     .copy-button
       +ma(auto)
       +block
+
+  +e(options)
+    ::v-deep
+      .checker-wrapper
+        +mx(auto)
+        max-width: 500px
+        +e(options)
+          grid-template-columns: repeat(2, 1fr)
+          +lt-mobile
+            grid-template-columns: repeat(4, 1fr)
+    ::v-deep
+      .input-range-container
+        +mx(auto)
 </style>

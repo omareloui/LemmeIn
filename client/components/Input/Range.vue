@@ -2,8 +2,22 @@
   <div
     class="input-range-container"
     :class="{ 'input-range-container--show-value': !doNotShowValue }"
-    :style="{ '--range-percentage': ((value - min) / (max + min)) * 100 }"
+    :style="{
+      '--range-percentage': Math.round(((value - min) / (max - min)) * 100)
+    }"
   >
+    <label v-if="label" :for="identifier">
+      {{ label }}
+    </label>
+
+    <div class="input-value-container">
+      <output v-if="!doNotShowValue" class="input-value" :for="identifier">
+        <glass-card no-back-shape tint="primary">
+          {{ value }}
+        </glass-card>
+      </output>
+    </div>
+
     <input
       :id="identifier"
       class="input-range"
@@ -12,16 +26,6 @@
       :value="value"
       @input="onInput($event.target.value)"
     />
-
-    <!-- <label v-if="label" :for="identifier">
-      {{ label }}
-    </label> -->
-
-    <output v-if="!doNotShowValue" class="input-value" :for="identifier">
-      <glass-card no-back-shape tint="primary">
-        {{ value }}
-      </glass-card>
-    </output>
   </div>
 </template>
 
@@ -73,26 +77,30 @@ export default Vue.extend({
   backdrop-filter: blur(2px)
 
 .input-range-container
-  +pos-r
-  +w(min-content)
+  --thumb-size: 25px
+  --track-width: 100%
+  --track-height: 10px
+
+  +w(clamp(150px, 80%, 330px))
 
   +m(show-value)
-    +mt(25px)
+    +mt(30px)
 
-  .input-value
-    +pos-a(top -10px)
-    left: calc(var(--range-percentage) * 1%)
-    +fnt-lg
-    +tran
-    transform: translateY(-50%)
-    ::v-deep .glass .glass__body
-      +pa(3px 5px)
+  .input-value-container
+    +pos-r
+    +w(calc(100% - var(--thumb-size)))
+    +mx(auto)
+
+    .input-value
+      +pos-a(top -25px)
+      left: calc((var(--range-percentage) * 1%))
+      +fnt-lg
+      +tran
+      transform: translateX(-50%)
+      ::v-deep .glass .glass__body
+        +pa(3px 5px)
 
   .input-range
-    --thumb-size: 25px
-    --track-width: 330px
-    --track-height: 10px
-
     +input-reset-appearance
     +my(calc(var(--thumb-size) / 4 + 10px))
     +w(var(--track-width))
