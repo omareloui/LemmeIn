@@ -88,7 +88,7 @@
 .dialogue-leave-active {
   @include t.tran(transform);
 }
-.dialogued-enter,
+.dialogue-enter,
 .dialogue-leave-to {
   transform: translateY(-100%);
 }

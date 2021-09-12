@@ -27,9 +27,9 @@
 import Vue from "vue"
 
 export default Vue.extend({
-  data: () => ({
-    isShown: true
-  })
+  props: {
+    isShown: { type: Boolean, required: true, default: false }
+  }
 })
 </script>
 

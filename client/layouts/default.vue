@@ -4,10 +4,6 @@
     <nuxt />
     <notify />
     <floating-menu />
-
-    <dialogue>
-      <password-generator />
-    </dialogue>
   </div>
 </template>
 

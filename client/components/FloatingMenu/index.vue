@@ -1,26 +1,30 @@
 <template>
-  <div class="floating-menu" :class="{ 'floating-menu--open': isOpen }">
+  <div class="floating-menu" :class="{ 'floating-menu--open': isMenuOpen }">
     <button-glass
       class="open-menu"
       icon="add"
       size="50px"
       @click="toggleMenu"
-      :color="isOpen ? 'cancel' : 'primary'"
+      :color="isMenuOpen ? 'cancel' : 'primary'"
     />
 
     <transition name="floating-menu">
-      <div class="options" v-if="isOpen">
+      <div class="options" v-if="isMenuOpen">
         <button-glass
-          v-for="(option, index) in options"
-          :key="index"
           class="options__button"
-          :icon="option.icon.name"
-          :icon-view-box="option.icon.viewBox"
+          icon="generate"
+          icon-view-box="24.8 32"
           size="50px"
-          @click="option.onClick"
+          @click="isPassGenShown = true"
         />
+
+        <button-glass class="options__button" icon="key" size="50px" />
       </div>
     </transition>
+
+    <dialogue :is-shown="isPassGenShown" @close="isPassGenShown = false">
+      <password-generator />
+    </dialogue>
   </div>
 </template>
 
@@ -29,17 +33,8 @@ import Vue from "vue"
 
 export default Vue.extend({
   data: () => ({
-    isOpen: false,
-    options: [
-      {
-        icon: { name: "generate", viewBox: "24.8 32" },
-        onClick: (): unknown => ({})
-      },
-      {
-        icon: { name: "key" },
-        onClick: (): unknown => ({})
-      }
-    ]
+    isMenuOpen: false,
+    isPassGenShown: false
   }),
 
   mounted() {
@@ -51,13 +46,13 @@ export default Vue.extend({
 
   methods: {
     closeMenu() {
-      this.isOpen = false
+      this.isMenuOpen = false
     },
     openMenu() {
-      this.isOpen = true
+      this.isMenuOpen = true
     },
     toggleMenu() {
-      if (this.isOpen) this.closeMenu()
+      if (this.isMenuOpen) this.closeMenu()
       else this.openMenu()
     },
     handleClick(e: MouseEvent) {
@@ -78,6 +73,7 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .floating-menu
+  +zi(floating-menu)
   +pos-f(bottom 20px right 30px)
 
   // Open button

@@ -29,7 +29,8 @@ $z-indexes: (
 $z-indexes: above(selector-dropdown, body);
 $z-indexes: above(selector, selector-dropdown);
 $z-indexes: above(nav, selector-dropdown);
-$z-indexes: above(dialogue, nav);
+$z-indexes: above(floating-menu, nav);
+$z-indexes: above(dialogue, floating-menu);
 $z-indexes: above(notifications, dialogue);
 
 @mixin z-index {
