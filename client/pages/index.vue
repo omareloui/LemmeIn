@@ -1,7 +1,6 @@
 <template>
   <container>
     <template #heading>Lemme in</template>
-    <password-generator />
   </container>
 </template>
 

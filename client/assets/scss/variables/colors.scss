@@ -1,15 +1,27 @@
 @use "sass:map";
+@use "../functions/opacify" as o;
+
+// TODO: add greys
+$core: (
+  primary: hsl(234, 85%, 66%),
+  light: hsl(360, 100%, 100%),
+  dark: hsl(0, 0%, 5%),
+  pink: hsl(320, 88%, 52%),
+  orange: hsl(27, 100%, 52%),
+  blue: hsl(201, 100%, 67%)
+);
 
 $shared: (
-  primary: hsl(234, 85%, 66%),
-  button-cta: hsl(234, 85%, 66%),
-  link: hsl(201, 100%, 67%),
-  text-light: hsl(360, 100%, 100%),
-  text-dark: hsl(0, 0%, 5%),
-  focus: hsla(234, 85%, 66%, 48%),
-  pink: hsl(320, 88%, 52%),
-  orange: hsl(27, 100%, 52%)
+  button-cta: map.get($core, primary),
+  link: map.get($core, blue),
+  text-light: map.get($core, light),
+  text-dark: map.get($core, dark),
+  focus: o.opacify(map.get($core, primary), 48),
+  scrollbar-thumb: o.opacify(map.get($core, primary), 30),
+  scrollbar-thumb-hover: map.get($core, primary)
 );
+
+$shared: map.merge($core, $shared);
 
 $light: (
   text-main: map.get($shared, text-dark),

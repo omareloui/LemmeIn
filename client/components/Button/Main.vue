@@ -56,8 +56,8 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-$width-on-base: max(20vw,140px)
-$width-on-large: max(30vw,160px)
+$width-on-base: clamp(140px, 20vw,100%)
+$width-on-large: clamp(160px, 30vw,100%)
 
 .button-main
   +br-md

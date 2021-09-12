@@ -24,11 +24,13 @@ $below: -1;
 
 // Data
 $z-indexes: (
-  body: $base
+  base: $base
 );
 $z-indexes: above(selector-dropdown, body);
 $z-indexes: above(selector, selector-dropdown);
 $z-indexes: above(nav, selector-dropdown);
+$z-indexes: above(dialogue, nav);
+$z-indexes: above(notifications, dialogue);
 
 @mixin z-index {
   @include generate-variables($z-indexes, "zi");

@@ -1,11 +1,5 @@
 <template>
   <div class="password-generator">
-    <button-glass
-      class="password-generator__close"
-      icon="close"
-      color="cancel"
-    />
-
     <div class="password-generator__generated-password-container">
       <button-base class="regenerate" @click="generate">
         <icon name="reload" size="75%" />
@@ -206,13 +200,7 @@ export default Vue.extend({
 
 .password-generator
   +pos-r
-  +clr-bg(main)
-  +float(2)
-  +br-lg
   +py(55px)
-
-  +e(close)
-    +pos-a(top 10px right 20px)
 
   +e(generated-password-container)
     +pos-r
@@ -230,16 +218,16 @@ export default Vue.extend({
       +fnt-xl
       +my(auto)
       +mb(20px)
-      +break-word
       +center-text
+      +no-wrap
+      +w(max 100%)
+      +scroll
+      overflow: auto hidden
 
     .regenerate
       +pos-a(top 10px right 15px)
       +size(clamp(30px, 3vw, 35px))
       +br-cr
-      +lt-tablet
-        top: 15px
-        right: 40px
       ::v-deep i
         +center
 

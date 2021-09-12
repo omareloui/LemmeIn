@@ -82,3 +82,13 @@
 .input-check-leave-to {
   transform: scale(0);
 }
+
+// Dialogue
+.dialogue-enter-active,
+.dialogue-leave-active {
+  @include t.tran(transform);
+}
+.dialogued-enter,
+.dialogue-leave-to {
+  transform: translateY(-100%);
+}

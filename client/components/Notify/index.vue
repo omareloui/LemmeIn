@@ -30,6 +30,7 @@ export default Vue.extend({})
 $offset: 10px
 
 .notifications
+  +zi(notifications)
   display: grid
   gap: 5px
   grid-template-columns: 1fr
