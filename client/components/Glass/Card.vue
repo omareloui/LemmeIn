@@ -45,6 +45,14 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 
+const BORDER_RADIUS_OPTIONS = ["none", "sm", "md", "lg", "xl"] as const
+const BACK_SHAPE_OPTIONS = ["square", "pill", "circle"] as const
+const BACK_SHAPE_POSITIONS = ["bottom", "center", "top"] as const
+
+type BorderRadiusOptions = typeof BORDER_RADIUS_OPTIONS[number]
+type BackShapeOptions = typeof BACK_SHAPE_OPTIONS[number]
+type BackShapePositions = typeof BACK_SHAPE_POSITIONS[number]
+
 export default Vue.extend({
   props: {
     size: { type: String },
@@ -63,9 +71,9 @@ export default Vue.extend({
 
     circle: { type: Boolean, default: false },
     borderRadius: {
-      type: String as PropType<"none" | "sm" | "md" | "lg" | "xl">,
-      validator: (v: string) =>
-        ["none", "sm", "md", "lg", "xl"].indexOf(v) > -1,
+      type: String as PropType<BorderRadiusOptions>,
+      validator: (v: BorderRadiusOptions) =>
+        BORDER_RADIUS_OPTIONS.indexOf(v) > -1,
       default: "md"
     },
 
@@ -75,16 +83,17 @@ export default Vue.extend({
 
     noBackShape: { type: Boolean, default: false },
     backShape: {
-      type: String as PropType<"square" | "pill" | "circle">,
-      validator: (v: string) => ["square", "pill", "circle"].indexOf(v) > -1,
+      type: String as PropType<BackShapeOptions>,
+      validator: (v: BackShapeOptions) => BACK_SHAPE_OPTIONS.indexOf(v) > -1,
       default: "square"
     },
     backShapeSize: { type: String, default: "60%" },
     backShapeWidth: { type: String },
     backShapeHeight: { type: String },
     backShapePosition: {
-      type: String as PropType<"bottom" | "center" | "top">,
-      validator: (v: string) => ["bottom", "center", "top"].indexOf(v) > -1,
+      type: String as PropType<BackShapePositions>,
+      validator: (v: BackShapePositions) =>
+        BACK_SHAPE_POSITIONS.indexOf(v) > -1,
       default: "center"
     },
     backShapeColor: { type: String }
@@ -127,7 +136,7 @@ export default Vue.extend({
     +m(square)
       +br-md
     +m(pill)
-      border-radius: 10000px
+      +br-bl
     +m(circle)
       +br-cr
 
