@@ -1,8 +1,11 @@
 @use "sass:map";
+@use "sass:list";
+@use "sass:math";
 @use "./colors" as *;
 @use "../functions/match-light-and-dark-colors" as *;
 @use "../functions/split-to-hue-saturation-lightness" as *;
 @use "../mixins/generate-variables" as *;
+@use "../functions/get-clr" as *;
 
 // I'm adding the colors for readability
 // Validate that all light colors are in dark colors and vice versa
@@ -13,35 +16,36 @@ $validating-result: match-light-and-dark-colors($light, $dark);
   @error "Light colors is missing at least a color.";
 }
 
-// Splitting the hues
-$splitted-shared: ();
-$splitted-light: ();
-$splitted-dark: ();
+@mixin generate-colors($map) {
+  @each $name, $value in $map {
+    $hue: hue($value);
+    $sat: saturation($value);
+    $lightness: lightness($value);
+    $alpha: alpha($value);
 
-@each $clr, $value in $shared {
-  $splitted-value: split-to-hue-saturation-lightness($value);
-  $splitted-shared: map.set($splitted-shared, $clr, $splitted-value);
+    --clr-hs-#{"" + $name}: #{$hue $sat};
+    --clr-l-#{"" + $name}: #{$lightness};
+    @if $alpha < 1 {
+      --clr-a-#{"" + $name}: $alpha;
+    }
+    --clr-#{"" + $name}: #{get-clr($name)};
+  }
 }
-
-@each $clr, $value in $light {
-  $splitted-value: split-to-hue-saturation-lightness($value);
-  $splitted-light: map.set($splitted-light, $clr, $splitted-value);
-}
-
-@each $clr, $value in $dark {
-  $splitted-value: split-to-hue-saturation-lightness($value);
-  $splitted-dark: map.set($splitted-dark, $clr, $splitted-value);
-}
-
-$default: map.merge($splitted-shared, $splitted-light);
 
 @mixin colors {
   // declare that dark and light are both supported
   color-scheme: light dark;
 
-  @include generate-variables($default, clr);
+  // Colors helpers
+  @for $i from 0 through 10 {
+    --clr-o-#{$i * 10}: #{math.div($i, 10)};
+    --clr-l-#{$i * 10}: #{$i * 10%};
+  }
+
+  // The actual colors
+  @include generate-colors($default);
 }
 
 @mixin colors-dark {
-  @include generate-variables($splitted-dark, clr);
+  @include generate-colors($dark);
 }

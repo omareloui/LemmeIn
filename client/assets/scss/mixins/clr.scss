@@ -1,15 +1,32 @@
 @use "sass:map";
 @use "sass:list";
-@use "../functions" as fns;
-@use "../variables/colors-generator" as clrs;
+@use "../functions/get-clr.scss" as *;
+@use "../variables/colors" as clrs;
 
-@mixin clr($name, $property: color, $opacity: 100, $important: false) {
+@mixin clr(
+  $name,
+  $property: color,
+  $opacity: null,
+  $lightness: null,
+  $important: false
+) {
   @if $name == none and not $important {
     #{$property}: transparent;
   } @else if $name == none and $important {
     #{$property}: transparent !important;
   } @else {
-    $color: #{fns.get-clr($name, $opacity)};
+    $keys: map.keys(clrs.$default);
+
+    @if not list.index($keys, $name) {
+      @error "#{$name} is invalid color name";
+    }
+
+    $color: var(--clr-#{$name});
+
+    @if $opacity or $lightness {
+      $color: get-clr($name, $opacity, $lightness);
+    }
+
     @if not $important {
       #{$property}: $color;
     } @else {
@@ -18,14 +35,14 @@
   }
 }
 
-@mixin clr-txt($type: main, $opacity: 100, $important: false) {
+@mixin clr-txt($type: main, $opacity: null, $important: false) {
   @if list.index(main light dark invert, $type) {
     $type: text-#{$type};
   }
   @include clr($type, $opacity: $opacity, $important: $important);
 }
 
-@mixin clr-bg($type: main, $opacity: 100, $important: false) {
+@mixin clr-bg($type: main, $opacity: null, $important: false) {
   @if list.index(main secondary tertiary invert, $type) {
     $type: background-#{$type};
   }

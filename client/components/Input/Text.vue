@@ -12,7 +12,7 @@
     <glass-card
       tint="background-tertiary"
       no-back-shape
-      :opacity="40"
+      :opacity="0.4"
       :blur="5"
       border-radius="md"
     >
@@ -57,7 +57,7 @@
           (side === 'right' && isRightIconClickable)
         "
         :class="`icon icon--${side}`"
-        :fill="!!errorMessage ? 'hsl(var(--clr-error))' : ''"
+        :fill="!!errorMessage ? 'var(--clr-error)' : ''"
       />
     </transition>
   </div>

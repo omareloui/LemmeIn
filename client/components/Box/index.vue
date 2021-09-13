@@ -247,7 +247,7 @@ export default Vue.extend({
     },
 
     normalizeColor(c: string) {
-      return this.checkIfNeedsColorWrapper(c) ? `hsl(var(--clr-${c}));` : c
+      return this.checkIfNeedsColorWrapper(c) ? `var(--clr-${c});` : c
     },
 
     // BUILDING THE STYLE

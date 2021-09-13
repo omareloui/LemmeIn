@@ -4,7 +4,7 @@
 @use "sizes" as s;
 
 @mixin scroll {
-  scrollbar-color: hsl(var(--clr-scrollbar-thumb)) transparent;
+  scrollbar-color: var(--clr-scrollbar-thumb) transparent;
   scrollbar-width: thin;
 
   &::-webkit-scrollbar {

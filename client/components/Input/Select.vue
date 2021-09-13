@@ -24,9 +24,7 @@
         v-if="!!leftIcon"
         size="28px"
         class="selector__left-icon"
-        :fill="
-          !!errorMessage ? 'hsl(var(--clr-error))' : 'hsl(var(--clr-dark))'
-        "
+        :fill="!!errorMessage ? 'var(--clr-error)' : 'var(--clr-dark)'"
       />
 
       <transition name="fade">
@@ -50,7 +48,7 @@
           transform: isDropdownOpen
             ? 'translateY(-50%) rotate(180deg)'
             : 'translateY(-50%)',
-          fill: isErred ? 'hsl(var(--clr-error))' : 'hsl(var(--clr-dark))'
+          fill: isErred ? 'var(--clr-error)' : 'var(--clr-dark)'
         }"
       />
     </div>

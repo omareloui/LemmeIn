@@ -1,3 +1,4 @@
+@use "sass:list";
 @use "./strip-unit" as *;
 
 @function split-to-hue-saturation-lightness($clr) {
@@ -5,7 +6,10 @@
     lightness($clr);
   $alpha-value: alpha($clr);
   @if $alpha-value != 1 {
-    $hue-saturation-lightness: $hue-saturation-lightness / $alpha-value;
+    $hue-saturation-lightness: list.append(
+      $hue-saturation-lightness,
+      $alpha-value
+    );
   }
   @return $hue-saturation-lightness;
 }

@@ -7,7 +7,7 @@
       tint="background-main"
       :back-shape-color="color"
       :blur="2"
-      :opacity="40"
+      :opacity="0.4"
     >
       <button-base
         size="100%"
@@ -25,7 +25,7 @@
       tint="background-secondary"
       float
       class="button-nav__description"
-      :opacity="40"
+      :opacity="0.4"
     >
       <span>{{ description }}</span>
     </glass-card>

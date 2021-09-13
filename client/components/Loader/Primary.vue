@@ -2,7 +2,7 @@
   <svg
     :style="{
       '--stroke-width': `${this.strokeWidth}px`,
-      '--stroke-clr': `hsl(var(--clr-${this.color}))`,
+      '--stroke-clr': `var(--clr-${this.color})`,
       '--loader-primary-size': `${this.size}px`,
       '--loader-primary-speed': `${this.speed}s`
     }"

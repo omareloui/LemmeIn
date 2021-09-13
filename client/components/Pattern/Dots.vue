@@ -12,10 +12,7 @@
         height: dotSize
       }"
     >
-      <span
-        class="dot"
-        :style="{ 'background-color': `hsl(var(--clr-${color}))` }"
-      >
+      <span class="dot" :style="{ 'background-color': `var(--clr-${color})` }">
       </span>
 
       <glass-circle
@@ -37,7 +34,7 @@ export default Vue.extend({
   props: {
     color: { type: String, default: "pink" },
     dotSize: { type: String, default: "30px" },
-    opacity: { type: Number, default: 15 },
+    opacity: { type: Number, default: 0.15 },
     blur: { type: Number, default: 3 },
     gridGap: { type: String, default: "20px" },
     dotsOffset: { type: String, default: "10px" }

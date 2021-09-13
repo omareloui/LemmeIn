@@ -1,16 +1,30 @@
 @use "sass:map";
 @use "sass:list";
-@use "../variables/colors-generator" as clrs;
+@use "../variables/colors" as clrs;
 
-@function get-clr($name, $opacity: 100) {
+// TODO: add lightness
+// TODO: work with opacity and lightness variables
+@function get-clr($name, $opacity: null, $lightness: null) {
   $keys: map.keys(clrs.$default);
   @if not list.index($keys, $name) {
     @error "#{$name} is invalid color name";
   }
 
-  @if $opacity < 100 and $opacity >= 0 {
-    @return hsla(var(--clr-#{$name}) / #{$opacity * 1%});
-  } @else {
-    @return hsl(var(--clr-#{$name}));
+  $hue-sat: var(--clr-hs-#{"" + $name});
+  $lightness: $lightness or var(--clr-l-#{"" + $name});
+
+  $color: hsl($hue-sat $lightness);
+
+  $alpha: null;
+  @if $opacity and $opacity < 1 {
+    $alpha: $opacity;
+  } @else if alpha(map.get(clrs.$default, $name)) < 1 {
+    $alpha: var(--clr-a-#{"" + $name});
   }
+
+  @if $alpha {
+    $color: hsl($hue-sat $lightness / $alpha);
+  }
+
+  @return $color;
 }

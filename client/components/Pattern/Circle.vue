@@ -17,7 +17,7 @@
         :key="index"
         class="circle"
         :style="{
-          'background-color': `hsl(var(--clr-${color}))`,
+          'background-color': `var(--clr-${color})`,
           width: smallCirclesSize,
           height: smallCirclesSize
         }"
@@ -42,7 +42,7 @@ export default Vue.extend({
   props: {
     color: { type: String, default: "orange" },
     size: { type: String, default: "200px" },
-    opacity: { type: Number, default: 15 },
+    opacity: { type: Number, default: 0.15 },
     blur: { type: Number, default: 3 },
     smallCirclesSize: { type: String, default: "20px" },
     smallCirclesOffset: { type: String, default: "60px" }

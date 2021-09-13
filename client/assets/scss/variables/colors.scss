@@ -46,6 +46,8 @@ $light: (
   input-range-thumb: hsl(234, 85%, 66%, 40%)
 );
 
+$default: map.merge($shared, $light);
+
 $dark: (
   text-main: map.get($shared, text-light),
   text-invert: map.get($shared, text-dark),

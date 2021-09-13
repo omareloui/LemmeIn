@@ -20,7 +20,7 @@
       :style="{
         height: backShapeHeight || backShapeSize,
         width: backShapeWidth || backShapeSize,
-        'background-color': `hsl(var(--clr-${backShapeColor || tint}))`
+        'background-color': `var(--clr-${backShapeColor || tint})`
       }"
     ></span>
     <div
@@ -31,9 +31,9 @@
       @keyup.space="$emit('keyup:space')"
       @keydown.space.prevent
       :style="{
-        'background-color': `hsl(var(--clr-${tint}) / ${opacity}%)`,
+        'background-color': `hsl(var(--clr-hs-${tint}) var(--clr-l-${tint}) / ${opacity})`,
         'backdrop-filter': `blur(${blur}px)`,
-        color: `hsl(var(--clr-${textColor}))`
+        color: `var(--clr-${textColor})`
       }"
       v-bind="{ role, ...aria }"
     >
@@ -60,7 +60,7 @@ export default Vue.extend({
     height: { type: String },
 
     blur: { type: Number, default: 4 },
-    opacity: { type: Number, default: 20 },
+    opacity: { type: Number, validator: v => v > 0 && v < 1, default: 0.2 },
 
     centerContent: { type: Boolean, default: false },
 
