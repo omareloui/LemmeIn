@@ -14,7 +14,7 @@
 
     <main>
       <div class="tags">
-        <transition-group name="slide-down">
+        <transition-group name="tag">
           <tag
             v-for="tag in searchResult"
             :key="tag.id"
@@ -81,7 +81,7 @@ export default Vue.extend({
     // Add tag
     addTag(tag: Tag) {
       // @ts-ignore
-      this.tags.push(tag)
+      this.tags.unshift(tag)
     },
     openAddTag() {
       this.closeDialogues()
@@ -129,9 +129,14 @@ export default Vue.extend({
     +mx(min(100px, 5vw))
 
 .tags > *
-  +grid($gap: 20px)
+  +grid
+  .tag
+    &:not(:last-child)
+      +mb(20px)
   +lt-tablet
     grid-template-columns: repeat(2, 1fr)
+    .tag:nth-child(even)
+      +ml(20px)
 
 .add-button
   +mb(20px)

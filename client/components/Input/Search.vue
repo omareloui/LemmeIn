@@ -44,7 +44,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     maxLength: { type: Number, default: 150 },
     pattern: { type: RegExp },
     invalidPatternMessage: { type: String },
-    noAutocomplete: { type: Boolean, default: false },
+    noAutocomplete: { type: Boolean, default: true },
     focusOnMount: { type: Boolean, default: false },
 
     searchFunction: {
@@ -87,6 +87,13 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     }
   },
 
+  mounted() {
+    window.addEventListener("keyup", this.onKeyUp)
+  },
+  beforeDestroy() {
+    window.removeEventListener("keyup", this.onKeyUp)
+  },
+
   methods: {
     onInput(value: string) {
       this.$emit("input", value)
@@ -102,6 +109,13 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       } catch (e) {
         this.$notify.error("No search key provided.")
       }
+    },
+
+    onKeyUp(e: KeyboardEvent) {
+      if (e.code === "Slash") this.focusOnSearch()
+    },
+    focusOnSearch() {
+      this.focus()
     },
 
     focus() {

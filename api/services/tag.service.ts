@@ -49,7 +49,10 @@ export default class TagService extends BaseService {
 
   public static async getAllMine(userId: string) {
     const passwords = await Tag.find({ user: userId }).toArray();
-    return normalizeDocuments(passwords);
+    const sortedTags = passwords.sort(
+      (a, b) => Number(b.createdAt) - Number(a.createdAt)
+    );
+    return normalizeDocuments(sortedTags);
   }
 
   public static async getMyPasswordAllTags(tagsIds: string[], userId: string) {
