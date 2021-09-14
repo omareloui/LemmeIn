@@ -31,11 +31,6 @@ const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
     body: { tag: "invalid-tag", color: "#333" },
     errorIncludes: "can't have spaces or special character",
   },
-  {
-    description: "should accept only hsl and hex colors",
-    body: { tag: "validTag", color: "rgb(11, 11, 11)" },
-    errorIncludes: "must be hex color or hsl color",
-  },
 ];
 
 const passingValidations: ValidData[] = [

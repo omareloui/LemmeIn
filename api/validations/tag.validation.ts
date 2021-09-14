@@ -12,16 +12,7 @@ const createAndUpdateValidationBody = {
     )
     .trim()
     .required("Field tag is required"),
-  color: yup
-    .string()
-    .min(4)
-    .max(28)
-    // .matches(
-    //   /^(#[\da-fA-F]{3,8}|hsla?\(\d{1,3}, \d{1,3}%, \d{1,3}%(, \d{1,3}%)?\))$/,
-    //   "Field color must be hex color or hsl color"
-    // )
-    .trim()
-    .required("Field color is required"),
+  color: yup.string().min(2).max(30).trim().required("Field color is required"),
 };
 
 export const createTagValidation = {

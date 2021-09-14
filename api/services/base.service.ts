@@ -3,7 +3,7 @@ type ID = string;
 type Doc = { id: string; [key: string]: any };
 type DeletionCount = number;
 
-type CreateReturn = Promise<ID>;
+type CreateReturn = Promise<Doc>;
 type GetOneReturn = Promise<Doc>;
 type GetAllReturn = Promise<Doc[]>;
 type RemoveOneReturn = Promise<DeletionCount>;

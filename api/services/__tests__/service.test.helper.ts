@@ -21,7 +21,8 @@ export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
     this.test(`should create ${this.serviceName}`, async () => {
       if (!this.service.create)
         throw new Error("This service doesn't have createForMe");
-      this.createdRecordId = await this.service.create(data);
+      const createdRecord = await this.service.create(data);
+      this.createdRecordId = createdRecord.id;
       assertMatch(this.createdRecordId, /^[\da-f]{24}$/);
     });
   }
@@ -79,7 +80,8 @@ export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
     this.test(`should create ${this.serviceName}`, async () => {
       if (!this.service.createMine)
         throw new Error("This service doesn't have createForMe");
-      this.createdRecordId = await this.service.createMine(data, this.userId);
+      const createdRecord = await this.service.createMine(data, this.userId);
+      this.createdRecordId = createdRecord.id;
       assertMatch(this.createdRecordId, /^[\da-f]{24}$/);
     });
   }

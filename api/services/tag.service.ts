@@ -36,7 +36,9 @@ export default class TagService extends BaseService {
       updatedAt: currentDate,
     });
     if (!tagDoc) return tagErrorHelper.badRequest({ action: "create" });
-    return tagDoc.toString();
+    const newTag = await Tag.findOne({ _id: tagDoc });
+    if (!newTag) return tagErrorHelper.notFound();
+    return normalizeDocument(newTag);
   }
 
   public static async getOneMine(id: string, userId: string) {

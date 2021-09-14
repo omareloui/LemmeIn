@@ -58,7 +58,9 @@ export default class PasswordService extends BaseService {
     const passwordId = await Password.insertOne(insertionData);
     if (!passwordId)
       return passwordErrorHelper.badRequest({ action: "create" });
-    return passwordId.toString();
+    const newPassword = await Password.findOne({ _id: passwordId });
+    if (!newPassword) return passwordErrorHelper.notFound();
+    return normalizeDocument(newPassword);
   }
 
   public static async getAllMine(userId: string) {

@@ -64,7 +64,9 @@ export default class UserService extends BaseService {
       isDisabled: false,
       version: 1,
     });
-    return userId;
+    const newUser = await User.findOne({ _id: user });
+    if (!newUser) return userErrorHelper.notFound();
+    return normalizeDocument(newUser);
   }
 
   public static async getAll(): Promise<UserDoc[]> {
