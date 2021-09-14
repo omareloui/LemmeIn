@@ -73,7 +73,7 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
         this.validate()
         await this.$nextTick()
         const hasError = this.checkIfComponentsHaveError()
-        if (hasError) throw new Error("not valid")
+        if (hasError) throw new Error("Make sure all fields are valid.")
         await this.submitFunction(this.values)
       } catch (e) {
         if (e.response) this.$notify.error(e.response.data.message)
@@ -106,7 +106,7 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
         (this.$refs[x.id] as InputComponent[])[0]
       const inputComponents = this.fields.map(getInputComponent.bind(this))
 
-      for (let i = 1; i < inputComponents.length; i++) {
+      for (let i = 0; i < inputComponents.length; i++) {
         const inputComponent = inputComponents[i]
         if (inputComponent.errorMessage) return true
       }
