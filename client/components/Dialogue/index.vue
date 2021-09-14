@@ -16,7 +16,7 @@
           class="close"
           icon="close"
           color="cancel"
-          @click="$emit('close')"
+          @click="closeDialogue"
         />
       </div>
     </glass-card>
@@ -29,6 +29,23 @@ import Vue from "vue"
 export default Vue.extend({
   props: {
     isShown: { type: Boolean, required: true, default: false }
+  },
+
+  mounted() {
+    window.addEventListener("keyup", this.onKeyUp)
+  },
+  beforeDestroy() {
+    window.removeEventListener("keyup", this.onKeyUp)
+  },
+
+  methods: {
+    onKeyUp(e: KeyboardEvent) {
+      if (e.code === "Escape") this.closeDialogue()
+    },
+
+    closeDialogue() {
+      this.$emit("close")
+    }
   }
 })
 </script>
