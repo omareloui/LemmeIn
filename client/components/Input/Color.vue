@@ -34,7 +34,8 @@ export default Vue.extend({
   props: {
     identifier: { type: String, required: true },
     value: { type: String, required: true },
-    notRequired: { type: Boolean, default: false }
+    notRequired: { type: Boolean, default: false },
+    doNotSelectDefault: { type: Boolean, default: false }
   },
 
   data: () => ({
@@ -46,6 +47,10 @@ export default Vue.extend({
     ] as InputRadioOption[],
     errorMessage: ""
   }),
+
+  created() {
+    if (!this.doNotSelectDefault) this.select(this.colors[0])
+  },
 
   computed: {
     isErred(): boolean {

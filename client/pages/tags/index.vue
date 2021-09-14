@@ -1,5 +1,5 @@
  <template>
-  <container tag="main">
+  <container has-padding-bottom>
     <template #heading>Tags</template>
     <input-search
       v-model="searchQuery"
@@ -12,9 +12,18 @@
       >Add new tag</button-main
     >
 
-    <div v-for="tag in searchResult" :key="tag.id" class="tag">
-      <tag :tag="tag" />
-    </div>
+    <main>
+      <div class="tags">
+        <transition-group name="slide-down">
+          <tag
+            v-for="tag in searchResult"
+            :key="tag.id"
+            class="tag"
+            v-bind="{ tag }"
+          />
+        </transition-group>
+      </div>
+    </main>
 
     <dialogue :is-shown="isAddTagOpen" @close="closeAddTag">
       <tag-add @add-tag="addTag" @close-dialogue="closeAddTag" />
@@ -72,12 +81,17 @@ export default Vue.extend({
 
 .search-input
   +my(20px)
-  +lt-mobile
+  +lt-tablet
     +mx(5vw)
+
+.tags > *
+  +grid($gap: 20px)
+  +lt-tablet
+    grid-template-columns: repeat(2, 1fr)
 
 .add-button
   +mb(20px)
   +mx(auto)
-  +lt-mobile
+  +lt-tablet
     +w(max 300px)
 </style>

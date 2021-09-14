@@ -4,7 +4,8 @@
     :class="{
       'glass--circle': circle,
       'glass--float': float,
-      'glass--center-content': centerContent
+      'glass--center-content': centerContent,
+      'glass--clickable': clickable
     }"
     :style="{
       width: width || size,
@@ -29,6 +30,7 @@
       :tabindex="focusable ? 0 : undefined"
       @click="$emit('click')"
       @keyup.space="$emit('keyup:space')"
+      @keyup.enter="$emit('keyup:enter')"
       :style="{
         '--background': `hsl(var(--clr-hs-${tint}) var(--clr-l-${tint}) / var(--clr-o-${
           opacity * 100
@@ -87,6 +89,8 @@ export default Vue.extend({
     },
 
     focusable: { type: Boolean, default: false },
+    clickable: { type: Boolean, default: false },
+
     role: { type: String },
     aria: { type: Object },
 
@@ -130,6 +134,9 @@ export default Vue.extend({
   +m(float)
     .glass__body
       +float(1)
+
+  +m(clickable)
+    +clickable
 
   +m(center-content)
     .glass__body

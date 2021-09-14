@@ -8,4 +8,5 @@ export default interface Tag {
   tag: string
   color: string
   user: string
+  passwordsCount: number
 }

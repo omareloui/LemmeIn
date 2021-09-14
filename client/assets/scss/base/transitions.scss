@@ -92,3 +92,14 @@
 .dialogue-leave-to {
   transform: translateY(-100%);
 }
+
+// Tags
+.tag-enter-active,
+.tag-leave-active {
+  @include t.tran(transform opacity, $duration: 500ms);
+}
+.tag-enter,
+.tag-leave-to {
+  opacity: 0;
+  transform: translateY(-100%);
+}
