@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import { FormField } from "~/components/Form/Generator.vue"
+import { FormField } from "~/@types"
 
 export default Vue.extend({
   data: () => ({

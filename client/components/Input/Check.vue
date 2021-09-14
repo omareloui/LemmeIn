@@ -51,19 +51,14 @@
       </div>
     </div>
     <transition name="fade">
-      <box v-if="isErred" tag="span" class="error">{{ errorMessage }}</box>
+      <span v-if="isErred" class="error">{{ errorMessage }}</span>
     </transition>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-
-export interface OptionType {
-  id: string
-  value: string
-  isChecked: boolean
-}
+import type { InputCheckOption } from "~/@types"
 
 export default Vue.extend({
   props: {
@@ -72,7 +67,7 @@ export default Vue.extend({
     heading: { type: String },
     headingTag: { type: String, default: "h3" },
     options: {
-      type: Array as PropType<OptionType[]>,
+      type: Array as PropType<InputCheckOption[]>,
       required: true,
       validator: options => {
         let isValid = true
@@ -103,7 +98,7 @@ export default Vue.extend({
   },
 
   methods: {
-    changeCheckbox(option: OptionType) {
+    changeCheckbox(option: InputCheckOption) {
       if (this.isErred) this.clearError()
       const hasOneTrue = !!this.options.find(x => x !== option && x.isChecked)
       if (this.mustHaveOneAtLeast && !hasOneTrue)

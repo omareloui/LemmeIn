@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import type { OptionType } from "~/components/Input/Check.vue"
+import type { InputCheckOption } from "~/@types"
 
 export default Vue.extend({
   data: () => ({
@@ -68,7 +68,7 @@ export default Vue.extend({
         value: "symbols",
         isChecked: true
       }
-    ] as OptionType[]
+    ] as InputCheckOption[]
   }),
 
   created() {

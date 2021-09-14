@@ -28,18 +28,14 @@
       </div>
     </div>
     <transition name="fade">
-      <box v-if="isErred" tag="span" class="error">{{ errorMessage }}</box>
+      <span v-if="isErred" class="error">{{ errorMessage }}</span>
     </transition>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-
-interface OptionType {
-  id: string
-  value: string
-}
+import type { InputRadioOption } from "~/@types"
 
 export default Vue.extend({
   props: {
@@ -48,7 +44,7 @@ export default Vue.extend({
     heading: { type: String },
     headingTag: { type: String, default: "h3" },
     options: {
-      type: Array as PropType<OptionType[]>,
+      type: Array as PropType<InputRadioOption[]>,
       required: true
     }
   },
@@ -64,7 +60,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async changeRadio(option: OptionType) {
+    async changeRadio(option: InputRadioOption) {
       if (this.isErred) this.clearError()
       this.$emit("input", option.id)
       this.focusOnRadio(option.id)

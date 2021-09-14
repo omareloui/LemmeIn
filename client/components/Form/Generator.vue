@@ -28,33 +28,14 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { ExtendVueRefs } from "~/@types"
-
-type AcceptableValues = string | string[] | File[]
-type Values = { [fieldId: string]: AcceptableValues }
+import { ExtendVueRefs, FormField, FormValues } from "~/@types"
 
 export type Gap = "gap"
 export const GAP: Gap = "gap"
 
-export interface FormField {
-  id: string
-  type: "text" | "email" | "password" | "select" | "radio" | "check" | "file"
-  value: AcceptableValues
-  label?: string
-  props?: Partial<{
-    notRequired: boolean
-    leftIcon: string
-    placeholder: string
-    hint: string
-    minLength: number
-    maxLength: number
-  }>
-  style?: "half"
-}
-
 type InputComponent = Vue & { validate: () => void; errorMessage: string }
 
-type SubmitFunction = (values: Values) => void
+type SubmitFunction = (values: FormValues) => void
 
 export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
   props: {
@@ -75,8 +56,8 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
     fields(): FormField[] {
       return this.formFields.filter(x => x !== GAP) as FormField[]
     },
-    values(): Values {
-      const neededResult: Values = {}
+    values(): FormValues {
+      const neededResult: FormValues = {}
       this.fields.forEach((x: FormField) => {
         neededResult[x.id] = x.value
       })

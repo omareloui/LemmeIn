@@ -1,5 +1,5 @@
  <template>
-  <container>
+  <container tag="main">
     <template #heading>The vault</template>
     <main>
       <container no-heading custom-max-width="600px">
@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import { FormField } from "~/components/Form/Generator.vue"
+import { FormField } from "~/@types"
 
 export default Vue.extend({
   async asyncData({ $axios, error }) {
