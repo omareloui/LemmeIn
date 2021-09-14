@@ -29,6 +29,7 @@
       :class="bodyClasses"
       :tabindex="focusable ? 0 : undefined"
       @click="$emit('click')"
+      @dblclick="$emit('dblclick')"
       @keyup.space="$emit('keyup:space')"
       @keyup.enter="$emit('keyup:enter')"
       :style="{

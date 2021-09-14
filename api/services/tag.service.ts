@@ -97,6 +97,7 @@ export default class TagService extends BaseService {
   }
 
   public static async removeOneMine(id: string, userId: string) {
+    // TODO: remove the tag from all the passwords that uses them
     const tag = await Tag.findOne({
       _id: new ObjectId(id),
       user: userId,

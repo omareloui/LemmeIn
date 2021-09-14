@@ -1,5 +1,12 @@
 <template>
-  <form @submit.prevent="onSubmit" @keydown.enter.prevent>
+  <form
+    @submit.prevent="onSubmit"
+    @keydown.enter.prevent
+    class="form-generator"
+    :class="{
+      'form-generator--danger': danger
+    }"
+  >
     <div
       v-for="(field, index) in formFields"
       :key="index"
@@ -45,7 +52,8 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
       type: Function as PropType<SubmitFunction>,
       required: true
     },
-    gridLayout: { type: String }
+    gridLayout: { type: String },
+    danger: { type: Boolean, default: false }
   },
 
   data: () => ({
@@ -119,7 +127,7 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-form
+.form-generator
   display: grid
   gap: 15px
   grid-template-columns: 1fr 1fr
@@ -138,4 +146,9 @@ form
 
   .submit
     grid-column: 1 / 3
+    +mt(15px)
+
+  +m(danger)
+    .submit
+      +clr-bg(danger)
 </style>

@@ -16,6 +16,7 @@ export default interface FormField {
   value: AcceptableFormValues
   label?: string
   props?: Partial<{
+    default: AcceptableFormValues
     notRequired: boolean
     leftIcon: string
     placeholder: string

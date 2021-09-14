@@ -71,6 +71,7 @@ export default Vue.extend({
   props: {
     value: { type: String, required: true },
     identifier: { type: String, required: true },
+    default: { type: String },
 
     name: { type: String },
     type: { type: String, default: "text" },
@@ -120,6 +121,11 @@ export default Vue.extend({
       }
       return ""
     }
+  },
+
+  created() {
+    if (this.default)
+      this.onInput({ target: { value: this.default } } as HTMLInputEvent)
   },
 
   mounted() {

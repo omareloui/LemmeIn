@@ -3,6 +3,8 @@ export interface AddTag {
   color: string
 }
 
+export type UpdateTag = AddTag
+
 export default interface Tag {
   id: string
   tag: string

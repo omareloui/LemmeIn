@@ -20,8 +20,11 @@ export default class TagController {
   }: RouterContext) {
     const body = request.body();
     const { tag, color } = await body.value;
-    await TagService.updateOneMine(params.id!, { tag, color }, state.user.id);
-    response.status = 200;
+    response.body = await TagService.updateOneMine(
+      params.id!,
+      { tag, color },
+      state.user.id
+    );
   }
 
   public static async deleteMine({ response, params, state }: RouterContext) {

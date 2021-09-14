@@ -34,6 +34,7 @@ export default Vue.extend({
   props: {
     identifier: { type: String, required: true },
     value: { type: String, required: true },
+    default: { type: String },
     notRequired: { type: Boolean, default: false },
     doNotSelectDefault: { type: Boolean, default: false }
   },
@@ -50,6 +51,11 @@ export default Vue.extend({
 
   created() {
     if (!this.doNotSelectDefault) this.select(this.colors[0])
+    if (this.default) {
+      const defaultColor = this.colors.find(x => x.value === this.default)
+      if (!defaultColor) throw new Error("Can't find this color.")
+      this.select(defaultColor)
+    }
   },
 
   computed: {

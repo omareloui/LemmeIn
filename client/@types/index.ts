@@ -2,7 +2,7 @@ import ExtendVue from "./ExtendVue"
 import ExtendVueRefs from "./ExtendVueRefs"
 import HTMLInputEvent from "./HTMLInputEvent"
 
-import Tag, { AddTag } from "./Tag"
+import Tag, { AddTag, UpdateTag } from "./Tag"
 import FormField, {
   AcceptableFormValues,
   InputTypes,
@@ -17,6 +17,7 @@ export {
   HTMLInputEvent,
   Tag,
   AddTag,
+  UpdateTag,
   FormField,
   AcceptableFormValues,
   InputTypes,

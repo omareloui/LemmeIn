@@ -6,7 +6,8 @@
     focusable
     clickable
     float
-    @click="goToTag"
+    @click="editTag"
+    @dblclick="goToTag"
     @keyup:space="goToTag"
     @keyup:enter="goToTag"
   >
@@ -31,6 +32,10 @@ export default Vue.extend({
   methods: {
     goToTag() {
       this.$router.push(`/vault?tags=${this.tag.id}`)
+    },
+
+    editTag() {
+      this.$emit("edit-tag", this.tag)
     }
   }
 })

@@ -20,6 +20,7 @@
             :key="tag.id"
             class="tag"
             v-bind="{ tag }"
+            @edit-tag="editTag"
           />
         </transition-group>
       </div>
@@ -27,6 +28,15 @@
 
     <dialogue :is-shown="isAddTagOpen" @close="closeAddTag">
       <tag-add @add-tag="addTag" @close-dialogue="closeAddTag" />
+    </dialogue>
+    <dialogue :is-shown="isEditTagOpen" @close="closeEditTag">
+      <tag-edit
+        :tag="tagToEdit"
+        @add-tag="addTag"
+        @close-dialogue="closeEditTag"
+        @update-tag="updateTag"
+        @remove-tag="removeTag"
+      />
     </dialogue>
   </container>
 </template>
@@ -57,20 +67,54 @@ export default Vue.extend({
 
   data: () => ({
     searchQuery: "",
-    isAddTagOpen: false
+    isAddTagOpen: false,
+    isEditTagOpen: false,
+    tagToEdit: null as Tag | null
   }),
 
   methods: {
+    closeDialogues() {
+      this.closeAddTag()
+      this.closeEditTag()
+    },
+
+    // Add tag
     addTag(tag: Tag) {
       // @ts-ignore
       this.tags.push(tag)
     },
-
     openAddTag() {
+      this.closeDialogues()
       this.isAddTagOpen = true
     },
     closeAddTag() {
       this.isAddTagOpen = false
+    },
+
+    // Edit tag
+    openEditTag() {
+      this.closeDialogues()
+      this.isEditTagOpen = true
+    },
+    closeEditTag() {
+      this.isEditTagOpen = false
+    },
+    editTag(tag: Tag) {
+      this.tagToEdit = tag
+      this.openEditTag()
+    },
+    updateTag(newTag: Tag) {
+      // @ts-ignore
+      this.tags = this.tags.map(x => {
+        if (x.id === newTag.id) x = newTag
+        return x
+      })
+    },
+
+    // Remote
+    removeTag(tagToRemove: Tag) {
+      // @ts-ignore
+      this.tags = this.tags.filter(x => x.id !== tagToRemove.id)
     }
   }
 })
@@ -82,7 +126,7 @@ export default Vue.extend({
 .search-input
   +my(20px)
   +lt-tablet
-    +mx(5vw)
+    +mx(min(100px, 5vw))
 
 .tags > *
   +grid($gap: 20px)
