@@ -6,6 +6,7 @@ export type InputTypes =
   | "radio"
   | "check"
   | "file"
+  | "color"
 export type AcceptableFormValues = string | string[] | File[]
 export type FormValues = { [fieldId: string]: AcceptableFormValues }
 

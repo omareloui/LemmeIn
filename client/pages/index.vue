@@ -1,5 +1,5 @@
 <template>
-  <container>
+  <container tag="main">
     <template #heading>Lemme in</template>
   </container>
 </template>

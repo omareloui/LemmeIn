@@ -16,10 +16,10 @@ const createAndUpdateValidationBody = {
     .string()
     .min(4)
     .max(28)
-    .matches(
-      /^(#[\da-fA-F]{3,8}|hsla?\(\d{1,3}, \d{1,3}%, \d{1,3}%(, \d{1,3}%)?\))$/,
-      "Field color must be hex color or hsl color"
-    )
+    // .matches(
+    //   /^(#[\da-fA-F]{3,8}|hsla?\(\d{1,3}, \d{1,3}%, \d{1,3}%(, \d{1,3}%)?\))$/,
+    //   "Field color must be hex color or hsl color"
+    // )
     .trim()
     .required("Field color is required"),
 };

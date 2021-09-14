@@ -1,3 +1,8 @@
+export interface AddTag {
+  tag: string
+  color: string
+}
+
 export default interface Tag {
   id: string
   tag: string

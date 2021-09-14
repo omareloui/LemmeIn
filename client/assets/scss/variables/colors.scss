@@ -1,14 +1,14 @@
 @use "sass:map";
 @use "../functions/opacify" as o;
 
-// TODO: add greys
 $core: (
   primary: hsl(234, 85%, 66%),
   light: hsl(360, 100%, 100%),
   dark: hsl(0, 0%, 5%),
   pink: hsl(320, 88%, 52%),
   orange: hsl(27, 100%, 52%),
-  blue: hsl(201, 100%, 67%)
+  blue: hsl(201, 100%, 67%),
+  green: hsl(108, 84%, 51%)
 );
 
 $shared: (

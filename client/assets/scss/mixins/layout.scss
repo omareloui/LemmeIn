@@ -1,0 +1,35 @@
+@mixin grid(
+  $columns: null,
+  $rows: null,
+  $areas: null,
+  $auto-fit: null,
+  $gap: null,
+  $center: false
+) {
+  display: grid;
+
+  @if $areas {
+    grid-template-areas: $areas;
+  }
+  @if $auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(#{$auto-fit}, 1fr));
+  }
+  @if $columns and not $auto-fit {
+    grid-template-columns: $columns;
+  }
+  @if $rows {
+    grid-template-rows: $rows;
+  }
+
+  @if $gap {
+    gap: $gap;
+  }
+
+  @if $center {
+    place-items: center;
+  }
+}
+
+@mixin auto-fit($minmax, $gap: null, $center: true) {
+  @include grid($auto-fit: $minmax, $gap: $gap, $center: $center);
+}

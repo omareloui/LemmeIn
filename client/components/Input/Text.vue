@@ -45,8 +45,8 @@
           (side === 'right' && !!rightIcon) || (side === 'left' && leftIcon)
         "
         @click="handleIconClick(side)"
-        @keyup.enter.native="handleIconClick(side)"
-        @keyup.space.native="handleIconClick(side)"
+        @keyup:enter="handleIconClick(side)"
+        @keyup:space="handleIconClick(side)"
         size="28px"
         :isClickable="
           (side === 'left' && isLeftIconClickable) ||
@@ -110,7 +110,11 @@ export default Vue.extend({
       return this.value.trim()
     },
     placeholderValue(): string {
-      if (this.isFocus && !this.value) {
+      if (!this.label) {
+        return this.placeholder
+      }
+
+      if (this.isFocus) {
         if (this.placeholder) return this.placeholder
         if (this.hint) return `eg. ${this.hint}`
       }
