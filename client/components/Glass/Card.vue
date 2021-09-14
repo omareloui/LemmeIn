@@ -139,13 +139,13 @@ export default Vue.extend({
   +e(body)
     +size(100%)
     +focus-effect
-    +clr-txt(var(--color))
-    +clr-bg(var(--background))
+    +clr-txt(--color)
+    +clr-bg(--background)
     backdrop-filter: blur(var(--blur))
 
   +e(back-shape)
     +inline-block
-    +clr-bg(var(--background))
+    +clr-bg(--background)
     +w(var(--width))
     +h(var(--height))
 

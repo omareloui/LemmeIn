@@ -12,7 +12,7 @@
 
   // Return the value as is if it's already a custom property
   @if is-custom-property($name) {
-    @return $name;
+    @return var(#{$name});
   }
 
   // Check if valid name

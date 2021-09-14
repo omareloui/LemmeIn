@@ -5,6 +5,8 @@
     :style="{ width: width || size, height: height || size }"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
+    @keyup.enter="$emit('keyup:enter')"
+    @keyup.space="$emit('keyup:space')"
   >
     <svg
       :viewBox="`0 0 ${viewBox}`"
@@ -54,8 +56,8 @@ export default Vue.extend({
   svg
     +center
     +focus-effect(icon)
-    +clr(var(--fill), fill)
-    +clr(var(--stroke), stroke)
+    +clr(--fill, fill)
+    +clr(--stroke, stroke)
     +size(100%)
 
   +m(is-clickable)
