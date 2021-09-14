@@ -17,7 +17,7 @@
     </div>
 
     <dialogue :is-shown="isAddTagOpen" @close="closeAddTag">
-      <add-tag @add-tag="addTag" @close-dialogue="closeAddTag" />
+      <tag-add @add-tag="addTag" @close-dialogue="closeAddTag" />
     </dialogue>
   </container>
 </template>
