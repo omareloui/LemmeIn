@@ -8,7 +8,12 @@
     }"
     :style="{ '--custom-width': customMaxWidth }"
   >
-    <component :is="headingTag" v-if="!noHeading" class="container__heading">
+    <component
+      :is="headingTag"
+      v-if="!noHeading"
+      class="container__heading"
+      :class="{ 'container__heading--center': centerHeading }"
+    >
       <slot name="heading">Heading</slot>
     </component>
     <slot></slot>
@@ -27,7 +32,8 @@ export default Vue.extend({
     tag: { type: String as PropType<ContainerTags>, default: "div" },
     headingTag: { type: String as PropType<HTMLHeadings>, default: "h1" },
     customMaxWidth: { type: String },
-    hasPaddingBottom: { type: Boolean, default: false }
+    hasPaddingBottom: { type: Boolean, default: false },
+    centerHeading: { type: Boolean, default: false }
   }
 })
 </script>
@@ -37,6 +43,9 @@ export default Vue.extend({
 
 .container
   +px(10px)
+
+  +m(has-padding-bottom)
+    +pb(30px)
 
   +lt-desktop
     --container-width: calc(var(--screen-desktop) - 20px)
@@ -51,13 +60,11 @@ export default Vue.extend({
       max-width: var(--custom-width)
       width: var(--custom-width)
 
-    +m(has-padding-bottom)
-      +pb(30px)
-
   +e(heading)
     +clr-txt(primary)
     text-align: center
     overflow: hidden
     +lt-tablet
-      text-align: left
+      &:not(.container__heading--center)
+        text-align: left
 </style>
