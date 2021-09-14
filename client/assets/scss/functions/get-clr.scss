@@ -1,11 +1,18 @@
 @use "sass:map";
 @use "sass:list";
+@use "sass:string";
 @use "../variables/colors" as clrs;
+@use "is-custom-property.scss" as *;
 
 @function get-clr($name, $opacity: null, $lightness: null) {
   // Return immediately if the color is none with transparent value
   @if $name == none {
     @return transparent;
+  }
+
+  // Return the value as is if it's already a custom property
+  @if is-custom-property($name) {
+    @return $name;
   }
 
   // Check if valid name
