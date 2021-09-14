@@ -26,10 +26,9 @@
     <div
       class="glass__body"
       :class="bodyClasses"
-      :tabindex="focusable ? 0 : -1"
+      :tabindex="focusable ? 0 : undefined"
       @click="$emit('click')"
       @keyup.space="$emit('keyup:space')"
-      @keydown.space.prevent
       :style="{
         '--background': `hsl(var(--clr-hs-${tint}) var(--clr-l-${tint}) / var(--clr-o-${
           opacity * 100
