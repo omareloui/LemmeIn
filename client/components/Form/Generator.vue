@@ -73,7 +73,7 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
         this.validate()
         await this.$nextTick()
         const hasError = this.checkIfComponentsHaveError()
-        if (hasError) throw new Error("Make sure all fields are valid.")
+        if (hasError) return
         await this.submitFunction(this.values)
       } catch (e) {
         if (e.response) this.$notify.error(e.response.data.message)
