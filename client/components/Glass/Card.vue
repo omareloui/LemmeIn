@@ -18,9 +18,9 @@
       class="glass__back-shape"
       :class="`glass__back-shape--${backShape} glass__back-shape--${backShapePosition}`"
       :style="{
-        height: backShapeHeight || backShapeSize,
-        width: backShapeWidth || backShapeSize,
-        'background-color': `var(--clr-${backShapeColor || tint})`
+        '--height': backShapeHeight || backShapeSize,
+        '--width': backShapeWidth || backShapeSize,
+        '--background': `var(--clr-${backShapeColor || tint})`
       }"
     ></span>
     <div
@@ -31,9 +31,11 @@
       @keyup.space="$emit('keyup:space')"
       @keydown.space.prevent
       :style="{
-        'background-color': `hsl(var(--clr-hs-${tint}) var(--clr-l-${tint}) / ${opacity})`,
-        'backdrop-filter': `blur(${blur}px)`,
-        color: `var(--clr-${textColor})`
+        '--background': `hsl(var(--clr-hs-${tint}) var(--clr-l-${tint}) / var(--clr-o-${
+          opacity * 100
+        }))`,
+        '--blur': `${blur}px`,
+        '--color': `var(--clr-${textColor})`
       }"
       v-bind="{ role, ...aria }"
     >
@@ -45,10 +47,14 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 
+const OPACITY_OPTIONS = [
+  0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1
+] as const
 const BORDER_RADIUS_OPTIONS = ["none", "sm", "md", "lg", "xl"] as const
 const BACK_SHAPE_OPTIONS = ["square", "pill", "circle"] as const
 const BACK_SHAPE_POSITIONS = ["bottom", "center", "top"] as const
 
+type OpacityOptions = typeof OPACITY_OPTIONS[number]
 type BorderRadiusOptions = typeof BORDER_RADIUS_OPTIONS[number]
 type BackShapeOptions = typeof BACK_SHAPE_OPTIONS[number]
 type BackShapePositions = typeof BACK_SHAPE_POSITIONS[number]
@@ -60,7 +66,11 @@ export default Vue.extend({
     height: { type: String },
 
     blur: { type: Number, default: 4 },
-    opacity: { type: Number, validator: v => v > 0 && v < 1, default: 0.2 },
+    opacity: {
+      type: Number as PropType<OpacityOptions>,
+      validator: (v: OpacityOptions) => OPACITY_OPTIONS.indexOf(v) > -1,
+      default: 0.2
+    },
 
     centerContent: { type: Boolean, default: false },
 
@@ -129,9 +139,15 @@ export default Vue.extend({
   +e(body)
     +size(100%)
     +focus-effect
+    +clr-txt(var(--color))
+    +clr-bg(var(--background))
+    backdrop-filter: blur(var(--blur))
 
   +e(back-shape)
     +inline-block
+    +clr-bg(var(--background))
+    +w(var(--width))
+    +h(var(--height))
 
     +m(square)
       +br-md

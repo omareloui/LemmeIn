@@ -24,7 +24,7 @@
         v-if="!!leftIcon"
         size="28px"
         class="selector__left-icon"
-        :fill="!!errorMessage ? 'var(--clr-error)' : 'var(--clr-dark)'"
+        :fill="!!errorMessage ? 'error' : 'dark'"
       />
 
       <transition name="fade">
@@ -48,7 +48,7 @@
           transform: isDropdownOpen
             ? 'translateY(-50%) rotate(180deg)'
             : 'translateY(-50%)',
-          fill: isErred ? 'var(--clr-error)' : 'var(--clr-dark)'
+          fill: isErred ? 'error' : 'dark'
         }"
       />
     </div>

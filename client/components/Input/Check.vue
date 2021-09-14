@@ -36,7 +36,6 @@
             <icon
               v-if="option.isChecked"
               name="check"
-              fill="hsla(var(--clr-text-main))"
               class="option__checkbox-icon"
               size="20px"
             ></icon>

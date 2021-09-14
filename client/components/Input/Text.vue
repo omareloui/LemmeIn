@@ -57,7 +57,7 @@
           (side === 'right' && isRightIconClickable)
         "
         :class="`icon icon--${side}`"
-        :fill="!!errorMessage ? 'var(--clr-error)' : ''"
+        :fill="!!errorMessage ? 'error' : undefined"
       />
     </transition>
   </div>

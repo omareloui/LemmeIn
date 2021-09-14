@@ -7,7 +7,7 @@
             <icon
               name="logo"
               size="100%"
-              fill="var(--clr-primary)"
+              fill="primary"
               view-box="32 30"
             ></icon>
           </nuxt-link>

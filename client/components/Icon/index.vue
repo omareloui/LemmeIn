@@ -8,7 +8,10 @@
   >
     <svg
       :viewBox="`0 0 ${viewBox}`"
-      :style="{ fill, stroke }"
+      :style="{
+        '--fill': `var(--clr-${fill})`,
+        '--stroke': stroke && `var(--clr-${stroke})`
+      }"
       :tabindex="isFocusable ? 0 : -1"
     >
       <transition name="fade">
@@ -28,7 +31,7 @@ export default Vue.extend({
     width: { type: String },
     height: { type: String },
     viewBox: { type: String, default: "32 32" },
-    fill: { type: String },
+    fill: { type: String, default: "text-main" },
     stroke: { type: String },
     isClickable: { type: Boolean, default: false },
     isFocusable: { type: Boolean, default: false }
@@ -51,7 +54,8 @@ export default Vue.extend({
   svg
     +center
     +focus-effect(icon)
-    +clr(text-main, fill)
+    +clr(var(--fill), fill)
+    +clr(var(--stroke), stroke)
     +size(100%)
 
   +m(is-clickable)
