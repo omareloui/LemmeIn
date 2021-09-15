@@ -18,7 +18,14 @@
   >
     <div class="selector__label">{{ label }}</div>
 
-    <div class="selector__button" @click="toggleShowOptions">
+    <glass-card
+      class="selector__button"
+      @click="toggleShowOptions"
+      tint="background-tertiary"
+      no-back-shape
+      :opacity="0.4"
+      :blur="5"
+    >
       <icon
         :name="leftIcon"
         v-if="!!leftIcon"
@@ -51,20 +58,25 @@
           fill: isErred ? 'error' : 'dark'
         }"
       />
-    </div>
+    </glass-card>
 
     <transition name="fade">
       <span v-if="isErred" class="selector__error">{{ errorMessage }}</span>
     </transition>
 
     <transition name="slide-down">
-      <div
+      <glass-card
+        tint="background-tertiary"
+        no-back-shape
+        :opacity="0.4"
+        :blur="5"
+        border-radius="md"
+        :id="identifier"
         class="dropdown"
         :class="{ 'dropdown--open': isDropdownOpen }"
         v-if="isDropdownOpen"
-        :id="identifier"
       >
-        <input-search
+        <!-- <input-search
           v-if="isSearchable"
           ref="searchField"
           class="dropdown__search"
@@ -74,7 +86,7 @@
           search-key="gender"
           :search-elements="options"
           no-autocomplete
-        />
+        /> -->
 
         <ul class="options">
           <li
@@ -107,19 +119,14 @@
             </label>
           </li>
         </ul>
-      </div>
+      </glass-card>
     </transition>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { ExtendVueRefs, HTMLInputEvent } from "~/@types"
-
-type Option = {
-  id: number | string
-  [key: string]: string | number
-}
+import { ExtendVueRefs, HTMLInputEvent, InputSelectOption } from "~/@types"
 
 interface Refs {
   searchField: HTMLElement & {
@@ -135,7 +142,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     name: { type: String },
     primaryKey: { type: String, default: "value" },
     options: {
-      type: Array as PropType<Option[]>,
+      type: Array as PropType<InputSelectOption[]>,
       required: true,
       validator(v) {
         // Make sure the passed options has id
@@ -171,7 +178,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       return !!this.errorMessage
     },
 
-    selectedOption(): Option | undefined {
+    selectedOption(): InputSelectOption | undefined {
       return this.options.find(x => x.id === this.value)
     },
 
@@ -339,117 +346,117 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 </script>
 
 <style lang="sass" scoped>
-// @use "~/assets/scss/mixins" as *
+@use "~/assets/scss/mixins" as *
 
-// .selector
-//   +pos-r
-//   +br-md
-//   +focus-effect(input)
-//   +clr-bg(input-background)
-//   +brdr(input-border)
+.selector
+  +pos-r
+  +br-md
+  +focus-effect(input)
 
-//   &--has-label
-//     +mt(15px)
+  &--has-label
+    +mt(15px)
 
-//   &__label
-//     +tran
-//     +center-v
-//     +pos-a(left 10px)
-//     +clr-txt
-//     +fnt-medium
-//     +no-select
-//     opacity: 0.6
+  &__label
+    +zi(selector-label)
+    +tran
+    +center-v
+    +pos-a(left 10px)
+    +clr-txt
+    +fnt-medium
+    +no-select
+    opacity: 0.6
 
-//   &--hover-label
-//     .selector__label
-//       top: -10px
-//       left: 5px !important
-//       opacity: 1
-//       +fnt-xs
+  &--hover-label
+    .selector__label
+      top: -10px
+      left: 5px !important
+      opacity: 1
+      +fnt-xs
 
-//   &__error
-//     +pos-a(left 10px top 50px)
-//     +clr-txt(error)
-//     +fnt-xs
+  &__error
+    +pos-a(left 10px top 50px)
+    +clr-txt(error)
+    +fnt-xs
 
-//   &__button
-//     +pos-r
-//     +zi(selector)
-//     +pa(10px)
-//     +br-md
-//     +tran(background-color)
-//     +clickable
-//     +h(45px)
+  &__button
+    +pos-r
+    +zi(selector)
+    ::v-deep .glass__body
+      +h(45px)
+      +pa(10px)
+      +br-md
+      +clickable
 
-//   &__button-text
-//     +center-v
-//     &--no-value
-//       +clr-txt($opacity: 60)
+  &__button-text
+    +center-v
+    &--no-value
+      +clr-txt($opacity: 60)
 
-//   &__button-icon
-//     +tran(transform)
-//     +center-v
-//     right: 20px
+  &__button-icon
+    +tran(transform)
+    +center-v
+    right: 20px
 
-//   &__left-icon
-//     +center-v
-//     left: 12px
+  &__left-icon
+    +center-v
+    left: 12px
 
-//   &--has-left-icon
-//     .selector
-//       &__label
-//         left: 50px
+  &--has-left-icon
+    .selector
+      &__label
+        left: 50px
 
-//       &__button-text
-//         +pl( 30px)
+      &__button-text
+        +pl( 30px)
 
-//   .dropdown
-//     +zi(selector-dropdown)
-//     +clr-bg(input-background)
-//     +brdr(input-border)
-//     +h(max 300px)
-//     +pa(10px)
-//     +w(100%)
-//     +br-md
-//     +pos-a(top 44px)
+  .dropdown
+    +zi(selector-dropdown)
+    +pos-a(top 44px)
+    +w(100%)
+    ::v-deep .glass__body
+      +h(max 150px)
+      +scroll
+      overflow: hidden auto
+      +pa(10px)
+      +br-md
 
-//     .options
-//       +list-reset
-//       +mt(5px)
+    .options
+      +list-reset
+      +mt(5px)
 
-//       .option
-//         +br-sm
-//         +focus-effect(input)
+      .option
+        +br-sm
+        +focus-effect(input)
 
-//         &:not(:last-child)
-//           +mb(5px)
+        &:not(:last-child)
+          +mb(5px)
 
-//         &__input
-//           +input-radio-reset
+        &__input
+          +input-radio-reset
 
-//         &__label
-//           +tran(color)
-//           +block
-//           +pl(10px)
+        &__label
+          +tran(color)
+          +block
+          +pl(10px)
 
-//         &:hover,
-//         &:focus
-//           +clr-bg
+        &:hover,
+        &:focus
+          +clr-bg
 
-//         &--selected
-//           +clr-bg(input-select-selected-bg, 30)
-//           &:hover,
-//           &:focus
-//             +clr-bg(input-select-selected-bg, 60)
+        &--selected
+          // +clr-bg(input-select-selected-bg, 30)
+          &:hover,
+          &:focus
+            // +clr-bg(input-select-selected-bg, 60)
 
-//   &--has-error
-//     +clr(error, border-color)
-//     +mb(15px)
+  &--has-error
+    +clr(error, border-color)
+    +mb(15px)
 
-//     .selector__button-text,
-//     .selector__label
-//       +clr-txt(error)
+    .selector__button-text,
+    .selector__label
+      +clr-txt(error)
 
-//     .dropdown
-//       +clr(error, border-color)
+    .dropdown
+      +clr(error, border-color)
 </style>

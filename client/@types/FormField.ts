@@ -1,3 +1,5 @@
+import { InputSelectOption } from "."
+
 export type InputTypes =
   | "text"
   | "email"
@@ -25,6 +27,8 @@ export default interface FormField {
     maxLength: number
     pattern: RegExp
     invalidPatternMessage: string
+    options: InputSelectOption[]
+    primaryKey: string
   }>
   style?: "half"
 }

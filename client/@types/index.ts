@@ -4,6 +4,7 @@ import HTMLInputEvent from "./HTMLInputEvent"
 
 import Tag, { AddTag, UpdateTag } from "./Tag"
 import Password, { AddPassword } from "./Password"
+
 import FormField, {
   AcceptableFormValues,
   InputTypes,
@@ -11,6 +12,7 @@ import FormField, {
 } from "./FormField"
 import InputCheckOption from "./InputCheckOption"
 import InputRadioOption from "./InputRadioOption"
+import InputSelectOption from "./InputSelectOption"
 
 export {
   ExtendVue,
@@ -26,5 +28,6 @@ export {
   InputTypes,
   FormValues,
   InputCheckOption,
-  InputRadioOption
+  InputRadioOption,
+  InputSelectOption
 }

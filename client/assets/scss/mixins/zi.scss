@@ -3,7 +3,7 @@
 
 @mixin zi($el) {
   @if not map.get(zis.$z-indexes, $el) {
-    @error "#{$el} is invalid border-radius size";
+    @error "#{$el} is invalid z-index name";
   }
   z-index: var(--zi-#{$el});
 }
