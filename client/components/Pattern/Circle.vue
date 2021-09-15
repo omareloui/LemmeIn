@@ -1,5 +1,6 @@
 <template>
-  <div
+  <pattern-base
+    v-bind="{ fixed, top, right, left, bottom }"
     class="pattern-circle"
     :style="{
       width: size,
@@ -31,7 +32,7 @@
       :tint="color"
       no-back-shape
     ></glass-circle>
-  </div>
+  </pattern-base>
 </template>
 
 
@@ -40,9 +41,15 @@ import Vue from "vue"
 
 export default Vue.extend({
   props: {
+    fixed: { type: Boolean, default: true },
+    top: { type: String },
+    bottom: { type: String },
+    left: { type: String },
+    right: { type: String },
+
     color: { type: String, default: "orange" },
     size: { type: String, default: "200px" },
-    opacity: { type: Number, default: 0.15 },
+    opacity: { type: Number, default: 0.1 },
     blur: { type: Number, default: 3 },
     smallCirclesSize: { type: String, default: "20px" },
     smallCirclesOffset: { type: String, default: "60px" }
@@ -54,7 +61,6 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .pattern-circle
-  +pos-a
   z-index: -1
   +w(min-content)
 

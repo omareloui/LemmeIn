@@ -1,5 +1,6 @@
 <template>
-  <div
+  <pattern-base
+    v-bind="{ fixed, top, right, left, bottom }"
     class="pattern-dots"
     :style="{ '--dots-gap': gridGap, '--dot-offset': dotsOffset }"
   >
@@ -23,7 +24,7 @@
         no-back-shape
       ></glass-circle>
     </span>
-  </div>
+  </pattern-base>
 </template>
 
 
@@ -32,9 +33,15 @@ import Vue from "vue"
 
 export default Vue.extend({
   props: {
+    fixed: { type: Boolean, default: true },
+    top: { type: String },
+    bottom: { type: String },
+    left: { type: String },
+    right: { type: String },
+
     color: { type: String, default: "pink" },
     dotSize: { type: String, default: "30px" },
-    opacity: { type: Number, default: 0.15 },
+    opacity: { type: Number, default: 0.1 },
     blur: { type: Number, default: 3 },
     gridGap: { type: String, default: "20px" },
     dotsOffset: { type: String, default: "10px" }
@@ -46,7 +53,6 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .pattern-dots
-  +pos-a
   z-index: -1
 
   display: grid
