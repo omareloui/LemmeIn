@@ -8,8 +8,8 @@
     float
     @click="editTag"
     @dblclick="goToTag"
-    @keyup:space="goToTag"
-    @keyup:enter="goToTag"
+    @keyup:space="editTag"
+    @keyup:enter="editTag"
   >
     <span
       class="tag__color"

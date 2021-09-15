@@ -1,5 +1,5 @@
  <template>
-  <container has-padding-bottom>
+  <container has-padding-bottom class="tags-page">
     <template #heading>Tags</template>
     <input-search
       v-model="searchQuery"
@@ -123,24 +123,29 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.search-input
-  +my(20px)
-  +lt-tablet
-    +mx(min(100px, 5vw))
+.tags-page
+  .search-input
+    +my(20px)
+    +lt-tablet
+      +mx(min(100px, 5vw))
 
-.tags > *
-  +grid
-  .tag
-    &:not(:last-child)
-      +mb(20px)
-  +lt-tablet
-    grid-template-columns: repeat(2, 1fr)
-    .tag:nth-child(even)
-      +ml(20px)
+  main
+    .tags > *
+      +grid
+      .tag
+        &:not(:last-child)
+          +mb(20px)
+      +lt-tablet
+        grid-template-columns: repeat(2, 1fr)
+        .tag
+          &:nth-child(even)
+            +ml(20px)
+          &:nth-last-child(2):nth-child(odd)
+            +mb(0)
 
-.add-button
-  +mb(20px)
-  +mx(auto)
-  +lt-tablet
-    +w(max 300px)
+  .add-button
+    +mb(20px)
+    +mx(auto)
+    +lt-tablet
+      +w(max 300px)
 </style>
