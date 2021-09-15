@@ -2,13 +2,6 @@
   <container tag="main">
     <template #heading>The vault</template>
     <main>
-      <container no-heading custom-max-width="600px">
-        <form-generator
-          v-bind="{ formFields }"
-          :submitFunction="submit"
-        ></form-generator>
-      </container>
-
       <div>{{ passwords }}</div>
 
       <div class="password" v-for="password in passwords" :key="password.id">
@@ -22,7 +15,6 @@
 
 <script lang="ts">
 import Vue from "vue"
-import { FormField } from "~/@types"
 
 export default Vue.extend({
   async asyncData({ $axios, error }) {
@@ -31,31 +23,6 @@ export default Vue.extend({
       return { passwords }
     } catch (e) {
       return error(e.response.data)
-    }
-  },
-
-  data: () => ({
-    formFields: [
-      {
-        id: "title",
-        type: "text",
-        value: "",
-        label: "title",
-        props: { hint: "Facebook" }
-      },
-      {
-        id: "password",
-        type: "password",
-        value: "",
-        label: "password",
-        props: { minLength: 2 }
-      }
-    ] as FormField[]
-  }),
-
-  methods: {
-    submit() {
-      this.$notify.error("the function isn't set yet")
     }
   }
 })

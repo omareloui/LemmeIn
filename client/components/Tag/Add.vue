@@ -59,4 +59,5 @@ export default Vue.extend({
   +e(heading)
     +clr-txt(primary)
     +center-text
+    +fnt-5xl
 </style>

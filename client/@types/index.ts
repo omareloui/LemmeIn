@@ -3,6 +3,7 @@ import ExtendVueRefs from "./ExtendVueRefs"
 import HTMLInputEvent from "./HTMLInputEvent"
 
 import Tag, { AddTag, UpdateTag } from "./Tag"
+import Password, { AddPassword } from "./Password"
 import FormField, {
   AcceptableFormValues,
   InputTypes,
@@ -18,6 +19,8 @@ export {
   Tag,
   AddTag,
   UpdateTag,
+  Password,
+  AddPassword,
   FormField,
   AcceptableFormValues,
   InputTypes,

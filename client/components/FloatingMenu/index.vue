@@ -15,14 +15,22 @@
           icon="generate"
           icon-view-box="24.8 32"
           size="50px"
-          @click="isPassGenShown = true"
+          @click="openPassGen"
         />
 
-        <button-glass class="options__button" icon="key" size="50px" />
+        <button-glass
+          class="options__button"
+          icon="key"
+          size="50px"
+          @click="openAddPass"
+        />
       </div>
     </transition>
 
-    <dialogue :is-shown="isPassGenShown" @close="isPassGenShown = false">
+    <dialogue :is-shown="isAddPassShown" @close="closeAddPass">
+      <password-add @close-dialogue="closeAddPass" />
+    </dialogue>
+    <dialogue :is-shown="isPassGenShown" @close="closePassGen">
       <password-generator />
     </dialogue>
   </div>
@@ -34,7 +42,8 @@ import Vue from "vue"
 export default Vue.extend({
   data: () => ({
     isMenuOpen: false,
-    isPassGenShown: false
+    isPassGenShown: false,
+    isAddPassShown: false
   }),
 
   mounted() {
@@ -64,6 +73,27 @@ export default Vue.extend({
         }
       })
       if (shouldClose) this.closeMenu()
+    },
+
+    closeAllDialogues() {
+      this.closePassGen()
+      this.closeAddPass()
+    },
+
+    openAddPass() {
+      this.closeAllDialogues()
+      this.isAddPassShown = true
+    },
+    closeAddPass() {
+      this.isAddPassShown = false
+    },
+
+    openPassGen() {
+      this.closeAllDialogues()
+      this.isPassGenShown = true
+    },
+    closePassGen() {
+      this.isPassGenShown = false
     }
   }
 })
