@@ -19,6 +19,7 @@ const createAndUpdatePasswordBody = {
   note: yup.string().min(3).min(3).max(256).trim(),
   site: yup.string().min(3).min(3).max(256).trim(),
   tags: yup.array().of(yup.string()),
+  isOAuth: yup.boolean(),
 };
 
 export const createPasswordValidation = {

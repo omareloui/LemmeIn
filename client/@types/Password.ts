@@ -13,8 +13,9 @@ export default interface Password {
 }
 
 export interface AddPassword {
-  password: string
   app: string
+  password: string
+  isOAuth: boolean
   accountIdentifier?: string
   site?: string
   note?: string
