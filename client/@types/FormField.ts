@@ -10,14 +10,19 @@ export type InputTypes =
   | "file"
   | "tag-color"
   | "tags"
+  | "textarea"
+
 export type AcceptableFormValues =
   | string
   | string[]
   | File[]
   | { id: string; [key: string]: string | number | boolean }[]
+
 export type FormValues = { [fieldId: string]: AcceptableFormValues }
 
-export default interface FormField {
+export type FormGap = "gap"
+
+export interface FormField {
   id: string
   type: InputTypes
   value: AcceptableFormValues
@@ -34,6 +39,10 @@ export default interface FormField {
     invalidPatternMessage: string
     options: InputSelectOption[]
     primaryKey: string
+    focusOnMount: boolean
+    noIcon: boolean
   }>
   style?: "half"
 }
+
+export type FormStructure = (FormField | FormGap)[]

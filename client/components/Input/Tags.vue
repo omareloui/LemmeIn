@@ -5,7 +5,7 @@
       'input-tags--hover-label': shouldHoverLabel,
       'input-tags--has-label': !!label,
       'input-tags--has-error': isErred,
-      'input-tags--has-icon': !!icon
+      'input-tags--has-icon': !!leftIcon
     }"
     :id="identifier"
   >
@@ -19,13 +19,17 @@
       @click="focusOnSearch"
     >
       <icon
-        :name="icon"
+        v-if="leftIcon"
+        :name="leftIcon"
         size="28px"
         class="input-tags__icon"
         :fill="isErred ? 'error' : undefined"
       />
 
-      <span v-if="label" class="input-tags__label">{{ label }}</span>
+      <span v-if="label" class="label">
+        {{ label }}
+        <span v-if="notRequired" class="label__optional">(optional)</span>
+      </span>
 
       <transition-group name="chips" class="chips">
         <chip-tag
@@ -107,8 +111,8 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     identifier: { type: String, required: true },
     value: { type: Array as PropType<TagId[]>, required: true },
     label: { type: String, default: "Tags" },
-    required: { type: Boolean, default: false },
-    icon: { type: String, default: "tags" }
+    notRequired: { type: Boolean, default: true },
+    leftIcon: { type: String, default: "tags" }
   },
 
   data: () => ({
@@ -218,7 +222,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       this.query = ""
     },
     validate() {
-      if (this.required && this.value.length === 0)
+      if (this.notRequired && this.value.length === 0)
         this.setError("You have to select at least one tag")
     }
   }
@@ -231,22 +235,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 .input-tags
   +pos-r
 
-  +m(has-label)
-    +mt(15px)
-
-  +m(has-icon)
-    .input-tags
-      +e(body)
-        ::v-deep > .glass__body
-          +pl(50px)
-      +e(label)
-        left: 50px
-
-      +e(icon)
-        +center-v
-        left: 12px
-
-  +e(label)
+  .label
     +tran
     +center-v
     +pos-a(left 10px)
@@ -254,13 +243,34 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     +fnt-medium
     +no-select
     opacity: 0.6
+    +e(optional)
+      +fnt-xs
+      +tran
+
+  +m(has-label)
+    +mt(15px)
+
+  +m(has-icon)
+    .label
+      left: 50px
+
+    .input-tags
+      +e(body)
+        ::v-deep > .glass__body
+          +pl(50px)
+
+      +e(icon)
+        +center-v
+        left: 12px
 
   +m(hover-label)
-    .input-tags__label
+    .label
       top: -10px
       left: 5px !important
       opacity: 1
       +fnt-xs
+      +e(optional)
+        opacity: 0
 
   +e(body)
     +zi(selector)
@@ -325,7 +335,8 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
         +pl(35px)
 
   .error
-    +pos-a(left 10px bottom -20px)
+    +pos-a(left 10px bottom 0)
+    transform: translateY(100%)
     +clr-txt(error)
     +fnt-xs
 

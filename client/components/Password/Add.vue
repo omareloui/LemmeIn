@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import { FormField, AddPassword, Password } from "~/@types"
+import { FormStructure, AddPassword, Password } from "~/@types"
 
 export default Vue.extend({
   data: () => ({
@@ -21,19 +21,48 @@ export default Vue.extend({
         type: "text",
         value: "",
         label: "App or Website",
-        props: { hint: "Facebook" }
+        props: { hint: "Facebook", focusOnMount: true }
       },
       {
         id: "password",
         type: "password",
-        value: ""
+        value: "",
+        props: { noIcon: true }
+      },
+      "gap",
+      {
+        id: "accountIdentifier",
+        type: "text",
+        value: "",
+        label: "Account identifier",
+        props: {
+          placeholder: "email or username",
+          notRequired: true
+        }
+      },
+      {
+        id: "site",
+        type: "text",
+        value: "",
+        label: "Link",
+        props: {
+          hing: "https://google.com",
+          notRequired: true
+        }
       },
       {
         id: "tags",
         type: "tags",
-        value: []
+        value: [],
+        props: { leftIcon: "" }
+      },
+      {
+        id: "note",
+        type: "textarea",
+        label: "note",
+        props: { notRequired: true }
       }
-    ] as FormField[]
+    ] as FormStructure
   }),
 
   methods: {

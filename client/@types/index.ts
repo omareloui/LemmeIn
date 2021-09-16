@@ -5,10 +5,13 @@ import HTMLInputEvent from "./HTMLInputEvent"
 import Tag, { AddTag, UpdateTag, TagColor } from "./Tag"
 import Password, { AddPassword } from "./Password"
 
-import FormField, {
+import {
   AcceptableFormValues,
   InputTypes,
-  FormValues
+  FormValues,
+  FormField,
+  FormGap,
+  FormStructure
 } from "./FormField"
 import InputCheckOption from "./InputCheckOption"
 import InputRadioOption from "./InputRadioOption"
@@ -25,6 +28,8 @@ export {
   Password,
   AddPassword,
   FormField,
+  FormGap,
+  FormStructure,
   AcceptableFormValues,
   InputTypes,
   FormValues,

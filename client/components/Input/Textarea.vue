@@ -16,18 +16,19 @@
       :blur="5"
       border-radius="md"
     >
-      <input
+      <textarea
         @focus="onFocus"
         @blur="onBlur"
         :type="type"
         :id="identifier"
         :name="name || identifier"
         :placeholder="placeholderValue"
-        :autocomplete="noAutocomplete ? 'off' : 'on'"
         :value="value"
         @input="onInput"
         class="input"
-      />
+        :rows="rows"
+        :maxlength="maxLength"
+      ></textarea>
     </glass-card>
 
     <label v-if="label" :for="identifier" class="label">
@@ -81,16 +82,12 @@ export default Vue.extend({
     label: { type: String },
 
     minLength: { type: Number, default: 3 },
-    maxLength: { type: Number, default: 150 },
+    maxLength: { type: Number },
     notRequired: { type: Boolean, default: false },
-    pattern: { type: RegExp },
-    invalidPatternMessage: {
-      type: String,
-      default: "This is an invalid value."
-    },
 
-    noAutocomplete: { type: Boolean, default: false },
     focusOnMount: { type: Boolean, default: false },
+
+    rows: { type: Number, default: 5 },
 
     leftIcon: { type: String },
     rightIcon: { type: String },
@@ -151,8 +148,6 @@ export default Vue.extend({
           return this.setError(
             `The value can't be less than ${this.minLength} characters long.`
           )
-        if (this.pattern && !trimmedValue.match(this.pattern))
-          return this.setError(this.invalidPatternMessage)
       }
       return this.clearError()
     },
@@ -195,7 +190,10 @@ export default Vue.extend({
   +tran
 
   .input
-    +size(100% 45px)
+    +scroll
+    +size(100%)
+    +block
+    resize: none
     +clr-bg(none)
     +brdr(none)
     +pa(10px 20px)
@@ -209,8 +207,7 @@ export default Vue.extend({
 
   .label
     +tran
-    +center-v
-    left: 10px
+    +pos-a(top 10px left 10px)
     +clr-txt
     +fnt-medium
     +no-select
@@ -221,7 +218,7 @@ export default Vue.extend({
 
   +m(hover-label)
     .label
-      top: -10px
+      top: -19px
       left: 5px !important
       opacity: 1
       +fnt-xs
@@ -247,7 +244,7 @@ export default Vue.extend({
 
   @each $side in right left
     .icon--#{$side}
-      +center-v
+      +pos-a(top 10px)
       #{$side}: 12px
 
     &--has-#{$side}-icon

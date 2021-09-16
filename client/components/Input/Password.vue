@@ -19,7 +19,7 @@
     :type="!isShown ? 'password' : 'text'"
     @input="$emit('input', $event)"
     @right-icon-click="isShown = !isShown"
-    left-icon="key"
+    :left-icon="noIcon ? undefined : 'key'"
     :right-icon="isShown ? 'eye-closed' : 'eye'"
     is-right-icon-clickable
   />
@@ -45,7 +45,8 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
     invalidPatternMessage: { type: String },
     notRequired: { type: Boolean, default: false },
     noAutocomplete: { type: Boolean, default: false },
-    focusOnMount: { type: Boolean, default: false }
+    focusOnMount: { type: Boolean, default: false },
+    noIcon: { type: Boolean, default: false }
   },
 
   data: () => ({ isShown: false }),

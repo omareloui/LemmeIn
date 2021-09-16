@@ -35,10 +35,15 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { ExtendVueRefs, FormField, FormValues } from "~/@types"
+import {
+  ExtendVueRefs,
+  FormField,
+  FormValues,
+  FormStructure,
+  FormGap
+} from "~/@types"
 
-export type Gap = "gap"
-export const GAP: Gap = "gap"
+export const GAP: FormGap = "gap"
 
 type InputComponent = Vue & { validate: () => void; errorMessage: string }
 
@@ -46,7 +51,7 @@ type SubmitFunction = (values: FormValues) => void
 
 export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
   props: {
-    formFields: { type: Array as PropType<(FormField | Gap)[]> },
+    formFields: { type: Array as PropType<FormStructure> },
     submitButtonText: { type: String, default: "Submit" },
     submitFunction: {
       type: Function as PropType<SubmitFunction>,
