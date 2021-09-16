@@ -16,7 +16,7 @@
       <div class="tags">
         <transition-group name="tag">
           <tag
-            v-for="tag in searchResult"
+            v-for="tag in searchQuery ? searchResult : tags"
             :key="tag.id"
             class="tag"
             v-bind="{ tag }"
@@ -43,13 +43,15 @@
 
 <script lang="ts">
 import Vue from "vue"
+import Fuse from "fuse.js"
 import type { Tag } from "~/@types"
 
 export default Vue.extend({
   async asyncData({ $axios, error }) {
     try {
-      const { data } = await $axios.get("/tags")
-      return { tags: data as Tag[] }
+      const response = await $axios.get("/tags")
+      const tags = response.data as Tag[]
+      return { tags }
     } catch (e) {
       return error(e.response.data)
     }
@@ -58,10 +60,8 @@ export default Vue.extend({
   computed: {
     searchResult(): Tag[] {
       // @ts-ignore
-      return (this.tags as Tag[]).filter(x => {
-        const query = this.searchQuery.replace(/[*.+$^()[\]{}]/gi, "")
-        return x.tag.match(new RegExp(query, "i"))
-      })
+      const fuse = new Fuse<Tag>(this.tags, { keys: ["tag"] })
+      return fuse.search(this.searchQuery).map(x => x.item)
     }
   },
 

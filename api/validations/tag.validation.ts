@@ -4,7 +4,7 @@ import { requiredId } from "../utils/checkIfMongoId.ts";
 const createAndUpdateValidationBody = {
   tag: yup
     .string()
-    .min(1)
+    .min(2)
     .max(16)
     .matches(
       /^[^\s.,<>`~+*!@#$%^&()[\]'"\/\\?:;-]+$/,

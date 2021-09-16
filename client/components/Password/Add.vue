@@ -27,6 +27,11 @@ export default Vue.extend({
         id: "password",
         type: "password",
         value: ""
+      },
+      {
+        id: "tags",
+        type: "tags",
+        value: []
       }
     ] as FormField[]
   }),

@@ -19,6 +19,8 @@
         @include c.clr(focus, border-color);
       } @else if ($effect == input-range) {
         opacity: 1;
+      } @else if ($effect == input-select) {
+        @include c.clr-bg(secondary);
       } @else if ($effect == icon) {
         @include c.clr(focus-icon, fill);
       } @else {

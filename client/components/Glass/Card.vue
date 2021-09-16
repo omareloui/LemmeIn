@@ -26,6 +26,7 @@
     ></span>
     <div
       class="glass__body"
+      :contenteditable="editable"
       :class="bodyClasses"
       :tabindex="focusable ? 0 : undefined"
       @click="$emit('click')"
@@ -73,6 +74,8 @@ export default Vue.extend({
       validator: (v: OpacityOptions) => OPACITY_OPTIONS.indexOf(v) > -1,
       default: 0.2
     },
+
+    editable: { type: Boolean, default: false },
 
     centerContent: { type: Boolean, default: false },
 

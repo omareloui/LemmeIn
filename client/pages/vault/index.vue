@@ -2,11 +2,9 @@
   <container tag="main">
     <template #heading>The vault</template>
     <main>
-      <div>{{ passwords }}</div>
-
       <div class="password" v-for="password in passwords" :key="password.id">
         <link-base :to="`/passwords/${password.id}`">
-          {{ password.title }}
+          {{ password.app }}
         </link-base>
       </div>
     </main>

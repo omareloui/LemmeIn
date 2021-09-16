@@ -103,3 +103,14 @@
   opacity: 0;
   margin-top: -100px;
 }
+
+// Chip
+.chips-enter-active,
+.chips-leave-active {
+  @include t.tran;
+}
+.chips-enter,
+.chips-leave-to {
+  opacity: 0;
+  margin-left: -100px;
+}

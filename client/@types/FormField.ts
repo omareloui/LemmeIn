@@ -9,7 +9,12 @@ export type InputTypes =
   | "check"
   | "file"
   | "color"
-export type AcceptableFormValues = string | string[] | File[]
+  | "tags"
+export type AcceptableFormValues =
+  | string
+  | string[]
+  | File[]
+  | { id: string; [key: string]: string | number | boolean }[]
 export type FormValues = { [fieldId: string]: AcceptableFormValues }
 
 export default interface FormField {

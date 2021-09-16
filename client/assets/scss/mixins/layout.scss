@@ -3,6 +3,7 @@
   $rows: null,
   $areas: null,
   $auto-fit: null,
+  $auto-fill: null,
   $gap: null,
   $center: false
 ) {
@@ -13,6 +14,9 @@
   }
   @if $auto-fit {
     grid-template-columns: repeat(auto-fit, minmax(#{$auto-fit}, 1fr));
+  }
+  @if $auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(#{$auto-fill}, 1fr));
   }
   @if $columns and not $auto-fit {
     grid-template-columns: $columns;
@@ -32,4 +36,8 @@
 
 @mixin auto-fit($minmax, $gap: null, $center: true) {
   @include grid($auto-fit: $minmax, $gap: $gap, $center: $center);
+}
+
+@mixin auto-fill($minmax, $gap: null, $center: true) {
+  @include grid($auto-fill: $minmax, $gap: $gap, $center: $center);
 }

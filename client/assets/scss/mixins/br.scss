@@ -26,3 +26,16 @@
 @mixin br-bl {
   border-radius: 9999px;
 }
+
+@mixin br-b-sm {
+  border-radius: 0 0 var(--br-sm) var(--br-sm);
+}
+@mixin br-b-md {
+  border-radius: 0 0 var(--br-md) var(--br-md);
+}
+@mixin br-b-lg {
+  border-radius: 0 0 var(--br-lg) var(--br-lg);
+}
+@mixin br-b-xl {
+  border-radius: 0 0 var(--br-xl) var(--br-xl);
+}

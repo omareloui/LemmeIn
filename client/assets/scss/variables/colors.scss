@@ -43,7 +43,8 @@ $light: (
   info: hsl(201, 100%, 67%),
   focus-icon: hsl(219, 11%, 29%),
   input-range-track: hsl(0, 0%, 77%),
-  input-range-thumb: hsl(234, 85%, 66%, 40%)
+  input-range-thumb: hsl(234, 85%, 66%, 40%),
+  chip-tag-bg: hsl(0, 0%, 77%)
 );
 
 $default: map.merge($shared, $light);
@@ -68,5 +69,6 @@ $dark: (
   info: hsl(201, 72%, 43%),
   focus-icon: hsl(0, 0%, 88%),
   input-range-track: hsl(220, 11%, 30%),
-  input-range-thumb: hsl(234, 85%, 66%, 40%)
+  input-range-thumb: hsl(234, 85%, 66%, 40%),
+  chip-tag-bg: hsl(220, 11%, 30%)
 );
