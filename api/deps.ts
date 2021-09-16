@@ -6,6 +6,7 @@ export {
   setup,
 } from "https://deno.land/std@0.105.0/log/mod.ts";
 export {
+  assert,
   assertMatch,
   assertEquals,
   assertThrows,

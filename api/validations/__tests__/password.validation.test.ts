@@ -1,4 +1,4 @@
-import { ValidationTest } from "./validate.test.helper.ts";
+import { ValidationTester } from "./validate.test.helper.ts";
 import type {
   ValidData,
   ErrorValidationDataForCreationAndUpdate,
@@ -12,7 +12,7 @@ import {
   deletePasswordValidation,
 } from "../password.validation.ts";
 
-const passwordTest = new ValidationTest("password");
+const validationTester = new ValidationTester("password");
 
 const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
   {
@@ -98,9 +98,9 @@ const passingValidations: ValidData[] = [
   },
 ];
 
-passwordTest.validateCreateAndUpdateErrors(
+validationTester.validateCreateAndUpdateErrors(
   errorValidationData,
   createPasswordValidation,
   updatePasswordValidation
 );
-passwordTest.testValidData(passingValidations);
+validationTester.testValidData(passingValidations);

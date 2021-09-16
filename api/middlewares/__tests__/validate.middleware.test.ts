@@ -1,12 +1,12 @@
 import { yup } from "../../deps.ts";
-import { MiddlewareTest } from "./middleware.test.helper.ts";
+import { MiddlewareTester } from "./middleware.test.helper.ts";
 import { validate } from "../validate.middleware.ts";
 
 import type { RouterContext } from "../../deps.ts";
 
-const middlewareTest = new MiddlewareTest("validate");
+const middlewareTester = new MiddlewareTester("validate");
 
-const next = middlewareTest.mockNext();
+const next = middlewareTester.mockNext();
 
 interface ValidTests {
   description: string;
@@ -27,7 +27,7 @@ const validTests: ValidTests[] = [
         name: yup.string().min(1).max(255).trim().required(`name is required`),
       }),
     },
-    context: middlewareTest.mockContext({ body: { name: "test" } }),
+    context: middlewareTester.mockContext({ body: { name: "test" } }),
   },
   {
     description:
@@ -37,7 +37,7 @@ const validTests: ValidTests[] = [
         name: yup.string().min(1).max(255).trim().required(`name is required`),
       }),
     },
-    context: middlewareTest.mockContext({ params: { name: "test" } }),
+    context: middlewareTester.mockContext({ params: { name: "test" } }),
   },
 ];
 
@@ -49,7 +49,7 @@ const errorTests: ErrorTest[] = [
         name: yup.string().min(1).max(255).trim().required(`name is required`),
       }),
     },
-    context: middlewareTest.mockContext({
+    context: middlewareTester.mockContext({
       body: { name: "no", notNeeded: true },
     }),
     errorIncludes: "notNeeded is not allowed",
@@ -61,19 +61,19 @@ const errorTests: ErrorTest[] = [
         name: yup.string().min(1).max(255).trim().required(`name is required`),
       }),
     },
-    context: middlewareTest.mockContext({ body: {} }),
+    context: middlewareTester.mockContext({ body: {} }),
     errorIncludes: "name is required",
   },
 ];
 
 validTests.forEach(({ description, context, schema }) => {
-  middlewareTest.test(description, async () => {
+  middlewareTester.test(description, async () => {
     await validate(schema)(context, next);
   });
 });
 
 errorTests.forEach(({ description, context, schema, errorIncludes }) => {
-  middlewareTest.testAsyncError(
+  middlewareTester.testAsyncError(
     description,
     async () => {
       await validate(schema)(context, next);

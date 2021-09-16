@@ -1,11 +1,10 @@
-import { Test } from "../../helpers/test.helper.ts";
-import { assertEquals } from "../../deps.ts";
+import { Tester } from "../../helpers/test.helper.ts";
 import capitalize from "../capitalize.ts";
 
-const testHelper = new Test("utils/capitalize");
+const tester = new Tester("utils/capitalize");
 
-testHelper.test("should work", () => {
+tester.test("should work", () => {
   const string = "hello, world!";
   const capitalizedString = capitalize(string);
-  assertEquals(capitalizedString, "Hello, World!");
+  tester.shouldEquals(capitalizedString, "Hello, World!");
 });

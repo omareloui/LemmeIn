@@ -164,7 +164,7 @@ export default class UserService extends BaseService {
     const userHistory = await UserHistory.find({ id: userId }).toArray();
     if (userHistory.length === 0)
       return userErrorHelper.notFound({ message: "Can't find user history" });
-    const sortedHistory = userHistory.sort((a, b) => a.version - b.version); // TODO: to test this
+    const sortedHistory = userHistory.sort((a, b) => a.version - b.version);
     return sortedHistory;
   }
 

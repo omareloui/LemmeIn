@@ -1,9 +1,9 @@
-import { assertEquals } from "../../deps.ts";
 import AuthService from "../auth.service.ts";
-import { ServiceTest } from "./service.test.helper.ts";
+
+import { ServiceTester } from "./service.test.helper.ts";
 import generateRandomText from "../../utils/generateRandomText.ts";
 
-const serviceTest = new ServiceTest("auth", AuthService);
+const serviceTester = new ServiceTester("auth", AuthService);
 
 const randomText = generateRandomText(8);
 const logData = {
@@ -11,23 +11,25 @@ const logData = {
   password: "12345678",
 };
 
-serviceTest.test("should register user fine and get a token", async () => {
+serviceTester.test("should register user fine and get a token", async () => {
   const { token, user } = await AuthService.register({
     firstName: "omar",
     lastName: "eloui",
     ...logData,
   });
-  assertEquals(Object.hasOwn(token, "token"), true);
-  assertEquals(Object.hasOwn(user, "id"), true);
+  serviceTester.shouldHaveProperty(token, "token");
+  // deno-lint-ignore no-explicit-any
+  serviceTester.shouldHaveProperty(user as any, "id");
 });
 
-serviceTest.test("should login the user fine and get a token", async () => {
+serviceTester.test("should login the user fine and get a token", async () => {
   const { token, user } = await AuthService.login(logData);
-  assertEquals(Object.hasOwn(token, "token"), true);
-  assertEquals(Object.hasOwn(user, "id"), true);
+  serviceTester.shouldHaveProperty(token, "token");
+  // deno-lint-ignore no-explicit-any
+  serviceTester.shouldHaveProperty(user as any, "id");
 });
 
-serviceTest.testAsyncError(
+serviceTester.testAsyncError(
   "should throw error if provided email that doesn't exist",
   async () => {
     await AuthService.login({
@@ -38,7 +40,7 @@ serviceTest.testAsyncError(
   "email or password is not correct"
 );
 
-serviceTest.testAsyncError(
+serviceTester.testAsyncError(
   "should throw error if provided invalid password",
   async () => {
     await AuthService.login({

@@ -1,4 +1,4 @@
-import { ValidationTest, ValidData } from "./validate.test.helper.ts";
+import { ValidationTester, ValidData } from "./validate.test.helper.ts";
 import type { ErrorValidationData } from "./validate.test.helper.ts";
 
 import {
@@ -7,7 +7,7 @@ import {
   meValidation,
 } from "../auth.validation.ts";
 
-const authTest = new ValidationTest("auth");
+const validationTester = new ValidationTester("auth");
 
 const errorValidationData: ErrorValidationData[] = [
   {
@@ -98,5 +98,5 @@ const passingValidations: ValidData[] = [
   },
 ];
 
-authTest.testValidData(passingValidations);
-authTest.testWithValidationMiddlewareWithError(errorValidationData);
+validationTester.testValidData(passingValidations);
+validationTester.testWithValidationMiddlewareWithError(errorValidationData);

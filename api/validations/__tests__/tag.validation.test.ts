@@ -1,4 +1,4 @@
-import { ValidationTest, ValidData } from "./validate.test.helper.ts";
+import { ValidationTester, ValidData } from "./validate.test.helper.ts";
 import type { ErrorValidationDataForCreationAndUpdate } from "./validate.test.helper.ts";
 
 import {
@@ -8,7 +8,7 @@ import {
   updateTagValidation,
 } from "../tag.validation.ts";
 
-const tagTest = new ValidationTest("tag");
+const validationTester = new ValidationTester("tag");
 
 const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
   {
@@ -47,9 +47,9 @@ const passingValidations: ValidData[] = [
   },
 ];
 
-tagTest.validateCreateAndUpdateErrors(
+validationTester.validateCreateAndUpdateErrors(
   errorValidationData,
   createTagValidation,
   updateTagValidation
 );
-tagTest.testValidData(passingValidations);
+validationTester.testValidData(passingValidations);

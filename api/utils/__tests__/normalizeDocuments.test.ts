@@ -1,13 +1,12 @@
-import { Test } from "../../helpers/test.helper.ts";
-import { assertEquals } from "../../deps.ts";
+import { Tester } from "../../helpers/test.helper.ts";
 import { normalizeDocument } from "../normalizeDocuments.ts";
 
-const testHelper = new Test("utils/normalizeDocuments:");
+const tester = new Tester("utils/normalizeDocuments:");
 
-testHelper.test("should replace _id with id for a single document", () => {
+tester.test("should replace _id with id for a single document", () => {
   const document = { _id: "222", name: "John Doe" };
   const normalized = normalizeDocument(document);
-  assertEquals(normalized.id, document._id);
+  tester.shouldEquals(normalized.id, document._id);
   // @ts-expect-error on _id because it should be undefined
-  assertEquals(normalized._id, undefined);
+  tester.shouldEquals(normalized._id, undefined);
 });

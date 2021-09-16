@@ -1,4 +1,10 @@
-import { assertThrows, assertThrowsAsync } from "../deps.ts";
+import {
+  assert,
+  assertEquals,
+  assertMatch,
+  assertThrows,
+  assertThrowsAsync,
+} from "../deps.ts";
 import type { Role } from "../config/roles.ts";
 
 import AuthService from "../services/auth.service.ts";
@@ -8,11 +14,26 @@ import generateRandomText from "../utils/generateRandomText.ts";
 
 type TestFunction = () => void | Promise<void>;
 
-export class Test {
+export class Tester {
   createdUsersId: string[];
 
   constructor(public namePrefix: string) {
     this.createdUsersId = [];
+  }
+
+  public assert = assert;
+  public shouldEquals = assertEquals;
+  public shouldMatch = assertMatch;
+  public shouldHaveProperty(obj: Record<string, unknown>, prop: string) {
+    assertEquals(Object.hasOwn(obj, prop), true);
+  }
+  public shouldHaveSameObjectPropertiesWValue(
+    subObj: Record<string, unknown>,
+    obj: Record<string, unknown>
+  ) {
+    Object.keys(subObj).forEach((key) => {
+      this.shouldEquals(obj[key], subObj[key]);
+    });
   }
 
   public test(description: string, testFunction: TestFunction, isOnly = false) {

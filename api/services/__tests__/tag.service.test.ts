@@ -1,6 +1,4 @@
 import { ServiceTester } from "./service.test.helper.ts";
-import { assertEquals } from "../../deps.ts";
-
 import TagService from "../tag.service.ts";
 
 const serviceTester = new ServiceTester("tag", TagService);
@@ -18,7 +16,8 @@ serviceTester.test(
     const records = await serviceTester.service.getAllMine(
       serviceTester.userId
     );
-    assertEquals(Object.hasOwn(records[0], "passwordsCount"), true);
+    // deno-lint-ignore no-explicit-any
+    serviceTester.shouldHaveProperty(records[0] as any, "passwordsCount");
   }
 );
 

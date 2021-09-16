@@ -1,11 +1,10 @@
-import { assertEquals, assertMatch } from "../../deps.ts";
-import { Test } from "../../helpers/test.helper.ts";
+import { Tester } from "../../helpers/test.helper.ts";
 
 import { BaseService } from "../base.service.ts";
 
 export class ServiceTester<
   ServiceType extends typeof BaseService
-> extends Test {
+> extends Tester {
   service: ServiceType;
   createdRecordId: string | null;
 
@@ -24,8 +23,8 @@ export class ServiceTester<
       if (!this.service.create)
         throw new Error("This service doesn't have createForMe");
       const createdRecord = await this.service.create(data);
-      this.createdRecordId = createdRecord.id;
-      assertMatch(this.createdRecordId, /^[\da-f]{24}$/);
+      this.createdRecordId = createdRecord.id.toString();
+      this.shouldMatch(this.createdRecordId, /^[\da-f]{24}$/);
     });
   }
 
@@ -36,7 +35,7 @@ export class ServiceTester<
       if (!this.service.getAll)
         throw new Error("This service doesn't have getOne");
       const records = await this.service.getAll();
-      assertEquals(Object.hasOwn(records[0], "id"), true);
+      this.shouldHaveProperty(records[0], "id");
     });
   }
 
@@ -47,7 +46,7 @@ export class ServiceTester<
       if (!this.service.getOne)
         throw new Error("This service doesn't have getOne");
       const record = await this.service.getOne(this.createdRecordId);
-      assertEquals(Object.hasOwn(record, "id"), true);
+      this.shouldHaveProperty(record, "id");
     });
   }
 
@@ -61,9 +60,7 @@ export class ServiceTester<
         this.createdRecordId,
         newData
       );
-      Object.keys(newData).forEach((key) => {
-        assertEquals(newRecord[key] === newData[key], true);
-      });
+      this.shouldHaveSameObjectPropertiesWValue(newData, newRecord);
     });
   }
 
@@ -74,7 +71,7 @@ export class ServiceTester<
       if (!this.service.removeOne)
         throw new Error("This service doesn't have removeOne");
       const deletionCount = await this.service.removeOne(this.createdRecordId);
-      assertEquals(deletionCount, 1);
+      this.shouldEquals(deletionCount, 1);
     });
   }
 
@@ -83,8 +80,8 @@ export class ServiceTester<
       if (!this.service.createMine)
         throw new Error("This service doesn't have createForMe");
       const createdRecord = await this.service.createMine(data, this.userId);
-      this.createdRecordId = createdRecord.id;
-      assertMatch(this.createdRecordId, /^[\da-f]{24}$/);
+      this.createdRecordId = createdRecord.id.toString();
+      this.shouldMatch(this.createdRecordId, /^[\da-f]{24}$/);
     });
   }
 
@@ -93,7 +90,7 @@ export class ServiceTester<
       if (!this.service.getAllMine)
         throw new Error("This service doesn't have getOneMine");
       const records = await this.service.getAllMine(this.userId);
-      assertEquals(Object.hasOwn(records[0], "id"), true);
+      this.shouldHaveProperty(records[0], "id");
     });
   }
 
@@ -107,7 +104,7 @@ export class ServiceTester<
         this.createdRecordId,
         this.userId
       );
-      assertEquals(Object.hasOwn(record, "id"), true);
+      this.shouldHaveProperty(record, "id");
     });
   }
 
@@ -122,9 +119,7 @@ export class ServiceTester<
         newData,
         this.userId
       );
-      Object.keys(newData).forEach((key) => {
-        assertEquals(newRecord[key] === newData[key], true);
-      });
+      this.shouldHaveSameObjectPropertiesWValue(newData, newRecord);
     });
   }
 
@@ -138,7 +133,7 @@ export class ServiceTester<
         this.createdRecordId,
         this.userId
       );
-      assertEquals(deletionCount, 1);
+      this.shouldEquals(deletionCount, 1);
     });
   }
 }

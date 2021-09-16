@@ -16,7 +16,7 @@ import TagService from "./tag.service.ts";
 
 const passwordErrorHelper = new ErrorHelper("password");
 
-const notOAuthPasswordRegEx = /\./;
+const ENCRYPTED_PASSWORD_REG_EXP = /[\da-z]\.[\da-z]/;
 
 interface CreatePasswordOptions {
   app: string;
@@ -32,7 +32,7 @@ interface PopulatedPassword {
   id: string;
   app: string;
   accountIdentifier: string;
-  password?: NormalizedDoc<PasswordSchema>;
+  password?: NormalizedDoc<PasswordSchema> | string;
   note?: string;
   site?: string;
   tags?: NormalizedDoc<TagSchema>[];
@@ -88,6 +88,7 @@ export default class PasswordService extends BaseService {
     const result: PopulatedPassword = {
       id,
       app: passwordDoc.app,
+      password: passwordDoc.password,
       accountIdentifier: passwordDoc.accountIdentifier,
       note: passwordDoc.note,
       site: passwordDoc.site,
@@ -96,7 +97,7 @@ export default class PasswordService extends BaseService {
       updatedAt: passwordDoc.updatedAt,
     };
     // Populate password if it's oAuth
-    if (!passwordDoc.password.match(notOAuthPasswordRegEx))
+    if (!passwordDoc.password.match(ENCRYPTED_PASSWORD_REG_EXP))
       result.password = normalizeDocument(
         (await Password.findOne({
           _id: new ObjectId(passwordDoc.password),
@@ -130,7 +131,7 @@ export default class PasswordService extends BaseService {
     const passwordDoc = await Password.findOne({
       _id: new ObjectId(id),
       user: userId,
-      password: { $regex: notOAuthPasswordRegEx },
+      password: { $regex: ENCRYPTED_PASSWORD_REG_EXP },
     });
     if (!passwordDoc) return passwordErrorHelper.notFound();
     const encryptionHelper = new EncryptionHelper();

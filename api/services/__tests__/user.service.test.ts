@@ -1,12 +1,12 @@
 import { UserHistory } from "../../models/user-history.model.ts";
+
 import UserService from "../user.service.ts";
-import { ServiceTest } from "./service.test.helper.ts";
-import { assertEquals } from "../../deps.ts";
+import { ServiceTester } from "./service.test.helper.ts";
 
-const serviceTest = new ServiceTest("user", UserService);
-const serviceDuplicatedEmailTest = new ServiceTest("user", UserService);
+const serviceTester = new ServiceTester("user", UserService);
+const serviceDuplicatedEmailTest = new ServiceTester("user", UserService);
 
-serviceTest.testCreate({
+serviceTester.testCreate({
   firstName: "omar",
   lastName: "eloui",
   email: "omareloui@hotmail.com",
@@ -26,21 +26,21 @@ serviceDuplicatedEmailTest.testAsyncError(
   "email is already in use"
 );
 
-serviceTest.testGetOne();
-serviceTest.testGetAll();
+serviceTester.testGetOne();
+serviceTester.testGetAll();
 
-serviceTest.testUpdateOne({ lastName: "elwy" });
-serviceTest.testUpdateOne({ firstName: "kenzy" });
+serviceTester.testUpdateOne({ lastName: "elwy" });
+serviceTester.testUpdateOne({ firstName: "kenzy" });
 
-serviceTest.testRemovingOne();
+serviceTester.testRemovingOne();
 
-serviceTest.test(
+serviceTester.test(
   "should have 4 history for the documents for the current user after updating twice and deleting him/her",
   async () => {
     const userHistory = await UserService.getUserHistory(
-      serviceTest.createdRecordId!
+      serviceTester.createdRecordId!
     );
-    assertEquals(userHistory.length, 4);
+    serviceTester.shouldEquals(userHistory.length, 4);
     await UserHistory.drop();
   }
 );

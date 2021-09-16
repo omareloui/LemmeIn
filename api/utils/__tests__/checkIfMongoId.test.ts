@@ -1,9 +1,8 @@
-import { Test } from "../../helpers/test.helper.ts";
-import { assertEquals } from "../../deps.ts";
+import { Tester } from "../../helpers/test.helper.ts";
 import { yup } from "../../deps.ts";
 import { requiredId } from "../checkIfMongoId.ts";
 
-const testHelper = new Test("utils/checkIfMongoId:");
+const tester = new Tester("utils/checkIfMongoId:");
 
 interface ErrorValidationData {
   description: string;
@@ -31,17 +30,14 @@ const errorValidationData: ErrorValidationData[] = [
   },
 ];
 
-testHelper.test(
-  "should not throw error if valid mongo id provided",
-  async () => {
-    const validId = "ab3ca12572b0a3ca91c2f7c2";
-    await yup.object({ id: requiredId }).validate({ id: validId });
-    assertEquals(true, true);
-  }
-);
+tester.test("should not throw error if valid mongo id provided", async () => {
+  const validId = "ab3ca12572b0a3ca91c2f7c2";
+  await yup.object({ id: requiredId }).validate({ id: validId });
+  tester.shouldEquals(true, true);
+});
 
 errorValidationData.forEach((x) =>
-  testHelper.testAsyncError(
+  tester.testAsyncError(
     x.description,
     async () => {
       await yup.object({ id: requiredId }).validate({ id: x.id });

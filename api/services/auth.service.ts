@@ -60,14 +60,10 @@ export default class AuthService extends BaseService {
     options: RegisterOptions
   ): Promise<LoggingStructure> {
     // Create the user
-    const userId = await UserService.create(options);
-    if (!userId) return authErrorHelper.badRequest({ action: "create" });
-    const id = userId.toString();
-
-    const user = await UserService.getOne(id);
+    const user = await UserService.create(options);
     if (!user) return authErrorHelper.notFound();
-    const { firstName, lastName, email, role, createdAt, updatedAt } = user;
-    const token = await JwtService.create(id);
+    const { id, firstName, lastName, email, role, createdAt, updatedAt } = user;
+    const token = await JwtService.create(user.id);
     return {
       token,
       user: { id, firstName, lastName, email, role, createdAt, updatedAt },

@@ -1,19 +1,19 @@
-import { MiddlewareTest } from "./middleware.test.helper.ts";
+import { MiddlewareTester } from "./middleware.test.helper.ts";
 import { auth } from "../auth.middleware.ts";
 
 import type { RouterContext } from "../../deps.ts";
 import type { Rights } from "../../config/roles.ts";
 
-const middlewareTest = new MiddlewareTest("auth");
+const middlewareTester = new MiddlewareTester("auth");
 
-const userToken = await middlewareTest.getToken();
-const adminToken = await middlewareTest.getToken("admin");
+const userToken = await middlewareTester.getToken();
+const adminToken = await middlewareTester.getToken("admin");
 
-const notSignedContext = middlewareTest.mockContext();
-const userContext = middlewareTest.mockContext({ authToken: userToken });
-const adminContext = middlewareTest.mockContext({ authToken: adminToken });
+const notSignedContext = middlewareTester.mockContext();
+const userContext = middlewareTester.mockContext({ authToken: userToken });
+const adminContext = middlewareTester.mockContext({ authToken: adminToken });
 
-const next = middlewareTest.mockNext();
+const next = middlewareTester.mockNext();
 
 interface ValidTests {
   description: string;
@@ -58,13 +58,13 @@ const errorTests: ErrorTest[] = [
 ];
 
 validTests.forEach(({ description, context, right }) => {
-  middlewareTest.test(description, async () => {
+  middlewareTester.test(description, async () => {
     await auth(right)(context, next);
   });
 });
 
 errorTests.forEach(({ description, context, right, errorIncludes }) => {
-  middlewareTest.testAsyncError(
+  middlewareTester.testAsyncError(
     description,
     async () => {
       await auth(right)(context, next);

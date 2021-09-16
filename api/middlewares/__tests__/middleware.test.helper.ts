@@ -1,4 +1,4 @@
-import { Test } from "../../helpers/test.helper.ts";
+import { Tester } from "../../helpers/test.helper.ts";
 
 import { RouterContext, testing, RouteParams } from "../../deps.ts";
 
@@ -10,7 +10,7 @@ interface MockContextOptions {
   authToken?: string;
 }
 
-export class MiddlewareTest extends Test {
+export class MiddlewareTester extends Tester {
   constructor(modelName: string) {
     super(`middleware/${modelName}:`);
   }

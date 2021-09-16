@@ -1,4 +1,4 @@
-import { Test } from "../../helpers/test.helper.ts";
+import { Tester } from "../../helpers/test.helper.ts";
 
 import { RouterContext, testing, RouteParams } from "../../deps.ts";
 import { validate } from "../../middlewares/validate.middleware.ts";
@@ -23,7 +23,7 @@ export interface ValidData {
   params?: RouteParams;
 }
 
-export class ValidationTest extends Test {
+export class ValidationTester extends Tester {
   constructor(modelName: string) {
     super(`validations/${modelName}:`);
   }
