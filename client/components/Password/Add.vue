@@ -29,44 +29,49 @@ export default Vue.extend({
         value: "",
         props: { noIcon: true }
       },
-      "gap",
       {
-        id: "accountIdentifier",
-        type: "text",
-        value: "",
-        label: "Account identifier",
-        props: {
-          placeholder: "email or username",
-          notRequired: true
-        }
-      },
-      {
-        id: "site",
-        type: "text",
-        value: "",
-        label: "Link",
-        props: {
-          hing: "https://google.com",
-          notRequired: true
-        }
-      },
-      {
-        id: "tags",
-        type: "tags",
-        value: [],
-        props: { leftIcon: "" }
-      },
-      {
-        id: "note",
-        type: "textarea",
-        label: "note",
-        props: { notRequired: true }
+        expandableFields: [
+          "gap",
+          {
+            id: "accountIdentifier",
+            type: "text",
+            value: "",
+            label: "Account identifier",
+            props: {
+              placeholder: "email or username",
+              notRequired: true
+            }
+          },
+          {
+            id: "site",
+            type: "text",
+            label: "Link",
+            value: "",
+            props: {
+              hing: "https://google.com",
+              notRequired: true
+            }
+          },
+          {
+            id: "tags",
+            type: "tags",
+            value: [],
+            props: { leftIcon: "" }
+          },
+          {
+            id: "note",
+            type: "textarea",
+            label: "Note",
+            value: "",
+            props: { notRequired: true }
+          }
+        ]
       }
     ] as FormStructure
   }),
 
   methods: {
-    async addPassword(options: AddPassword) {
+    async addPassword(options: Partial<AddPassword>) {
       try {
         const response = await this.$axios.post("/passwords", options)
         const password = response.data as Password

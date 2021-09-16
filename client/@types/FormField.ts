@@ -45,4 +45,10 @@ export interface FormField {
   style?: "half"
 }
 
-export type FormStructure = (FormField | FormGap)[]
+interface ExpandableFields {
+  expandableFields: (FormField | FormGap)[]
+}
+
+type FormOptions = FormField | FormGap | ExpandableFields
+
+export type FormStructure = FormOptions[]

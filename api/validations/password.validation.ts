@@ -15,9 +15,9 @@ const createAndUpdatePasswordBody = {
     .max(256)
     .trim()
     .required(`Field "password" is required`),
-  accountIdentifier: yup.string().min(3).min(3).max(256).trim(),
-  note: yup.string().min(3).min(3).max(256).trim(),
-  site: yup.string().min(3).min(3).max(256).trim(),
+  accountIdentifier: yup.string().trim(),
+  note: yup.string().trim(),
+  site: yup.string().url().trim(),
   tags: yup.array().of(yup.string()),
   isOAuth: yup.boolean(),
 };

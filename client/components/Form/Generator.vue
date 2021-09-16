@@ -7,26 +7,63 @@
       'form-generator--danger': danger
     }"
   >
-    <div
-      v-for="(field, index) in formFields"
-      :key="index"
-      class="form-field"
-      :class="{
-        'form-field--gap': field === 'gap',
-        'form-field--input': field !== 'gap',
-        'form-field--half': field.style === 'half'
-      }"
-    >
-      <component
-        v-if="field !== 'gap'"
-        :is="`input-${field.type}`"
-        v-model="field.value"
-        :ref="field.id"
-        :identifier="field.id"
-        :label="field.label"
-        v-bind="{ ...field.props }"
-      ></component>
+    <div class="fields">
+      <div
+        v-for="(field, index) in topLevelFields"
+        :key="index"
+        class="form-field"
+        :class="{
+          'form-field--gap': field === 'gap',
+          'form-field--input': field !== 'gap',
+          'form-field--half': field.style === 'half'
+        }"
+      >
+        <component
+          v-if="field !== 'gap'"
+          :is="`input-${field.type}`"
+          v-model="field.value"
+          :ref="field.id"
+          :identifier="field.id"
+          :label="field.label"
+          v-bind="{ ...field.props }"
+        ></component>
+      </div>
     </div>
+
+    <button-base
+      v-if="couldExpand && !isExpandableShown"
+      @click="isExpandableShown = true"
+      class="expand-button"
+    >
+      more options
+      <icon name="drop" size="15px" />
+    </button-base>
+
+    <transition name="slide-down">
+      <div v-if="couldExpand && isExpandableShown" class="fields">
+        <div
+          v-for="(field, index) in expandableFields"
+          :key="index"
+          class="form-field"
+          :class="{
+            'form-field--gap': field === 'gap',
+            'form-field--input': field !== 'gap',
+            'form-field--half': field.style === 'half'
+          }"
+        >
+          <component
+            v-if="field !== 'gap'"
+            :is="`input-${field.type}`"
+            v-model="field.value"
+            :ref="field.id"
+            :identifier="field.id"
+            :label="field.label"
+            v-bind="{ ...field.props }"
+          ></component>
+        </div>
+      </div>
+    </transition>
+
     <input-submit v-bind="{ isLoading }" @enter="onSubmit" class="submit">
       {{ submitButtonText }}
     </input-submit>
@@ -34,6 +71,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import Vue, { PropType } from "vue"
 import {
   ExtendVueRefs,
@@ -62,19 +100,47 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
   },
 
   data: () => ({
-    isLoading: false
+    isLoading: false,
+    isExpandableShown: false
   }),
 
   computed: {
-    fields(): FormField[] {
-      return this.formFields.filter(x => x !== GAP) as FormField[]
+    couldExpand(): boolean {
+      return this.expandableFields.length > 0
     },
+
+    topLevelFields(): FormField[] {
+      return this.formFields.filter(x => !x.expandableFields) as FormField[]
+    },
+
+    expandableFields(): FormField[] {
+      return this.formFields
+        .filter(x => !!x.expandableFields)
+        .reduce(
+          (acc, prev) => [...acc, ...prev.expandableFields],
+          []
+        ) as unknown as FormField[]
+    },
+
+    fields(): FormField[] {
+      return this.removeGap(this.topLevelFields.concat(this.expandableFields))
+    },
+
     values(): FormValues {
       const neededResult: FormValues = {}
       this.fields.forEach((x: FormField) => {
         neededResult[x.id] = x.value
       })
       return neededResult
+    },
+
+    components() {
+      const getInputComponent = (x: FormField) =>
+        (this.$refs[x.id] as InputComponent[])[0]
+      const fieldsToGet = this.isExpandableShown
+        ? this.fields
+        : this.removeGap(this.topLevelFields)
+      return fieldsToGet.map(getInputComponent.bind(this))
     }
   },
 
@@ -105,25 +171,22 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
     },
 
     validate() {
-      const getInputComponent = (x: FormField) =>
-        (this.$refs[x.id] as InputComponent[])[0]
-      const inputComponents = this.fields.map(getInputComponent.bind(this))
       const validateInput = (inputComponent: InputComponent) =>
         inputComponent.validate()
-
-      inputComponents.forEach(validateInput.bind(this))
+      this.components.forEach(validateInput.bind(this))
     },
 
     checkIfComponentsHaveError() {
-      const getInputComponent = (x: FormField) =>
-        (this.$refs[x.id] as InputComponent[])[0]
-      const inputComponents = this.fields.map(getInputComponent.bind(this))
-
-      for (let i = 0; i < inputComponents.length; i++) {
-        const inputComponent = inputComponents[i]
+      const { components } = this
+      for (let i = 0; i < components.length; i++) {
+        const inputComponent = components[i]
         if (inputComponent.errorMessage) return true
       }
       return false
+    },
+
+    removeGap(fields: FormStructure): FormField {
+      return fields.filter(x => x !== GAP)
     }
   }
 })
@@ -133,9 +196,12 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 @use "~/assets/scss/mixins" as *
 
 .form-generator
-  display: grid
-  gap: 15px
-  grid-template-columns: 1fr 1fr
+
+  .fields
+    display: grid
+    gap: 15px
+    grid-template-columns: 1fr 1fr
+
   .form-field
     +m(gap)
       height: 0.7rem
@@ -146,8 +212,20 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 
     +lt-mobile
       grid-column: unset
-      &:not(.form-field--half)
+      &:not(.form-field--half),
+      &:not(.expandable-field--half)
         grid-column: 1 / 3
+
+  .expand-button
+    opacity: 0.8
+    +center-text
+    +mx(auto)
+    +my(10px)
+    +fnt-sm
+    +block
+    +pos-r
+    i
+      +pos-a(top 7px right -22px)
 
   .submit
     grid-column: 1 / 3

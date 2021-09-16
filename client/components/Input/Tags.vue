@@ -222,7 +222,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       this.query = ""
     },
     validate() {
-      if (this.notRequired && this.value.length === 0)
+      if (!this.notRequired && this.value.length === 0)
         this.setError("You have to select at least one tag")
     }
   }
