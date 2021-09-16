@@ -2,7 +2,7 @@
   <div class="chip-tag" :style="{ '--color': `var(--clr-${tag.color})` }">
     {{ tag.tag }}
     <button-glass
-      class="chip-tag__remove"
+      class="remove-button"
       size="20px"
       icon-size="10px"
       icon="close"
@@ -35,7 +35,7 @@ export default Vue.extend({
   +inline-block
   +fnt-sm
 
-  +e(remove)
+  .remove-button
     +center-v
     right: 8px
 </style>

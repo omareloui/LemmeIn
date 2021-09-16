@@ -49,7 +49,7 @@ export default Vue.extend({
     if (!this.doNotSelectDefault) this.select(this.colors[0])
     if (this.default) {
       const defaultColor = this.colors.find(x => x === this.default)
-      if (!defaultColor) throw new Error("Can't find this color.")
+      if (!defaultColor) return
       this.select(defaultColor)
     }
   },

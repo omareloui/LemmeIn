@@ -1,12 +1,13 @@
 <template>
   <container>
     <template #heading>{{ password.title }}</template>
-    <box tag="main">
+    <main>
       {{ password }}
-    </box>
-    <button-base @click="deletePassword" cta width="200px">
+    </main>
+
+    <button-main @click="deletePassword" cta width="200px">
       delete password
-    </button-base>
+    </button-main>
   </container>
 </template>
 

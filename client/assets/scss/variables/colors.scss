@@ -4,16 +4,22 @@
 $core: (
   primary: hsl(234, 85%, 66%),
   light: hsl(360, 100%, 100%),
-  dark: hsl(0, 0%, 5%),
-  pink: hsl(320, 88%, 52%),
-  orange: hsl(27, 100%, 52%),
-  blue: hsl(201, 100%, 67%),
-  green: hsl(108, 84%, 51%)
+  dark: hsl(0, 0%, 5%)
+);
+
+$tags-colors: (
+  candy-apple-red: hsl(350, 95%, 45%),
+  persian-rose: hsl(320, 88%, 52%),
+  lemon-yellow: hsl(56, 92%, 62%),
+  safety-orange: hsl(27, 100%, 52%),
+  maya-blue: hsl(201, 100%, 67%),
+  neon-green: hsl(108, 84%, 51%),
+  majorelle-blue: hsl(244, 86%, 61%)
 );
 
 $shared: (
   button-cta: map.get($core, primary),
-  link: map.get($core, blue),
+  link: hsl(201, 100%, 67%),
   text-light: map.get($core, light),
   text-dark: map.get($core, dark),
   focus: o.opacify(map.get($core, primary), 48),
@@ -22,6 +28,7 @@ $shared: (
 );
 
 $shared: map.merge($core, $shared);
+$shared: map.merge($shared, $tags-colors);
 
 $light: (
   text-main: map.get($shared, text-dark),

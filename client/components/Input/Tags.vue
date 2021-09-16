@@ -54,7 +54,7 @@
 
     <transition name="slide-down">
       <glass-card
-        v-if="query || (isFocus && !query)"
+        v-if="query.length > 1 || (isFocus && tagsToView.length > 0)"
         class="dropdown"
         tint="background-tertiary"
         border-radius="none"
@@ -74,7 +74,7 @@
         >
         <div
           class="tag"
-          v-for="tag in query ? searchResult : tags"
+          v-for="tag in query ? searchResult : tagsToView"
           :key="tag.id"
           :style="{ '--color': `var(--clr-${tag.color})` }"
           :class="{ 'tag--selected': value.id === value }"
@@ -95,6 +95,7 @@
 import Vue, { PropType } from "vue"
 import Fuse from "fuse.js"
 import { FormField, Tag, ExtendVueRefs, AddTag } from "~/@types"
+import getRandomColor from "~/assets/utils/getRandomTagColor"
 
 type TagId = string
 interface Refs {
@@ -167,7 +168,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     async createTag() {
       try {
         this.clearError()
-        const tag: AddTag = { tag: this.query, color: "pink" }
+        const tag: AddTag = { tag: this.query, color: getRandomColor() }
         this.isLoadingCreating = true
         const response = await this.$axios.post("/tags", tag)
         const createdTag = response.data as Tag
@@ -324,7 +325,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
         +pl(35px)
 
   .error
-    +pos-a(left 10px top 50px)
+    +pos-a(left 10px bottom -20px)
     +clr-txt(error)
     +fnt-xs
 
