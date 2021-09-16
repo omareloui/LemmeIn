@@ -48,7 +48,7 @@ export default Vue.extend({
         },
         {
           id: "color",
-          type: "color",
+          type: "tag-color",
           value: "",
           props: { default: this.tag.color }
         }

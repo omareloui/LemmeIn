@@ -31,7 +31,7 @@ export default Vue.extend({
             "You can't use spaces or special characters in the tag"
         }
       },
-      { id: "color", type: "color", value: "" }
+      { id: "color", type: "tag-color", value: "" }
     ] as FormField[]
   }),
 

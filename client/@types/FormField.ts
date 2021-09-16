@@ -8,7 +8,7 @@ export type InputTypes =
   | "radio"
   | "check"
   | "file"
-  | "color"
+  | "tag-color"
   | "tags"
 export type AcceptableFormValues =
   | string

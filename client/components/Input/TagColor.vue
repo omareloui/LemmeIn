@@ -8,12 +8,12 @@
   >
     <div class="colors">
       <div
-        v-for="color in colors"
-        :key="color.id"
+        v-for="(color, index) in colors"
+        :key="index"
         tabindex="0"
         class="colors__color"
-        :class="{ 'colors__color--selected': color.value === value }"
-        :style="{ '--color': `var(--clr-${color.value})` }"
+        :class="{ 'colors__color--selected': color === value }"
+        :style="{ '--color': `var(--clr-${color})` }"
         @click="select(color)"
         @keyup.space="select(color)"
         @keyup.enter="select(color)"
@@ -28,7 +28,8 @@
 
 <script lang="ts">
 import Vue from "vue"
-import { InputRadioOption } from "~/@types"
+import { TagColor } from "~/@types"
+import tagColors from "~/config/tag-colors"
 
 export default Vue.extend({
   props: {
@@ -40,19 +41,14 @@ export default Vue.extend({
   },
 
   data: () => ({
-    colors: [
-      { id: "1", value: "pink" },
-      { id: "2", value: "blue" },
-      { id: "3", value: "orange" },
-      { id: "4", value: "green" }
-    ] as InputRadioOption[],
+    colors: tagColors,
     errorMessage: ""
   }),
 
   created() {
     if (!this.doNotSelectDefault) this.select(this.colors[0])
     if (this.default) {
-      const defaultColor = this.colors.find(x => x.value === this.default)
+      const defaultColor = this.colors.find(x => x === this.default)
       if (!defaultColor) throw new Error("Can't find this color.")
       this.select(defaultColor)
     }
@@ -65,10 +61,10 @@ export default Vue.extend({
   },
 
   methods: {
-    select(color: InputRadioOption) {
+    select(color: TagColor) {
       if (this.isErred) this.clearError()
-      if (color.value === this.value) return this.$emit("input", "")
-      return this.$emit("input", color.value)
+      if (color === this.value) return this.$emit("input", "")
+      return this.$emit("input", color)
     },
 
     validate() {
