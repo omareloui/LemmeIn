@@ -38,11 +38,7 @@ $validating-result: match-light-and-dark-colors($light, $dark);
 }
 
 @mixin colors {
-  // declare that dark and light are both supported
-  color-scheme: light dark;
-
-  // The actual colors
-  @include generate-colors($default);
+  color-scheme: light;
 
   // Colors helpers
   @for $i from 0 through 10 {
@@ -51,8 +47,12 @@ $validating-result: match-light-and-dark-colors($light, $dark);
   @for $i from 0 through 10 {
     --clr-l-#{$i * 10}: #{$i * 10%};
   }
+
+  // The actual colors
+  @include generate-colors($default);
 }
 
 @mixin colors-dark {
+  color-scheme: dark;
   @include generate-colors($dark);
 }
