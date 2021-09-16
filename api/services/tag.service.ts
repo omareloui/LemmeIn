@@ -1,13 +1,11 @@
-import { Tag } from "../models/tag.model.ts";
+import { Tag, TagSchema, VirtualTagSchema } from "../models/tag.model.ts";
 import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 
-import {
-  normalizeDocument,
-  normalizeDocuments,
-} from "../utils/normalizeDocuments.ts";
+import { normalizeDocument } from "../utils/normalizeDocuments.ts";
 
 import { BaseService } from "./base.service.ts";
+import PasswordService from "./password.service.ts";
 
 const tagErrorHelper = new ErrorHelper("tag");
 
@@ -48,11 +46,12 @@ export default class TagService extends BaseService {
   }
 
   public static async getAllMine(userId: string) {
-    const passwords = await Tag.find({ user: userId }).toArray();
-    const sortedTags = passwords.sort(
-      (a, b) => Number(b.createdAt) - Number(a.createdAt)
+    const tags = await Tag.find({ user: userId }).toArray();
+    const normalizedTags: VirtualTagSchema[] = await Promise.all(
+      tags.map((x) => this.normalizeDoc(x, userId))
     );
-    return normalizeDocuments(sortedTags);
+    const sortedTags = this.sort(normalizedTags);
+    return sortedTags;
   }
 
   public static async getMyPasswordAllTags(tagsIds: string[], userId: string) {
@@ -112,5 +111,22 @@ export default class TagService extends BaseService {
     });
     if (!deleteCount) return tagErrorHelper.notFound();
     return deleteCount;
+  }
+
+  private static sort(docs: VirtualTagSchema[]): VirtualTagSchema[] {
+    return docs.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+  }
+
+  private static async normalizeDoc(
+    doc: TagSchema,
+    userId: string
+  ): Promise<VirtualTagSchema> {
+    const t = normalizeDocument(doc) as VirtualTagSchema;
+    const passwords = await PasswordService.getMineWithTag(
+      doc._id.toString(),
+      userId
+    );
+    t.passwordsCount = passwords.length;
+    return t;
   }
 }

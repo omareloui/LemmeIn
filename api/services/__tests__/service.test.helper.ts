@@ -3,7 +3,9 @@ import { Test } from "../../helpers/test.helper.ts";
 
 import { BaseService } from "../base.service.ts";
 
-export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
+export class ServiceTester<
+  ServiceType extends typeof BaseService
+> extends Test {
   service: ServiceType;
   createdRecordId: string | null;
 
@@ -88,8 +90,6 @@ export class ServiceTest<ServiceType extends typeof BaseService> extends Test {
 
   public testGetAllMine() {
     this.test(`should get all ${this.serviceName}`, async () => {
-      if (!this.createdRecordId)
-        throw new Error("No record was provided to test deleting");
       if (!this.service.getAllMine)
         throw new Error("This service doesn't have getOneMine");
       const records = await this.service.getAllMine(this.userId);

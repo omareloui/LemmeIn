@@ -68,6 +68,17 @@ export default class PasswordService extends BaseService {
     return normalizeDocuments(passwords);
   }
 
+  public static async getMineWithTag(
+    tagId: string,
+    userId: string
+  ): Promise<NormalizedDoc<PasswordSchema>[]> {
+    const passwords = await Password.find({
+      user: userId,
+      tags: tagId,
+    }).toArray();
+    return normalizeDocuments(passwords);
+  }
+
   public static async getOneMine(id: string, userId: string) {
     const passwordDoc = await Password.findOne({
       _id: new ObjectId(id),

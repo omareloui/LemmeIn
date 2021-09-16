@@ -1,40 +1,54 @@
-import { ServiceTest } from "./service.test.helper.ts";
+import { ServiceTester } from "./service.test.helper.ts";
+import { assertEquals } from "../../deps.ts";
+
 import TagService from "../tag.service.ts";
 
-const serviceTest = new ServiceTest("tag", TagService);
-const serviceTestDuplication = new ServiceTest("tag", TagService);
+const serviceTester = new ServiceTester("tag", TagService);
+const serviceTesterDuplication = new ServiceTester("tag", TagService);
 
-serviceTest.testCreateMine({ tag: "testingTag", color: "#fff" });
-serviceTest.testGetAllMine();
-serviceTest.testGetOneMine();
+serviceTester.testCreateMine({ tag: "testingTag", color: "#fff" });
+serviceTester.testGetAllMine();
+serviceTester.testGetOneMine();
 
-serviceTest.testAsyncError(
+serviceTester.test(
+  "should normalize all tags with passwords count",
+  async () => {
+    if (!serviceTester.service.getAllMine)
+      throw new Error("This service doesn't have getOneMine");
+    const records = await serviceTester.service.getAllMine(
+      serviceTester.userId
+    );
+    assertEquals(Object.hasOwn(records[0], "passwordsCount"), true);
+  }
+);
+
+serviceTester.testAsyncError(
   "should throw error on creating new testing with the same name",
   async () => {
     await TagService.createMine(
       { tag: "testingTag", color: "#123" },
-      serviceTest.userId
+      serviceTester.userId
     );
   },
   "already exists"
 );
 
-serviceTest.testUpdateOneMine({ tag: "testingTag" });
-serviceTest.testUpdateOneMine({ color: "#ooo" });
-serviceTest.testUpdateOneMine({ tag: "updatedTag" });
+serviceTester.testUpdateOneMine({ tag: "testingTag" });
+serviceTester.testUpdateOneMine({ color: "#ooo" });
+serviceTester.testUpdateOneMine({ tag: "updatedTag" });
 
-serviceTestDuplication.testCreateMine({ tag: "shouldNotDuplicate" });
-serviceTest.testAsyncError(
+serviceTesterDuplication.testCreateMine({ tag: "shouldNotDuplicate" });
+serviceTester.testAsyncError(
   "should throw error on updating tag with a name that another tag holds",
   async () => {
     await TagService.updateOneMine(
-      serviceTest.createdRecordId!,
+      serviceTester.createdRecordId!,
       { tag: "shouldNotDuplicate" },
-      serviceTest.userId
+      serviceTester.userId
     );
   },
   "can't duplicate it"
 );
 
-serviceTest.testRemovingOneMine();
-serviceTestDuplication.testRemovingOneMine();
+serviceTester.testRemovingOneMine();
+serviceTesterDuplication.testRemovingOneMine();
