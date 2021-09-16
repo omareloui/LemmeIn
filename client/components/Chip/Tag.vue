@@ -29,9 +29,9 @@ export default Vue.extend({
 .chip-tag
   +pos-r
   +pa(2px 35px 2px 10px)
-  +clr(--color)
+  +clr-bg(--color)
+  +clr-txt(dark)
   +br-bl
-  +clr-bg(chip-tag-bg)
   +inline-block
   +fnt-sm
 
