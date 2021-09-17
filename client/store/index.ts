@@ -2,6 +2,7 @@ import { getAccessorType, mutationTree, actionTree } from "typed-vuex"
 
 // All store modules
 import * as notify from "~/store/notify"
+import * as vault from "~/store/vault"
 import * as theme from "~/store/theme"
 import * as auth from "~/store/auth"
 
@@ -14,9 +15,9 @@ export const mutations = mutationTree(state, {})
 export const actions = actionTree(
   { state, mutations },
   {
-    nuxtServerInit({ dispatch }) {
-      dispatch("auth/setMe")
+    async nuxtServerInit({ dispatch }) {
       dispatch("theme/load")
+      await dispatch("auth/setMe")
     }
   }
 )
@@ -28,6 +29,7 @@ export const accessorType = getAccessorType({
   modules: {
     notify,
     theme,
-    auth
+    auth,
+    vault
   }
 })

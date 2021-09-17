@@ -1,8 +1,8 @@
 <template>
   <container>
-    <template #heading>{{ password.title }}</template>
+    <template #heading>{{ password.app }}</template>
     <main>
-      {{ password }}
+      <pre>{{ password }}</pre>
     </main>
 
     <button-main @click="deletePassword" cta width="200px">

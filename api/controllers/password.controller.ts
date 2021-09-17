@@ -6,8 +6,7 @@ export default class PasswordController {
     const body = request.body();
     const data = await body.value;
     const userId = state.user.id;
-    await PasswordService.createMine(data, userId);
-    response.status = 200;
+    response.body = await PasswordService.createMine(data, userId);
   }
 
   public static async viewAllMine({ response, state }: RouterContext) {

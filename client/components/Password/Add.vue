@@ -11,12 +11,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import {
-  FormStructure,
-  AddPassword,
-  Password,
-  AddPasswordReceivedData
-} from "~/@types"
+import { FormStructure, AddPassword, AddPasswordReceivedData } from "~/@types"
 
 export default Vue.extend({
   data: () => ({
@@ -32,7 +27,7 @@ export default Vue.extend({
         id: "password",
         type: "password",
         value: "",
-        props: { noIcon: true, hasOAuth: true }
+        props: { noIcon: true, minLength: 3, hasOAuth: true }
       },
       {
         expandableFields: [
@@ -94,10 +89,7 @@ export default Vue.extend({
         tags
       }
       try {
-        const response = await this.$axios.post("/passwords", options)
-        const password = response.data as Password
-        this.$notify.success("Created password.")
-        this.$emit("add-password", password)
+        this.$accessor.vault.addPassword(options)
         this.$emit("close-dialogue")
       } catch (e) {
         this.$notify.error(e.response.data.message)

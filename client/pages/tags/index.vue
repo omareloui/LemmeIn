@@ -13,17 +13,15 @@
     >
 
     <main>
-      <div class="tags">
-        <transition-group name="tag">
-          <tag
-            v-for="tag in searchQuery ? searchResult : tags"
-            :key="tag.id"
-            class="tag"
-            v-bind="{ tag }"
-            @edit-tag="editTag"
-          />
-        </transition-group>
-      </div>
+      <transition-group name="tag" class="tags" tag="div">
+        <tag
+          v-for="tag in searchQuery ? searchResult : tags"
+          :key="tag.id"
+          class="tag"
+          v-bind="{ tag }"
+          @edit-tag="editTag"
+        />
+      </transition-group>
     </main>
 
     <dialogue :is-shown="isAddTagOpen" @close="closeAddTag">
@@ -130,7 +128,7 @@ export default Vue.extend({
       +mx(min(100px, 5vw))
 
   main
-    .tags > *
+    .tags
       +grid
       .tag
         &:not(:last-child)

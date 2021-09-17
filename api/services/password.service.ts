@@ -55,6 +55,7 @@ export default class PasswordService extends BaseService {
       const encryptHelper = new EncryptionHelper();
       insertionData.password = encryptHelper.encrypt(data.password);
     }
+    delete insertionData.isOAuth;
     const passwordId = await Password.insertOne(insertionData);
     if (!passwordId)
       return passwordErrorHelper.badRequest({ action: "create" });

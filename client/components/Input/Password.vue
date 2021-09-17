@@ -34,18 +34,20 @@
     />
 
     <input-select
-      v-if="isOAuth"
+      v-if="isOAuth && hasOtherPasswords"
       ref="input"
       class="input-password__select"
       label="OAuth password"
       v-bind="{ identifier, value }"
       @input="onInput"
       primary-key="app"
-      :options="[{ id: '33', app: 'facebook' }]"
+      defaultButtonText="Select a password"
+      :options="$accessor.vault.passwords"
+      is-searchable
     />
 
     <button-base
-      v-if="hasOAuth"
+      v-if="hasOAuth && hasOtherPasswords"
       class="input-password__oauth-button"
       @click="toggleOAuth"
     >
@@ -79,17 +81,28 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
 
   data: () => ({ isShown: false, isOAuth: false, isErred: false }),
 
+  async beforeCreate() {
+    await this.$accessor.vault.getPasswords()
+  },
+
   computed: {
     // Needed for form generator
     errorMessage(): string {
       return this.$refs.input.errorMessage
+    },
+
+    hasOtherPasswords(): boolean {
+      return this.$accessor.vault.passwords.length > 0
     }
   },
 
   methods: {
+    getInput(): InputText {
+      return this.$refs.input as InputText
+    },
+
     updateIsErred() {
-      const { input } = this.$refs
-      this.setIsErred(input.isErred)
+      this.setIsErred(this.getInput().isErred)
     },
 
     setIsErred(value: boolean) {
@@ -97,8 +110,7 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
     },
 
     validate() {
-      const { input } = this.$refs
-      input.validate()
+      this.getInput().validate()
       this.updateIsErred()
     },
 
@@ -107,8 +119,19 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
       this.updateIsErred()
     },
 
+    clearInput() {
+      this.onInput("")
+    },
+
+    clearError() {
+      this.getInput().clearError()
+      this.updateIsErred()
+    },
+
     toggleOAuth() {
       this.isOAuth = !this.isOAuth
+      this.clearInput()
+      this.clearError()
     }
   }
 })

@@ -1,13 +1,15 @@
+import { Tag } from "."
+
 export default interface Password {
   id: string
   user: string
-  password: string
+  password?: Password | string
   app: string
   accountIdentifier: string
   site: string
   note: string
-  tags: string[]
-  lastUsed: Date
+  tags: Tag[]
+  lastUsed: Date | null
   createdAt: Date
   updatedAt: Date
 }

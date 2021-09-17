@@ -114,3 +114,25 @@
   opacity: 0;
   margin-left: -100px;
 }
+
+// Passwords
+.password-enter-active,
+.password-leave-active {
+  @include t.tran($duration: 500ms);
+}
+.password-enter,
+.password-leave-to {
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
+// Input select
+.input-select-search-enter-active,
+.input-select-search-leave-active {
+  @include t.tran($duration: 500ms);
+}
+.input-select-search-enter,
+.input-select-search-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}

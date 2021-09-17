@@ -16,7 +16,7 @@
     @keydown.up.prevent
     @keydown.down.prevent
   >
-    <div class="selector__label">{{ label }}</div>
+    <div class="selector__label" @click="openDropdown">{{ label }}</div>
 
     <glass-card
       class="selector__button"
@@ -76,19 +76,19 @@
         :class="{ 'dropdown--open': isDropdownOpen }"
         v-if="isDropdownOpen"
       >
-        <!-- <input-search
+        <input-search
           v-if="isSearchable"
           ref="searchField"
           class="dropdown__search"
           v-model="searchQuery"
           @clear="clearSearch"
           @search-result="searchResult = $event"
-          search-key="gender"
+          :search-key="primaryKey"
           :search-elements="options"
           no-autocomplete
-        /> -->
+        />
 
-        <ul class="options">
+        <transition-group name="input-select-search" tag="ul" class="options">
           <li
             class="option"
             v-for="option in isSearching ? searchResult : options"
@@ -118,7 +118,7 @@
               {{ option[primaryKey] }}
             </label>
           </li>
-        </ul>
+        </transition-group>
       </glass-card>
     </transition>
   </div>
@@ -353,10 +353,10 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
   +br-md
   +focus-effect(input)
 
-  &--has-label
+  +m(has-label)
     +mt(15px)
 
-  &__label
+  +e(label)
     +zi(selector-label)
     +tran
     +center-v
@@ -364,21 +364,22 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     +clr-txt
     +fnt-medium
     +no-select
+    +clickable
     opacity: 0.6
 
-  &--hover-label
+  +m(hover-label)
     .selector__label
       top: -10px
       left: 5px !important
       opacity: 1
       +fnt-xs
 
-  &__error
+  +e(error)
     +pos-a(left 10px top 50px)
     +clr-txt(error)
     +fnt-xs
 
-  &__button
+  +e(button)
     +pos-r
     +zi(selector)
     ::v-deep .glass__body
@@ -386,39 +387,41 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       +pa(10px)
       +br-md
       +clickable
+      +brdr(none)
 
-  &__button-text
+  +e(button-text)
     +center-v
-    &--no-value
+    +m(no-value)
       +clr-txt($opacity: 60)
 
-  &__button-icon
+  +e(button-icon)
     +tran(transform)
     +center-v
     right: 20px
 
-  &__left-icon
+  +e(left-icon)
     +center-v
     left: 12px
 
-  &--has-left-icon
+  +m(has-left-icon)
     .selector
-      &__label
+      +e(label)
         left: 50px
 
-      &__button-text
+      +e(button-text)
         +pl( 30px)
 
   .dropdown
     +zi(selector-dropdown)
     +pos-a(top 44px)
     +w(100%)
-    ::v-deep .glass__body
-      +h(max 150px)
+
+    ::v-deep > .glass__body
+      +h(max 200px)
       +scroll
       overflow: hidden auto
       +pa(10px)
-      +br-md
+      +br-b-md
 
     .options
       +list-reset
@@ -427,14 +430,15 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       .option
         +br-sm
         +focus-effect(input)
+        +pa(5px 10px)
 
         &:not(:last-child)
           +mb(5px)
 
-        &__input
+        +e(input)
           +input-radio-reset
 
-        &__label
+        +e(label)
           +tran(color)
           +block
           +pl(10px)
@@ -443,15 +447,16 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
         &:focus
           +clr-bg
 
-        &--selected
-          // +clr-bg(input-select-selected-bg, 30)
-          &:hover,
-          &:focus
-            // +clr-bg(input-select-selected-bg, 60)
-
-  &--has-error
+  +m(has-error)
     +clr(error, border-color)
     +mb(15px)
+
+    .selector__button-icon
+      ::v-deep svg
+        +clr(error, fill)
+
+    ::v-deep .glass__body
+      +clr(error, border-color)
 
     .selector__button-text,
     .selector__label
