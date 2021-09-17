@@ -221,7 +221,7 @@ export default Vue.extend({
       +center-text
       +no-wrap
       +w(max 100%)
-      +scroll
+      +no-scroll
       overflow: auto hidden
 
     .regenerate

@@ -22,3 +22,12 @@
     @include c.clr-bg(scrollbar-thumb-hover);
   }
 }
+
+@mixin no-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
