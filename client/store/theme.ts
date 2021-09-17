@@ -1,6 +1,6 @@
 import { mutationTree, actionTree } from "typed-vuex"
 
-type ThemeOption = "light" | "dark"
+type ThemeOption = "light" | "dark" | "default"
 
 export const state = () => ({
   THEME_COOKIE_NAME: "theme",
@@ -20,6 +20,10 @@ export const actions = actionTree(
   {
     load({ dispatch }) {
       dispatch("loadSetTheme")
+    },
+
+    loadMediaQuery({ dispatch }) {
+      dispatch("setFromMediaQueryIfNeeded")
       dispatch("listenForDefaultChange")
     },
 
@@ -29,22 +33,13 @@ export const actions = actionTree(
     },
 
     async changeTheme({ commit, dispatch }, theme: ThemeOption) {
-      await dispatch("applyTheme", theme)
       commit("setThemeState", theme)
       dispatch("setThemeToCookie", theme)
     },
 
     async loadSetTheme({ dispatch }) {
-      let cookie: ThemeOption
-      cookie = await dispatch("getThemeFromCookie")
-      if (!cookie) cookie = await dispatch("getThemeFromMediaQuery")
+      const cookie = await dispatch("getThemeFromCookie")
       dispatch("changeTheme", cookie)
-    },
-
-    applyTheme(_vuexContext, theme: ThemeOption) {
-      if (theme === "dark")
-        return document.documentElement.setAttribute("theme", "dark")
-      return document.documentElement.removeAttribute("theme")
     },
 
     setThemeToCookie({ state }, theme: ThemeOption) {
@@ -55,7 +50,16 @@ export const actions = actionTree(
     },
 
     getThemeFromCookie({ state }) {
-      return this.app.$cookies.get(state.THEME_COOKIE_NAME)
+      let theme = this.app.$cookies.get(state.THEME_COOKIE_NAME)
+      if (!theme) theme = "default"
+      return theme
+    },
+
+    async setFromMediaQueryIfNeeded({ state, dispatch }) {
+      if (state.currentTheme === "default") {
+        const theme = await dispatch("getThemeFromMediaQuery")
+        dispatch("changeTheme", theme)
+      }
     },
 
     getThemeFromMediaQuery() {

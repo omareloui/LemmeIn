@@ -6,6 +6,7 @@
       size="50px"
       @click="toggleMenu"
       :color="isMenuOpen ? 'cancel' : 'primary'"
+      aria-label="floating menu"
     />
 
     <transition name="floating-menu">
@@ -16,6 +17,7 @@
           icon-view-box="24.8 32"
           size="50px"
           @click="openPassGen"
+          aria-label="generate password"
         />
 
         <button-glass
@@ -23,6 +25,7 @@
           icon="key"
           size="50px"
           @click="openAddPass"
+          aria-label="add new password"
         />
       </div>
     </transition>

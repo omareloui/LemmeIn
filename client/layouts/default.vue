@@ -1,18 +1,8 @@
 <template>
-  <div>
+  <layouts-wrapper>
     <the-navbar />
     <nuxt />
     <notify />
     <floating-menu />
-  </div>
+  </layouts-wrapper>
 </template>
-
-<script lang="ts">
-import Vue from "vue"
-
-export default Vue.extend({
-  beforeMount() {
-    this.$accessor.theme.load()
-  }
-})
-</script>

@@ -1,8 +1,10 @@
 <template>
-  <container class="error">
-    <template #heading>{{ error.status }} {{ error.type }}</template>
-    <p class="error__message">{{ error.message }}</p>
-  </container>
+  <layouts-wrapper>
+    <container class="error">
+      <template #heading>{{ error.status }} {{ error.type }}</template>
+      <p class="error__message">{{ error.message }}</p>
+    </container>
+  </layouts-wrapper>
 </template>
 
 <script lang="ts">

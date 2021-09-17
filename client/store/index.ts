@@ -14,8 +14,9 @@ export const mutations = mutationTree(state, {})
 export const actions = actionTree(
   { state, mutations },
   {
-    async nuxtServerInit({ dispatch }) {
-      await dispatch("auth/setMe")
+    nuxtServerInit({ dispatch }) {
+      dispatch("auth/setMe")
+      dispatch("theme/load")
     }
   }
 )

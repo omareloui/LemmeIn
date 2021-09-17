@@ -3,6 +3,7 @@
     :type="type"
     class="button"
     :style="{ width: width || size, height: height || size }"
+    :aria-label="ariaLabel"
     :disabled="isDisabled"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
@@ -17,6 +18,7 @@ import Vue from "vue"
 export default Vue.extend({
   props: {
     type: { type: String, default: "button" },
+    ariaLabel: { type: String },
     width: { type: String },
     height: { type: String },
     size: { type: String },

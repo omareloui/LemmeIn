@@ -23,6 +23,7 @@
             icon="nav-menu"
             icon-view-box="32 7.5"
             @click="toggleMenu"
+            aria-label="nav menu"
           />
 
           <transition name="nav-menu">

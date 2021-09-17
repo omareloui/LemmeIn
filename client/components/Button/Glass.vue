@@ -14,6 +14,7 @@
         class="button-nav__button"
         @click="onClick('single')"
         @dblclick="onClick('dbl')"
+        v-bind="{ ariaLabel: description || ariaLabel }"
       >
         <icon :name="icon" :view-box="iconViewBox" :size="iconSize"></icon>
       </button-base>
@@ -38,6 +39,7 @@ import Vue from "vue"
 export default Vue.extend({
   props: {
     type: { type: String, default: "button" },
+    ariaLabel: { type: String },
     size: { type: String, default: "40px" },
     isLoading: { type: Boolean, default: false },
     isDisabled: { type: Boolean, default: false },

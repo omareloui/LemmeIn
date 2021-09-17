@@ -7,7 +7,7 @@
       'button-main--large': large,
       'button-main--dont-block-on-mobile': dontBlockOnMobile
     }"
-    v-bind="{ type, width, isDisabled }"
+    v-bind="{ type, width, isDisabled, ariaLabel }"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
   >
@@ -35,6 +35,7 @@ import Vue from "vue"
 export default Vue.extend({
   props: {
     type: { type: String, default: "button" },
+    ariaLabel: { type: String },
     width: { type: String },
     isLoading: { type: Boolean, default: false },
     isDisabled: { type: Boolean, default: false },
