@@ -49,7 +49,7 @@ oAuthServiceTest.test(
     const newPassword = await PasswordService.createMine(
       {
         app: "oAuthed app",
-        password: serviceTester.createdRecordId,
+        password: serviceTester.createdRecordId.toString(),
         isOAuth: true,
       },
       oAuthServiceTest.userId

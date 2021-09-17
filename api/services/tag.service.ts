@@ -54,7 +54,10 @@ export default class TagService extends BaseService {
     return sortedTags;
   }
 
-  public static async getMyPasswordAllTags(tagsIds: string[], userId: string) {
+  public static async getMyPasswordAllTags(
+    tagsIds: string[],
+    userId: string
+  ): Promise<VirtualTagSchema[]> {
     const ids = tagsIds.map((x) => new ObjectId(x));
     const tagsDocs = await Tag.find({ _id: { $in: ids }, user: userId });
     const tagsArray = await tagsDocs.toArray();
@@ -62,7 +65,7 @@ export default class TagService extends BaseService {
       x._id.toString();
       return normalizeDocument(x);
     });
-    return normalizedTags;
+    return normalizedTags as VirtualTagSchema[];
   }
 
   public static async updateOneMine(

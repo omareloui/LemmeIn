@@ -1,17 +1,17 @@
 import { ObjectId } from "../deps.ts";
+import { mongoIdRegExp } from "../utils/mongoIdRegExp.ts";
 
 import EncryptionHelper from "../helpers/encryption.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
-import {
-  normalizeDocuments,
-  normalizeDocument,
-} from "../utils/normalizeDocuments.ts";
+import { normalizeDocument } from "../utils/normalizeDocuments.ts";
 import { BaseService } from "./base.service.ts";
 
-import type { NormalizedDoc } from "../utils/normalizeDocuments.ts";
-
-import { Password, PasswordSchema } from "../models/password.model.ts";
-import type { TagSchema } from "../models/tag.model.ts";
+import {
+  Password,
+  PasswordSchema,
+  VirtualPasswordSchema,
+} from "../models/password.model.ts";
+import type { VirtualTagSchema } from "../models/tag.model.ts";
 import TagService from "./tag.service.ts";
 
 const passwordErrorHelper = new ErrorHelper("password");
@@ -28,21 +28,11 @@ interface CreatePasswordOptions {
   isOAuth?: boolean;
 }
 
-interface PopulatedPassword {
-  id: string;
-  app: string;
-  accountIdentifier: string;
-  password?: NormalizedDoc<PasswordSchema> | string;
-  note?: string;
-  site?: string;
-  tags?: NormalizedDoc<TagSchema>[];
-  lastUsed?: Date | null;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
 export default class PasswordService extends BaseService {
-  public static async createMine(data: CreatePasswordOptions, userId: string) {
+  public static async createMine(
+    data: CreatePasswordOptions,
+    userId: string
+  ): Promise<VirtualPasswordSchema> {
     const currentDate = new Date();
     const insertionData = {
       ...data,
@@ -61,55 +51,37 @@ export default class PasswordService extends BaseService {
       return passwordErrorHelper.badRequest({ action: "create" });
     const newPassword = await Password.findOne({ _id: passwordId });
     if (!newPassword) return passwordErrorHelper.notFound();
-    return normalizeDocument(newPassword);
+    return this.normalizeDoc(newPassword, userId);
   }
 
-  public static async getAllMine(userId: string) {
+  public static async getAllMine(
+    userId: string
+  ): Promise<VirtualPasswordSchema[]> {
     const passwords = await Password.find({ user: userId }).toArray();
-    return normalizeDocuments(passwords);
+    const normalizedDocs = await this.normalizeAndSortDocs(passwords, userId);
+    return normalizedDocs;
   }
 
   public static async getMineWithTag(
     tagId: string,
     userId: string
-  ): Promise<NormalizedDoc<PasswordSchema>[]> {
+  ): Promise<VirtualPasswordSchema[]> {
     const passwords = await Password.find({
       user: userId,
       tags: tagId,
     }).toArray();
-    return normalizeDocuments(passwords);
+    return this.normalizeAndSortDocs(passwords, userId);
   }
 
-  public static async getOneMine(id: string, userId: string) {
-    const passwordDoc = await Password.findOne({
+  public static async getOneMine(
+    id: string,
+    userId: string
+  ): Promise<VirtualPasswordSchema> {
+    const passwordDoc = (await Password.findOne({
       _id: new ObjectId(id),
       user: userId,
-    });
-    if (!passwordDoc) return passwordErrorHelper.notFound();
-    const result: PopulatedPassword = {
-      id,
-      app: passwordDoc.app,
-      password: passwordDoc.password,
-      accountIdentifier: passwordDoc.accountIdentifier,
-      note: passwordDoc.note,
-      site: passwordDoc.site,
-      lastUsed: passwordDoc.lastUsed,
-      createdAt: passwordDoc.createdAt,
-      updatedAt: passwordDoc.updatedAt,
-    };
-    // Populate password if it's oAuth
-    if (!passwordDoc.password.match(ENCRYPTED_PASSWORD_REG_EXP))
-      result.password = normalizeDocument(
-        (await Password.findOne({
-          _id: new ObjectId(passwordDoc.password),
-          user: userId,
-        }))!
-      );
-    // Populate the tags
-    if (passwordDoc.tags && passwordDoc.tags.length >= 1)
-      result.tags = await this.getMyPasswordTags(passwordDoc.tags, userId);
-
-    return result;
+    })) as PasswordSchema;
+    return this.normalizeDoc(passwordDoc, userId);
   }
 
   public static async removeOneMine(id: string, userId: string) {
@@ -144,7 +116,53 @@ export default class PasswordService extends BaseService {
     return password;
   }
 
-  private static getMyPasswordTags(tags: string[], userId: string) {
-    return TagService.getMyPasswordAllTags(tags, userId);
+  private static async getMyPasswordTags(
+    tags: string[],
+    userId: string
+  ): Promise<VirtualTagSchema[]> {
+    if (tags && tags.length > 0)
+      return await TagService.getMyPasswordAllTags(tags, userId);
+    return [];
+  }
+
+  private static async normalizeDoc(
+    doc: PasswordSchema,
+    userId: string
+  ): Promise<VirtualPasswordSchema> {
+    const p = { ...normalizeDocument(doc), id: doc._id.toString() };
+    const isOAuth = this.checkIfPasswordOAuth(p.password);
+    // @ts-ignore accept the password type as virtual password
+    const result = { ...p } as VirtualPasswordSchema;
+    // Set password
+    if (!isOAuth) {
+      delete (result as { password?: string }).password;
+    } else {
+      result.password = await this.getOneMine(p.password, userId);
+    }
+    // Set tags
+    result.tags = await this.getMyPasswordTags(doc.tags, userId);
+    return result;
+  }
+
+  private static async normalizeAndSortDocs(
+    docs: PasswordSchema[],
+    userId: string
+  ): Promise<VirtualPasswordSchema[]> {
+    docs = docs.map((x) => {
+      x._id = x._id.toString();
+      return x;
+    });
+    const normalized = await Promise.all(
+      docs.map((x) => this.normalizeDoc(x, userId))
+    );
+    return this.sort(normalized);
+  }
+
+  private static checkIfPasswordOAuth(password: string) {
+    return !!password.toString().match(mongoIdRegExp);
+  }
+
+  private static sort(docs: VirtualPasswordSchema[]): VirtualPasswordSchema[] {
+    return docs.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
   }
 }
