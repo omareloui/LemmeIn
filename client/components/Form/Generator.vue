@@ -71,19 +71,22 @@
 </template>
 
 <script lang="ts">
-// @ts-nocheck
 import Vue, { PropType } from "vue"
 import {
   ExtendVueRefs,
   FormField,
   FormValues,
+  PasswordValue,
   FormStructure,
-  FormGap
+  ExpandableFields,
+  FormGap,
+  InputText,
+  InputPassword
 } from "~/@types"
 
 export const GAP: FormGap = "gap"
 
-type InputComponent = Vue & { validate: () => void; errorMessage: string }
+type InputComponent = InputText | InputPassword
 
 type SubmitFunction = (values: FormValues) => void
 
@@ -109,38 +112,61 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
       return this.expandableFields.length > 0
     },
 
-    topLevelFields(): FormField[] {
-      return this.formFields.filter(x => !x.expandableFields) as FormField[]
+    topLevelFields(): (FormField | FormGap)[] {
+      // @ts-ignore
+      return this.formFields.filter(x => !x.expandableFields) as (
+        | FormField
+        | FormGap
+      )[]
     },
 
-    expandableFields(): FormField[] {
-      return this.formFields
-        .filter(x => !!x.expandableFields)
-        .reduce(
-          (acc, prev) => [...acc, ...prev.expandableFields],
-          []
-        ) as unknown as FormField[]
+    expandableFields(): (FormField | FormGap)[] {
+      return (
+        this.formFields
+          // @ts-ignore
+          .filter(x => !!x.expandableFields)
+          .reduce(
+            // @ts-ignore
+            (acc, field) => [...acc, ...field.expandableFields],
+            [] as (FormField | FormGap)[]
+          ) as unknown as (FormField | FormGap)[]
+      )
     },
 
     fields(): FormField[] {
-      return this.removeGap(this.topLevelFields.concat(this.expandableFields))
+      return this.removeGap(
+        this.topLevelFields.concat(this.expandableFields)
+      ) as FormField[]
     },
 
     values(): FormValues {
-      const neededResult: FormValues = {}
+      const result: FormValues = {}
       this.fields.forEach((x: FormField) => {
-        neededResult[x.id] = x.value
+        // Handle password value if the types is password
+        if (x.type === "password") {
+          const passwordComponent = this.getInputComponent(x) as InputPassword
+          if (passwordComponent.hasOAuth) {
+            const passwordResult: PasswordValue = {
+              value: x.value as string,
+              isOAuth: false
+            }
+            if (passwordComponent.isOAuth) passwordResult.isOAuth = true
+            result[x.id] = passwordResult
+          } else result[x.id] = x.value
+        }
+        // Handle the rest of the fields
+        else result[x.id] = x.value
       })
-      return neededResult
+      return result
     },
 
-    components() {
-      const getInputComponent = (x: FormField) =>
-        (this.$refs[x.id] as InputComponent[])[0]
-      const fieldsToGet = this.isExpandableShown
-        ? this.fields
-        : this.removeGap(this.topLevelFields)
-      return fieldsToGet.map(getInputComponent.bind(this))
+    components(): InputComponent[] {
+      const fieldsToGet = (
+        this.isExpandableShown
+          ? this.fields
+          : this.removeGap(this.topLevelFields)
+      ) as FormField[]
+      return fieldsToGet.map(this.getInputComponent.bind(this))
     }
   },
 
@@ -185,8 +211,12 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
       return false
     },
 
-    removeGap(fields: FormStructure): FormField {
-      return fields.filter(x => x !== GAP)
+    removeGap(fields: FormStructure): (FormField | ExpandableFields)[] {
+      return fields.filter(x => x !== GAP) as (FormField | ExpandableFields)[]
+    },
+
+    getInputComponent(x: FormField) {
+      return (this.$refs[x.id] as InputComponent[])[0]
     }
   }
 })
@@ -218,14 +248,19 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 
   .expand-button
     opacity: 0.8
+    +pos-r
     +center-text
     +mx(auto)
-    +my(10px)
+    +mb(10px)
+    +mt(20px)
+    +pr(20px)
     +fnt-sm
     +block
-    +pos-r
+    +br-md
     i
-      +pos-a(top 7px right -22px)
+      +center-v
+      opacity: 0.8
+      right: 0
 
   .submit
     grid-column: 1 / 3

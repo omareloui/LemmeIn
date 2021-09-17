@@ -12,6 +12,15 @@ export default interface Password {
   updatedAt: Date
 }
 
+export interface AddPasswordReceivedData {
+  app: string
+  password: { value: string; isOAuth: boolean }
+  accountIdentifier?: string
+  site?: string
+  note?: string
+  tags?: string[]
+}
+
 export interface AddPassword {
   app: string
   password: string

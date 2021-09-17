@@ -12,13 +12,17 @@ export type InputTypes =
   | "tags"
   | "textarea"
 
+export type PasswordValue = { value: string; isOAuth: boolean } | string
 export type AcceptableFormValues =
   | string
   | string[]
   | File[]
+  | PasswordValue
   | { id: string; [key: string]: string | number | boolean }[]
 
-export type FormValues = { [fieldId: string]: AcceptableFormValues }
+export type FormValues = {
+  [fieldId: string]: AcceptableFormValues
+}
 
 export type FormGap = "gap"
 
@@ -41,14 +45,15 @@ export interface FormField {
     primaryKey: string
     focusOnMount: boolean
     noIcon: boolean
+    hasOAuth: boolean
   }>
   style?: "half"
 }
 
-interface ExpandableFields {
+export interface ExpandableFields {
   expandableFields: (FormField | FormGap)[]
 }
 
-type FormOptions = FormField | FormGap | ExpandableFields
+export type FormOptions = FormField | FormGap | ExpandableFields
 
 export type FormStructure = FormOptions[]
