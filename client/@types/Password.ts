@@ -1,6 +1,6 @@
 import { Tag } from "."
 
-export default interface Password {
+export interface Password {
   id: string
   user: string
   password?: Password | string

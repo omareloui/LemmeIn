@@ -1,4 +1,4 @@
-export default interface OptionType {
+export interface InputCheckOption {
   id: string
   value: string
   isChecked: boolean

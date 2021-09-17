@@ -1,4 +1,4 @@
-export default interface OptionType {
+export interface InputRadioOption {
   id: string
   value: string
 }
