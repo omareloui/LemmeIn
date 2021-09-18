@@ -57,6 +57,12 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .link
-  +clr-txt(link)
-  +italic
+  +no-underline
+  +clr-txt
+  +br-md
+  +mx(-5px)
+  +px(5px)
+  +m(disabled)
+    +clr-txt($opacity: 0.5)
+    +not-allowed
 </style>
