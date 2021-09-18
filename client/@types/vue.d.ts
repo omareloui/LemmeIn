@@ -1,5 +1,5 @@
 import Vue from "vue"
-import type {NuxtCookies} from "cookie-universal-nuxt"
+import type { NuxtCookies } from "cookie-universal-nuxt"
 import { accessorType } from "~/store"
 
 declare module "*.vue" {

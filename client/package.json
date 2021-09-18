@@ -33,6 +33,7 @@
     "@types/express": "^4.17.11",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.37",
+    "@types/qrcode": "^1.4.1",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
     "@vue/test-utils": "^1.1.4",
@@ -61,7 +62,8 @@
     "cookie-universal-nuxt": "^2.1.5",
     "fuse.js": "^6.4.6",
     "nuxt": "^2.15.8",
-    "nuxt-typed-vuex": "^0.2.0"
+    "nuxt-typed-vuex": "^0.2.0",
+    "qrcode": "^1.4.4"
   },
   "main": "index.js"
 }

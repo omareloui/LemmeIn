@@ -25,7 +25,8 @@ export const mutations = mutationTree(state, {
   },
 
   updateLastUsedToNow(state, passwordId: string) {
-    const password = state.passwords.find(x => x.id === passwordId)
+    if (state.passwords.length === 0) return
+    const password = state.passwords.find(x => x?.id === passwordId)
     if (!password)
       throw new Error("Can't find the password to update last used")
     password.lastUsed = new Date()
@@ -53,23 +54,28 @@ export const actions = actionTree(
       commit("unshiftToPasswords", password)
     },
 
-    async copy({ commit }, passwordId: string) {
+    async decryptPassword({ commit }, passwordId: string) {
       // Get the password
       try {
         const { data: password } = await this.$axios.get(
           `/passwords/decrypt/${passwordId}`
         )
-
         // Update the last used in passwords state
         commit("updateLastUsedToNow", passwordId)
-
-        // Copy the password
-        navigator.clipboard.writeText(password)
-        this.$notify.success("Copied password!")
+        return password.toString() as string
       } catch (e) {
         // @ts-ignore
-        this.$notify.error(e.response.data.message)
+        return this.$notify.error(e.response.data.message)
       }
+    },
+
+    async copy({ dispatch }, passwordId: string) {
+      // Get the password
+      const password = await dispatch("decryptPassword", passwordId)
+      if (!password) return
+      // Copy the password
+      navigator.clipboard.writeText(password)
+      this.$notify.success("Copied password!")
     }
   }
 )

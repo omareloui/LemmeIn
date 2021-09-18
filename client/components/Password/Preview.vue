@@ -96,6 +96,8 @@ export default Vue.extend({
         +mb(3px)
       .account-identifier
         +clr-txt(main, $opacity: 0.5)
+    +e(copy)
+      align-self: center
 
   .tags
     +mt(10px)

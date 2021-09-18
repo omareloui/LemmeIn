@@ -36,6 +36,7 @@ export default Vue.extend({
 .button
   +pos-r
   +focus-effect
+  +br-md
   +brdr(none)
   +clickable
   +center-text
