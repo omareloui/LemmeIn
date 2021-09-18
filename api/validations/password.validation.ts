@@ -27,12 +27,14 @@ export const createPasswordValidation = {
 };
 
 export const getPasswordValidation = {
-  params: yup.object({
-    id: requiredId,
-  }),
+  params: yup.object({ id: requiredId }),
 };
 
 export const getPasswordsValidation = {};
+
+export const decryptPasswordValidation = {
+  params: yup.object({ id: requiredId }),
+};
 
 export const updatePasswordValidation = {
   params: yup.object({ id: requiredId }),

@@ -7,6 +7,7 @@ import {
   deletePasswordValidation,
   getPasswordsValidation,
   getPasswordValidation,
+  decryptPasswordValidation,
 } from "../validations/password.validation.ts";
 
 const router = new Router();
@@ -23,6 +24,13 @@ router.post(
   validate(createPasswordValidation),
   auth("manageMyPasswords"),
   PasswordController.create
+);
+
+router.get(
+  "/passwords/decrypt/:id",
+  validate(decryptPasswordValidation),
+  auth("manageMyPasswords"),
+  PasswordController.decrypt
 );
 
 router.get(

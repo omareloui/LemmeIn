@@ -11,16 +11,20 @@
         />
 
         <div class="info__text-info">
-          <div class="app">{{ password.app }}</div>
+          <link-base class="app" :to="`/passwords/${password.id}`">
+            {{ password.app }}
+          </link-base>
           <div class="account-identifier">{{ password.accountIdentifier }}</div>
         </div>
 
         <icon
+          v-if="!password.password"
           class="info__copy"
           name="copy"
           size="25px"
           view-box="25.6 32"
           clickable
+          @click="copy"
         />
       </div>
 
@@ -67,6 +71,10 @@ export default Vue.extend({
   methods: {
     gotToTag(tag: Tag) {
       this.$router.push(`/vault?tag=${tag.id}`)
+    },
+
+    copy() {
+      this.$accessor.vault.copy(this.password.id)
     }
   }
 })
