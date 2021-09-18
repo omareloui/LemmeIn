@@ -5,10 +5,10 @@ export interface Password {
   user: string
   password?: Password | string
   app: string
-  accountIdentifier: string
-  site: string
-  note: string
-  tags: Tag[]
+  accountIdentifier?: string
+  site?: string
+  note?: string
+  tags?: Tag[]
   lastUsed: Date | null
   createdAt: Date
   updatedAt: Date

@@ -5,6 +5,8 @@ export * from "./HTMLInputEvent"
 
 export * from "./Components"
 
+export * from "./Icon"
+
 export * from "./Tag"
 export * from "./Password"
 

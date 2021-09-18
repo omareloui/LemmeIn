@@ -1,21 +1,29 @@
 <template>
   <i
     class="icon-wrapper"
-    :class="{ 'icon-wrapper--is-clickable': isClickable }"
-    :style="{ width: width || size, height: height || size }"
+    :class="{
+      'icon-wrapper--clickable': clickable,
+      'icon-wrapper--focusable': focusable
+    }"
+    :style="{
+      '--width': width || size,
+      '--height': height || size,
+      '--fill': Array.isArray(fill)
+        ? $accessor.theme.currentTheme === 'light'
+          ? fill[0]
+          : fill[1]
+        : fill.match(/^#[\da-f]{3,8}$/i)
+        ? fill
+        : `var(--clr-${fill})`,
+      '--stroke': stroke && `var(--clr-${stroke})`
+    }"
+    :tabindex="focusable ? 0 : undefined"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
     @keyup.enter="$emit('keyup:enter')"
     @keyup.space="$emit('keyup:space')"
   >
-    <svg
-      :viewBox="`0 0 ${viewBox}`"
-      :style="{
-        '--fill': `var(--clr-${fill})`,
-        '--stroke': stroke && `var(--clr-${stroke})`
-      }"
-      :tabindex="isFocusable ? 0 : -1"
-    >
+    <svg :viewBox="`0 0 ${viewBox}`">
       <transition name="fade">
         <component :is="`icon-${name}`"></component>
       </transition>
@@ -33,10 +41,10 @@ export default Vue.extend({
     width: { type: String },
     height: { type: String },
     viewBox: { type: String, default: "32 32" },
-    fill: { type: String, default: "text-main" },
+    fill: { default: "text-main" },
     stroke: { type: String },
-    isClickable: { type: Boolean, default: false },
-    isFocusable: { type: Boolean, default: false }
+    clickable: { type: Boolean, default: false },
+    focusable: { type: Boolean, default: false }
   },
 
   methods: {
@@ -53,13 +61,19 @@ export default Vue.extend({
 .icon-wrapper
   +pos-r
   +inline-block
+  +h(var(--height))
+  +w(var(--width))
+
   svg
     +center
-    +focus-effect(icon)
     +clr(--fill, fill)
     +clr(--stroke, stroke)
     +size(100%)
 
-  +m(is-clickable)
+  +m(focusable)
+    svg
+      +focus-effect(icon)
+
+  +m(clickable)
     +clickable
 </style>

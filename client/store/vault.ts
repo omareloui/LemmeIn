@@ -43,7 +43,7 @@ export const actions = actionTree(
       const response = await this.$axios.post("/passwords", options)
       const password = response.data as Password
       this.$notify.success("Created password.")
-      commit("pushToPasswords", password)
+      commit("unshiftToPasswords", password)
     }
   }
 )
