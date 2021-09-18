@@ -3,7 +3,7 @@
     {{ tag.tag }}
     <button-glass
       class="remove-button"
-      size="20px"
+      size="25px"
       icon-size="10px"
       icon="close"
       color="cancel"

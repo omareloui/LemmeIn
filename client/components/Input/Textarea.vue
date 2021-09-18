@@ -10,25 +10,28 @@
     }"
   >
     <glass-card
+      class="input-glass"
       tint="background-tertiary"
       no-back-shape
       :opacity="0.4"
       :blur="5"
       border-radius="md"
     >
-      <textarea
-        @focus="onFocus"
-        @blur="onBlur"
-        :type="type"
-        :id="identifier"
-        :name="name || identifier"
-        :placeholder="placeholderValue"
-        :value="value"
-        @input="onInput"
-        class="input"
-        :rows="rows"
-        :maxlength="maxLength"
-      ></textarea>
+      <div>
+        <textarea
+          :id="identifier"
+          class="input"
+          @focus="onFocus"
+          @blur="onBlur"
+          :type="type"
+          :name="name || identifier"
+          :placeholder="placeholderValue"
+          :value="value"
+          @input="onInput"
+          :rows="rows"
+          :maxlength="maxLength"
+        ></textarea>
+      </div>
     </glass-card>
 
     <label v-if="label" :for="identifier" class="label">
@@ -189,9 +192,14 @@ export default Vue.extend({
   +pos-r
   +tran
 
+  .input-glass
+    > div
+      +br-md
+
   .input
     +scroll
     +size(100%)
+    +br-md
     +block
     resize: none
     +clr-bg(none)
@@ -199,7 +207,6 @@ export default Vue.extend({
     +pa(10px 20px)
     +tran
     +input-search-reset
-    +br-md
     +focus-effect(input, focus focus-visible)
 
   +m(has-label)

@@ -1,50 +1,36 @@
 <template>
-  <div
+  <component
+    :is="tag"
     class="glass"
-    :class="{
-      'glass--circle': circle,
-      'glass--float': float,
-      'glass--center-content': centerContent,
-      'glass--clickable': clickable
-    }"
+    :class="classes"
     :style="{
-      width: width || size,
-      height: height || size
+      '--back-shape-height': !noBackShape
+        ? backShapeHeight || backShapeSize
+        : undefined,
+      '--back-shape-width': !noBackShape
+        ? backShapeWidth || backShapeSize
+        : undefined,
+      '--back-shape-background': !noBackShape
+        ? `var(--clr-${backShapeColor || tint})`
+        : undefined,
+      '--background': `hsl(var(--clr-hs-${tint}) var(--clr-l-${tint}) / var(--clr-o-${
+        opacity * 100
+      }))`,
+      '--blur': `${blur}px`,
+      '--color': `var(--clr-${textColor})`
     }"
+    :contenteditable="editable ? true : undefined"
+    :tabindex="focusable ? 0 : undefined"
+    v-bind="{ role, ...aria }"
+    @click="$emit('click')"
+    @dblclick="$emit('dblclick')"
+    @keyup.space="$emit('keyup:space')"
+    @keyup.enter="$emit('keyup:enter')"
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
   >
-    <span
-      v-if="!noBackShape"
-      class="glass__back-shape"
-      :class="`glass__back-shape--${backShape} glass__back-shape--${backShapePosition}`"
-      :style="{
-        '--height': backShapeHeight || backShapeSize,
-        '--width': backShapeWidth || backShapeSize,
-        '--background': `var(--clr-${backShapeColor || tint})`
-      }"
-    ></span>
-    <div
-      class="glass__body"
-      :contenteditable="editable"
-      :class="bodyClasses"
-      :tabindex="focusable ? 0 : undefined"
-      @click="$emit('click')"
-      @dblclick="$emit('dblclick')"
-      @keyup.space="$emit('keyup:space')"
-      @keyup.enter="$emit('keyup:enter')"
-      :style="{
-        '--background': `hsl(var(--clr-hs-${tint}) var(--clr-l-${tint}) / var(--clr-o-${
-          opacity * 100
-        }))`,
-        '--blur': `${blur}px`,
-        '--color': `var(--clr-${textColor})`
-      }"
-      v-bind="{ role, ...aria }"
-    >
-      <slot></slot>
-    </div>
-  </div>
+    <slot></slot>
+  </component>
 </template>
 
 <script lang="ts">
@@ -53,20 +39,16 @@ import Vue, { PropType } from "vue"
 const OPACITY_OPTIONS = [
   0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1
 ] as const
-const BORDER_RADIUS_OPTIONS = ["none", "sm", "md", "lg", "xl"] as const
 const BACK_SHAPE_OPTIONS = ["square", "pill", "circle"] as const
 const BACK_SHAPE_POSITIONS = ["bottom", "center", "top"] as const
 
 type OpacityOptions = typeof OPACITY_OPTIONS[number]
-type BorderRadiusOptions = typeof BORDER_RADIUS_OPTIONS[number]
 type BackShapeOptions = typeof BACK_SHAPE_OPTIONS[number]
 type BackShapePositions = typeof BACK_SHAPE_POSITIONS[number]
 
 export default Vue.extend({
   props: {
-    size: { type: String },
-    width: { type: String },
-    height: { type: String },
+    tag: { type: String, default: "div" },
 
     blur: { type: Number, default: 4 },
     opacity: {
@@ -77,20 +59,12 @@ export default Vue.extend({
 
     editable: { type: Boolean, default: false },
 
-    centerContent: { type: Boolean, default: false },
-
     float: { type: Boolean, default: false },
 
     tint: { type: String, default: "info" },
     textColor: { type: String, default: "text-main" },
 
     circle: { type: Boolean, default: false },
-    borderRadius: {
-      type: String as PropType<BorderRadiusOptions>,
-      validator: (v: BorderRadiusOptions) =>
-        BORDER_RADIUS_OPTIONS.indexOf(v) > -1,
-      default: "md"
-    },
 
     focusable: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
@@ -117,10 +91,13 @@ export default Vue.extend({
   },
 
   computed: {
-    bodyClasses(): string {
+    classes(): string {
       let classes = ""
-      if (this.borderRadius && this.borderRadius !== "none")
-        classes += `br-${this.borderRadius}`
+      if (this.circle) classes += " glass--circle"
+      if (this.float) classes += " glass--float"
+      if (this.clickable) classes += " glass--clickable"
+      if (!this.noBackShape)
+        classes += ` glass--has-back-shape glass--back-shape--${this.backShape} glass--back-shape--${this.backShapePosition}`
       return classes
     }
   }
@@ -131,47 +108,49 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .glass
-  +pos-r
-  +m(circle)
-    .glass__body
-      +br-cr
-  +m(float)
-    .glass__body
-      +float(1)
+  +focus-effect
+  +clr-txt(--color)
 
-  +m(clickable)
-    +clickable
-
-  +m(center-content)
-    .glass__body
-      +center
-
-  +e(body)
-    +size(100%)
-    +focus-effect
-    +clr-txt(--color)
+  > :first-child
     +clr-bg(--background)
     backdrop-filter: blur(var(--blur))
 
-  +e(back-shape)
-    +inline-block
-    +clr-bg(--background)
-    +w(var(--width))
-    +h(var(--height))
+  +m(circle)
+    +br-cr
+  +m(float)
+    +float(1)
+  +m(clickable)
+    +clickable
 
+  &.glass--has-back-shape
+    &::before
+      content: ""
+      z-index: -1
+      +tran
+      +clr-bg(--back-shape-background)
+      +w(var(--back-shape-width))
+      +h(var(--back-shape-height))
+
+  &.glass--back-shape
     +m(square)
-      +br-md
+      &::before
+        +br-md
     +m(pill)
-      +br-bl
+      &::before
+        +br-bl
     +m(circle)
-      +br-cr
+      &::before
+        +br-cr
 
     +m(center)
-      +center
+      &::before
+        +center
     +m(bottom)
-      +pos-a(bottom 3% left 50%)
-      transform: translateX(-50%)
+      &::before
+        +pos-a(bottom 3% left 50%)
+        transform: translateX(-50%)
     +m(top)
-      +pos-a(top 0 left 50%)
-      transform: translateX(-50%)
+      &::before
+        +pos-a(top 0 left 50%)
+        transform: translateX(-50%)
 </style>

@@ -19,7 +19,6 @@
           focusable
           @click="changeCheckbox(option)"
           @keyup:space="changeCheckbox(option)"
-          size="35px"
           tint="background-tertiary"
           back-shape="circle"
           :back-shape-color="
@@ -32,14 +31,16 @@
           float
           center-content
         >
-          <transition name="input-check">
-            <icon
-              v-if="option.isChecked"
-              name="check"
-              class="option__checkbox-icon"
-              size="20px"
-            ></icon>
-          </transition>
+          <div>
+            <transition name="input-check">
+              <icon
+                v-if="option.isChecked"
+                name="check"
+                class="option__checkbox-icon"
+                size="20px"
+              ></icon>
+            </transition>
+          </div>
         </glass-card>
         <label
           class="option__label"
@@ -163,8 +164,10 @@ $checker-size: 20px
       +pos-r
       +mb(10px)
       +clickable
-      ::v-deep .option__checkbox-icon
-        +center-inset
+      > div
+        +size(35px)
+    +e(checkbox-icon)
+      +center-inset
     +e(label)
       +clickable
       +center-text

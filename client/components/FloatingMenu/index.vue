@@ -46,7 +46,7 @@ export default Vue.extend({
   data: () => ({
     isMenuOpen: false,
     isPassGenShown: false,
-    isAddPassShown: false
+    isAddPassShown: true
   }),
 
   mounted() {

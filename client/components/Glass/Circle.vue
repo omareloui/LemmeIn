@@ -2,12 +2,10 @@
   <glass-card
     circle
     back-shape="circle"
-    center-content
     v-bind="{
       blur,
       opacity,
       tint,
-      size,
       float,
       textColor,
       noBackShape,

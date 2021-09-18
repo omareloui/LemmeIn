@@ -2,22 +2,22 @@
   <transition name="dialogue">
     <glass-card
       v-if="isShown"
-      class="dialogue"
       border-radius="none"
-      height="100vh"
-      width="100vw"
       no-back-shape
       tint="background-main"
       :blur="10"
+      class="dialogue-wrapper"
     >
-      <div class="dialogue__body">
-        <slot></slot>
-        <button-glass
-          class="close"
-          icon="close"
-          color="cancel"
-          @click="closeDialogue"
-        />
+      <div class="dialogue">
+        <div class="dialogue__body">
+          <slot></slot>
+          <button-glass
+            class="close"
+            icon="close"
+            color="cancel"
+            @click="closeDialogue"
+          />
+        </div>
       </div>
     </glass-card>
   </transition>
@@ -53,20 +53,24 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.dialogue
+.dialogue-wrapper
   +zi(dialogue)
-  &::v-deep.glass
-    +pos-f(top 0 left 0)
+  +pos-f(top 0 left 0)
 
-  +e(body)
-    +scroll
-    +center
-    +w(min(90%, 600px))
-    +h(max 90vh)
-    +float(2)
-    +br-lg
-    +clr-bg(main)
-    overflow-y: auto
+  .dialogue
+    +w(100vw)
+    +h(100vh)
+
+    +e(body)
+      +pos-r
+      +scroll
+      +center
+      +w(min(90%, 600px))
+      +h(max 90vh)
+      +float(2)
+      +br-lg
+      +clr-bg(main)
+      overflow-y: auto
 
     .close
       +pos-a(top 20px right 20px)

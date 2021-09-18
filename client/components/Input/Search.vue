@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
+import Fuse from "fuse.js"
 import { ExtendVueRefs } from "~/@types"
 
 interface Refs {
@@ -53,7 +54,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       >,
       default(query: string) {
         const propsData = this.$options.propsData as {
-          searchKey: string | undefined
+          searchKeys: string | string[]
           searchElements: Array<string | number | Record<string, string>>
         }
         if (
@@ -64,20 +65,24 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
         )
           return []
 
-        const queryRegExp = new RegExp(query, "i")
-        const result = propsData.searchElements.filter(x => {
-          if (typeof x === "object") {
-            if (!propsData.searchKey) throw new Error("No search key provided!")
-            return x[propsData.searchKey].match(queryRegExp)
-          }
-          if (typeof x === "number") return x.toString().match(queryRegExp)
-          return x.match(queryRegExp)
-        })
-        if (result.length === 0) return []
-        return result
+        const isObj = !!(typeof propsData.searchElements[0] === "object")
+
+        if (!isObj) {
+          const fuse = new Fuse(propsData.searchElements)
+          return fuse.search(query).map(x => x.item)
+        }
+
+        if (!propsData.searchKeys || propsData.searchKeys.length === 0)
+          throw new Error("You have to provide search key(s)")
+
+        const keys = Array.isArray(propsData.searchKeys)
+          ? propsData.searchKeys
+          : [propsData.searchKeys]
+        const fuse = new Fuse(propsData.searchElements, { keys })
+        return fuse.search(query).map(x => x.item)
       }
     },
-    searchKey: { type: String },
+    searchKeys: { type: [String, Array] },
     searchElements: { type: Array }
   },
 

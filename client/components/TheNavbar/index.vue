@@ -41,9 +41,11 @@
 
       <transition name="fade">
         <nav class="auth header--right" v-if="!isSigned">
-          <glass-card class="glass-nav" no-back-shape tint="background-main">
-            <nuxt-link to="/signin">Sign in</nuxt-link>
-            <nuxt-link class="cta" to="/sign-up" is-cta>Sign up</nuxt-link>
+          <glass-card no-back-shape tint="background-main">
+            <div class="glass-nav">
+              <nuxt-link to="/signin">Sign in</nuxt-link>
+              <nuxt-link class="cta" to="/sign-up" is-cta>Sign up</nuxt-link>
+            </div>
           </glass-card>
         </nav>
       </transition>
@@ -199,9 +201,6 @@ header
 
   .glass-nav
     +size(100%)
-    &::v-deep .glass__body
-      +size(100%)
-      +pa(5px)
 
   &::v-deep .container
     display: grid
@@ -228,6 +227,8 @@ header
       display: inline-block
       +size(100%)
       +clickable
+      +pa(5px)
+      +br-lg
 
   .menu
     +e(options)
@@ -243,6 +244,9 @@ header
       grid-template-columns: 1fr 1fr
       gap: 15px
       +no-wrap
+      +pa(5px 10px)
+      +br-lg
+
     a
       +no-underline
       +clr-txt

@@ -11,11 +11,18 @@
     </label>
 
     <div class="input-value-container">
-      <output v-if="!doNotShowValue" class="input-value" :for="identifier">
-        <glass-card no-back-shape tint="primary">
+      <glass-card
+        v-if="!doNotShowValue"
+        :for="identifier"
+        no-back-shape
+        tint="primary"
+        tag="output"
+        class="input-value"
+      >
+        <span>
           {{ value }}
-        </glass-card>
-      </output>
+        </span>
+      </glass-card>
     </div>
 
     <input
@@ -92,13 +99,16 @@ export default Vue.extend({
     +mx(auto)
 
     .input-value
-      +pos-a(top -25px)
+      +pos-a(top -30px)
       left: calc((var(--range-percentage) * 1%))
       +fnt-lg
       +tran
       transform: translateX(-50%)
-      ::v-deep .glass .glass__body
+      > span
+        display: block
         +pa(3px 5px)
+        +center-text
+        +br-md
 
   .input-range
     +input-reset-appearance

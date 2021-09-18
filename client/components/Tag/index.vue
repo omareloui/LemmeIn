@@ -11,12 +11,14 @@
     @keyup:space="editTag"
     @keyup:enter="editTag"
   >
-    <span
-      class="tag__color"
-      :style="{ '--color': `var(--clr-${tag.color})` }"
-    ></span>
-    <div class="tag__name">{{ tag.tag }}</div>
-    <div class="tag__passwords-count">{{ tag.passwordsCount || 0 }}</div>
+    <div>
+      <span
+        class="tag__color"
+        :style="{ '--color': `var(--clr-${tag.color})` }"
+      ></span>
+      <div class="tag__name">{{ tag.tag }}</div>
+      <div class="tag__passwords-count">{{ tag.passwordsCount || 0 }}</div>
+    </div>
   </glass-card>
 </template>
 
@@ -45,9 +47,8 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .tag
-  ::v-deep
-    .glass__body
-      +pa(20px)
+  > :first-child
+    +pa(20px)
 
   +e(color)
     +center-v

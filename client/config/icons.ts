@@ -7,7 +7,7 @@ const icons = [
   { name: "facebook", color: "#1877f2", regex: /facebook|fb\.com/ },
   { name: "instagram", color: "#c92c8e", regex: /instagram/ },
   { name: "twitter", color: "#1da1f2", regex: /twitter|twt/ },
-  { name: "whats-app", color: "#075e54", regex: /what'?s ?app/ },
+  { name: "whats-app", color: "#25d366", regex: /what'?s ?app/ },
   { name: "telegram", color: "#0088cc", regex: /telegram/ },
   { name: "messenger", color: "#0084ff", regex: /messeng[ea]r/ },
   { name: "tumblr", color: "#35465c", regex: /tumblr/ },

@@ -18,38 +18,40 @@
       clickable
       @click="focusOnSearch"
     >
-      <icon
-        v-if="leftIcon"
-        :name="leftIcon"
-        size="28px"
-        class="input-tags__icon"
-        :fill="isErred ? 'error' : undefined"
-      />
-
-      <span v-if="label" class="label">
-        {{ label }}
-        <span v-if="notRequired" class="label__optional">(optional)</span>
-      </span>
-
-      <transition-group name="chips" class="chips">
-        <chip-tag
-          class="chips__chip"
-          v-for="tag in selectedTags"
-          :key="tag.id"
-          :tag="tag"
-          @remove-tag="removeTag"
+      <div tabindex="0">
+        <icon
+          v-if="leftIcon"
+          :name="leftIcon"
+          size="28px"
+          class="icon"
+          :fill="isErred ? 'error' : undefined"
         />
-      </transition-group>
 
-      <input
-        type="text"
-        ref="searchInput"
-        class="input-tags__input"
-        :placeholder="shouldHoverLabel ? 'search tags...' : ''"
-        v-model="query"
-        @focus="onFocus"
-        @blur="onBlur"
-      />
+        <span v-if="label" class="label">
+          {{ label }}
+          <span v-if="notRequired" class="label__optional">(optional)</span>
+        </span>
+
+        <transition-group name="chips" class="chips">
+          <chip-tag
+            class="chips__chip"
+            v-for="tag in selectedTags"
+            :key="tag.id"
+            :tag="tag"
+            @remove-tag="removeTag"
+          />
+        </transition-group>
+
+        <input
+          type="text"
+          ref="searchInput"
+          class="input"
+          :placeholder="shouldHoverLabel ? 'search tags...' : ''"
+          v-model="query"
+          @focus="onFocus"
+          @blur="onBlur"
+        />
+      </div>
     </glass-card>
 
     <transition name="fade">
@@ -63,32 +65,38 @@
         tint="background-tertiary"
         border-radius="none"
         no-back-shape
-        :opacity="0.8"
+        :opacity="0.4"
         :blur="5"
       >
-        <button-main
-          class="create"
-          v-if="query.length > 1"
-          :disabled="!couldCreate"
-          block
-          cta
-          @click="createTag"
-          :is-loading="isLoadingCreating"
-          >Create "{{ query }}"</button-main
-        >
-        <div
-          class="tag"
-          v-for="tag in query ? searchResult : tagsToView"
-          :key="tag.id"
-          :style="{ '--color': `var(--clr-${tag.color})` }"
-          :class="{ 'tag--selected': value.id === value }"
-          tabindex="0"
-          @click="selectTag(tag)"
-          @keyup.space="selectTag(tag)"
-          @keyup.enter="selectTag(tag)"
-        >
-          <span class="tag__color"></span>
-          <div class="tag__name">{{ tag.tag }}</div>
+        <div>
+          <transition name="fade">
+            <button-main
+              class="create"
+              v-if="query.length > 1"
+              :disabled="!couldCreate"
+              block
+              cta
+              @click="createTag"
+              :is-loading="isLoadingCreating"
+              >Create "{{ query }}"</button-main
+            >
+          </transition>
+          <transition-group name="input-select-search" tag="div">
+            <div
+              class="tag"
+              v-for="tag in query ? searchResult : tagsToView"
+              :key="tag.id"
+              :style="{ '--color': `var(--clr-${tag.color})` }"
+              :class="{ 'tag--selected': value.id === value }"
+              tabindex="0"
+              @click="selectTag(tag)"
+              @keyup.space="selectTag(tag)"
+              @keyup.enter="selectTag(tag)"
+            >
+              <span class="tag__color"></span>
+              <div class="tag__name">{{ tag.tag }}</div>
+            </div>
+          </transition-group>
         </div>
       </glass-card>
     </transition>
@@ -247,41 +255,19 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       +fnt-xs
       +tran
 
-  +m(has-label)
-    +mt(15px)
-
-  +m(has-icon)
-    .label
-      left: 50px
-
-    .input-tags
-      +e(body)
-        ::v-deep > .glass__body
-          +pl(50px)
-
-      +e(icon)
-        +center-v
-        left: 12px
-
-  +m(hover-label)
-    .label
-      top: -10px
-      left: 5px !important
-      opacity: 1
-      +fnt-xs
-      +e(optional)
-        opacity: 0
-
   +e(body)
     +zi(selector)
-    +w(100%)
-    +tran
-    ::v-deep > .glass__body
-      +tran
-      +h(min 45px)
+    > div
       +pa(10px 20px)
+      +pos-r
+      +focus-effect(input)
+      +w(100%)
+      +h(min 45px)
+      +br-md
+      +brdr(none)
+      +clickable
 
-  +e(input)
+  .input
     +inline-block
     +w(min 75px)
     +h(max 25px)
@@ -299,18 +285,49 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       +my(2px)
       +mr(4px)
 
-  .dropdown
-    +pos-a
-    top: calc(100% - 3px)
-    +w(100%)
-    +zi(selector-dropdown)
+  +m(has-label)
+    +mt(15px)
 
-    ::v-deep .glass__body
-      +pa(10px 20px)
-      +br-b-md
+  +m(has-icon)
+    .label
+      left: 50px
+    .input-tags
+      +e(body)
+        > div
+          +pl(50px)
+          .icon
+            +center-v
+            left: 12px
+
+  +m(hover-label)
+    .label
+      top: -10px
+      left: 5px !important
+      opacity: 1
+      +fnt-xs
+      +e(optional)
+        opacity: 0
+
+  // Map
+  // glass-card.dropdown
+  //   div
+  //     button-main.create
+  //     div.tag
+  //       span.tag__color
+  //       div.tag__name
+
+  .dropdown
+    +pos-r
+    +zi(selector-dropdown)
+    > div
+      +pos-a(top 5px)
+      +pa(10px)
+      +w(100%)
       +h(max 200px)
-      overflow: hidden auto
-      +scroll
+      +no-scroll
+      +br-md
+      +brdr(none)
+      overflow-x: auto
 
     .create
       +my(8px)
@@ -342,6 +359,6 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 
   +m(has-error)
     +mb(15px)
-    .input-tags__label
+    +e(input-tags, label)
       +clr-txt(error)
 </style>

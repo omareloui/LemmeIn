@@ -86,7 +86,7 @@
 // Dialogue
 .dialogue-enter-active,
 .dialogue-leave-active {
-  @include t.tran(transform);
+  @include t.tran(opacity);
 }
 .dialogue-enter,
 .dialogue-leave-to {

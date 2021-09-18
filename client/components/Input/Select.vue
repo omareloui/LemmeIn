@@ -8,7 +8,6 @@
       'selector--hover-label': hoverLabel || !!value,
       'selector--has-left-icon': !!leftIcon
     }"
-    tabindex="0"
     @keyup.space="toggleShowOptions"
     @keyup.up="focusPrevOption"
     @keyup.down="focusNextOption"
@@ -26,38 +25,40 @@
       :opacity="0.4"
       :blur="5"
     >
-      <icon
-        :name="leftIcon"
-        v-if="!!leftIcon"
-        size="28px"
-        class="selector__left-icon"
-        :fill="!!errorMessage ? 'error' : 'dark'"
-      />
+      <div tabindex="0">
+        <icon
+          :name="leftIcon"
+          v-if="!!leftIcon"
+          size="28px"
+          class="selector__left-icon"
+          :fill="!!errorMessage ? 'error' : 'dark'"
+        />
 
-      <transition name="fade">
-        <span
-          v-if="hoverLabel || !!value"
-          class="selector__button-text"
-          :class="{ 'selector__button-text--no-value': !selectedOption }"
-        >
-          {{
-            (selectedOption && selectedOption[primaryKey]) ||
-            defaultButtonText ||
-            `Select a ${primaryKey}`
-          }}
-        </span>
-      </transition>
+        <transition name="fade">
+          <span
+            v-if="hoverLabel || !!value"
+            class="selector__button-text"
+            :class="{ 'selector__button-text--no-value': !selectedOption }"
+          >
+            {{
+              (selectedOption && selectedOption[primaryKey]) ||
+              defaultButtonText ||
+              `Select a ${primaryKey}`
+            }}
+          </span>
+        </transition>
 
-      <icon
-        name="drop"
-        class="selector__button-icon"
-        :style="{
-          transform: isDropdownOpen
-            ? 'translateY(-50%) rotate(180deg)'
-            : 'translateY(-50%)',
-          fill: isErred ? 'error' : 'dark'
-        }"
-      />
+        <icon
+          name="drop"
+          class="selector__button-icon"
+          :style="{
+            transform: isDropdownOpen
+              ? 'translateY(-50%) rotate(180deg)'
+              : 'translateY(-50%)',
+            fill: isErred ? 'error' : 'dark'
+          }"
+        />
+      </div>
     </glass-card>
 
     <transition name="fade">
@@ -66,6 +67,7 @@
 
     <transition name="slide-down">
       <glass-card
+        v-if="isDropdownOpen"
         tint="background-tertiary"
         no-back-shape
         :opacity="0.4"
@@ -74,51 +76,52 @@
         :id="identifier"
         class="dropdown"
         :class="{ 'dropdown--open': isDropdownOpen }"
-        v-if="isDropdownOpen"
       >
-        <input-search
-          v-if="isSearchable"
-          ref="searchField"
-          class="dropdown__search"
-          v-model="searchQuery"
-          @clear="clearSearch"
-          @search-result="searchResult = $event"
-          :search-key="primaryKey"
-          :search-elements="options"
-          no-autocomplete
-        />
+        <div>
+          <input-search
+            v-if="isSearchable"
+            ref="searchField"
+            class="dropdown__search"
+            v-model="searchQuery"
+            @clear="clearSearch"
+            @search-result="searchResult = $event"
+            :search-keys="primaryKey"
+            :search-elements="options"
+            no-autocomplete
+          />
 
-        <transition-group name="input-select-search" tag="ul" class="options">
-          <li
-            class="option"
-            v-for="option in isSearching ? searchResult : options"
-            :key="option.id"
-            :class="{ 'option--selected': option.id === value }"
-            tabindex="0"
-            @keyup.up="focusPrevOption"
-            @keyup.down="focusNextOption"
-            @keyup.space="selectOnSpace"
-            @keydown.space.prevent
-            @keydown.up.prevent
-            @keydown.down.prevent
-          >
-            <input
-              type="radio"
-              class="option__input"
-              :id="option.id"
-              :name="name || identifier"
-              :value="option.id"
-              @change="select"
-            />
-            <label
-              class="option__label"
-              :for="option.id"
-              @click="closeDropdown"
+          <transition-group name="input-select-search" tag="ul" class="options">
+            <li
+              class="option"
+              v-for="option in isSearching ? searchResult : options"
+              :key="option.id"
+              :class="{ 'option--selected': option.id === value }"
+              tabindex="0"
+              @keyup.up="focusPrevOption"
+              @keyup.down="focusNextOption"
+              @keyup.space="selectOnSpace"
+              @keydown.space.prevent
+              @keydown.up.prevent
+              @keydown.down.prevent
             >
-              {{ option[primaryKey] }}
-            </label>
-          </li>
-        </transition-group>
+              <input
+                type="radio"
+                class="option__input"
+                :id="option.id"
+                :name="name || identifier"
+                :value="option.id"
+                @change="select"
+              />
+              <label
+                class="option__label"
+                :for="option.id"
+                @click="closeDropdown"
+              >
+                {{ option[primaryKey] }}
+              </label>
+            </li>
+          </transition-group>
+        </div>
       </glass-card>
     </transition>
   </div>
@@ -351,10 +354,6 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 .selector
   +pos-r
   +br-md
-  +focus-effect(input)
-
-  +m(has-label)
-    +mt(15px)
 
   +e(label)
     +zi(selector-label)
@@ -366,6 +365,19 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     +no-select
     +clickable
     opacity: 0.6
+
+  +e(button)
+    +zi(selector)
+    > div
+      +focus-effect(input)
+      +pos-r
+      +size(100% 45px)
+      +br-md
+      +brdr(none)
+      +clickable
+
+  +m(has-label)
+    +mt(15px)
 
   +m(hover-label)
     .selector__label
@@ -379,18 +391,9 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     +clr-txt(error)
     +fnt-xs
 
-  +e(button)
-    +pos-r
-    +zi(selector)
-    ::v-deep .glass__body
-      +h(45px)
-      +pa(10px)
-      +br-md
-      +clickable
-      +brdr(none)
-
   +e(button-text)
     +center-v
+    left: 10px
     +m(no-value)
       +clr-txt($opacity: 60)
 
@@ -411,17 +414,32 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       +e(button-text)
         +pl( 30px)
 
-  .dropdown
-    +zi(selector-dropdown)
-    +pos-a(top 44px)
-    +w(100%)
+  +m(has-error)
+    +mb(15px)
+    +e(selector, button)
+      > div
+        +clr(error, border-color)
 
-    ::v-deep > .glass__body
+    +e(selector, button-icon)
+      ::v-deep svg
+        +clr(error, fill)
+
+    .selector__button-text,
+    .selector__label
+      +clr-txt(error)
+
+  .dropdown
+    +pos-r
+    +zi(selector-dropdown)
+    > div
+      +pos-a(top 5px)
+      +pa(10px)
+      +w(100%)
       +h(max 200px)
       +scroll
-      overflow: hidden auto
-      +pa(10px)
-      +br-b-md
+      +br-md
+      +brdr(none)
+      overflow-x: auto
 
     .options
       +list-reset
@@ -432,6 +450,13 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
         +focus-effect(input)
         +pa(5px 10px)
 
+        &:hover,
+        &:focus
+          +clr-bg(secondary)
+
+        +m(selected)
+          +clr-bg
+
         &:not(:last-child)
           +mb(5px)
 
@@ -441,27 +466,10 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
         +e(label)
           +tran(color)
           +block
-          +pl(10px)
-
-        &:hover,
-        &:focus
-          +clr-bg
+          +clickable
 
   +m(has-error)
-    +clr(error, border-color)
-    +mb(15px)
-
-    .selector__button-icon
-      ::v-deep svg
-        +clr(error, fill)
-
-    ::v-deep .glass__body
-      +clr(error, border-color)
-
-    .selector__button-text,
-    .selector__label
-      +clr-txt(error)
-
     .dropdown
-      +clr(error, border-color)
+      > div
+        +clr(error, border-color)
 </style>

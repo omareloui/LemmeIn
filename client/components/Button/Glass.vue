@@ -1,8 +1,8 @@
 <template>
-  <div class="button-nav">
+  <div class="button-glass" :style="{ '--size': size }">
     <glass-circle
-      v-bind="{ size }"
       float
+      class="button-glass__glass-layer"
       back-shape-size="58%"
       tint="background-main"
       :back-shape-color="color"
@@ -10,8 +10,7 @@
       :opacity="0.4"
     >
       <button-base
-        size="100%"
-        class="button-nav__button"
+        class="button-glass__button"
         @click="onClick('single')"
         @dblclick="onClick('dbl')"
         v-bind="{ ariaLabel: description || ariaLabel }"
@@ -25,7 +24,7 @@
       no-back-shape
       tint="background-secondary"
       float
-      class="button-nav__description"
+      class="button-glass__description"
       :opacity="0.4"
     >
       <span>{{ description }}</span>
@@ -64,33 +63,36 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.button-nav
+.button-glass
   +pos-r
-  +e(button)
-    +pos-unset
+
+  +e(glass-layer)
+    +size(var(--size))
     +br-cr
-    ::v-deep
-      .button__content
-        +pos-r
-      i
-        +center
+
+  +e(button)
+    +block
+    +br-cr
+    +size(100%)
+    i
+      +center
 
   +e(description)
     z-index: -1
-    position: absolute !important
     +pos-a(top 50% right 120%)
     +no-select
+    +tran
     opacity: 0
     transform: translate(50px , -50%)
-    +tran
-    +w(max-content)
     span
       +inline-block
+      +no-wrap
       +pa(5px)
       +fnt-xs
       +capitalize
+
   &:hover
-    .button-nav__description
+    +e(button-glass, description)
       opacity: 1
       transform: translate(0, -50%)
 </style>
