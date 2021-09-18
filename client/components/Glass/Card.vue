@@ -118,7 +118,8 @@ export default Vue.extend({
   +m(circle)
     +br-cr
   +m(float)
-    +float(1)
+    > :first-child
+      +float(1)
   +m(clickable)
     +clickable
 

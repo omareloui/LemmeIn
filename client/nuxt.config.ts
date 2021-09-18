@@ -49,7 +49,7 @@ const nuxt: NuxtConfig = {
     { src: "~/plugins/notify", mode: "client" }
   ],
   components: true,
-  buildModules: ["@nuxt/typescript-build", "nuxt-typed-vuex"],
+  buildModules: ["@nuxt/typescript-build", "nuxt-typed-vuex", "@nuxtjs/moment"],
   build: { additionalExtensions: ["vue", "ts"] },
   ignore: ["**/*/__tests__/**/*", "**/*.spec.*", "**/*.test.*"],
   modules: ["@nuxtjs/axios", "cookie-universal-nuxt"],

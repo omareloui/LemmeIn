@@ -1,17 +1,6 @@
  <template>
   <container has-padding-bottom class="passwords-page">
     <template #heading>The Vault</template>
-
-    <icon
-      v-for="icon in icons"
-      :key="icon.name"
-      :name="`app-${icon.name}`"
-      :fill="icon.color"
-      :view-box="icon.viewBox"
-      size="50px"
-      :aria-label="icon.name"
-    />
-
     <input-search
       v-model="searchQuery"
       placeholder="Search passwords..."
@@ -39,7 +28,6 @@
 import Vue from "vue"
 import Fuse from "fuse.js"
 import { Password } from "~/@types"
-import icons from "~/config/icons"
 
 export default Vue.extend({
   async beforeCreate() {
@@ -56,8 +44,7 @@ export default Vue.extend({
   },
 
   data: () => ({
-    searchQuery: "",
-    icons
+    searchQuery: ""
   })
 })
 </script>
