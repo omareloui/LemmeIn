@@ -1,7 +1,7 @@
 <template>
   <button
     :type="type"
-    class="button"
+    class="button button-base"
     :aria-label="ariaLabel"
     :disabled="isDisabled"
     @click="onClick('single')"
@@ -35,12 +35,14 @@ export default Vue.extend({
 
 .button
   +pos-r
-  +focus-effect
   +br-md
   +brdr(none)
   +clickable
   +center-text
   background: none
+
+  &.button-base
+    +focus-effect
 
   &[disabled="disabled"]
     opacity: 0.8

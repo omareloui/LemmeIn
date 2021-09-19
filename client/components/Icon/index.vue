@@ -22,6 +22,7 @@
     @dblclick="onClick('dbl')"
     @keyup.enter="$emit('keyup:enter')"
     @keyup.space="$emit('keyup:space')"
+    :aria-label="ariaLabel"
   >
     <svg :viewBox="`0 0 ${viewBox}`">
       <transition name="fade">
@@ -44,7 +45,8 @@ export default Vue.extend({
     fill: { default: "text-main" },
     stroke: { type: String },
     clickable: { type: Boolean, default: false },
-    focusable: { type: Boolean, default: false }
+    focusable: { type: Boolean, default: false },
+    ariaLabel: { type: String }
   },
 
   methods: {
@@ -63,6 +65,8 @@ export default Vue.extend({
   +inline-block
   +h(var(--height))
   +w(var(--width))
+  +focus-effect
+  +br-sm
 
   svg
     +center

@@ -37,7 +37,7 @@ $offset: 10px
   +not-clickable
 
   .notification
-    +grid($center-h: true)
+    +grid($center-v: true)
     justify-self: right
     width: calc(100% - #{$offset} * 2)
     +center-text

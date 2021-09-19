@@ -7,6 +7,7 @@
       opacity,
       tint,
       float,
+      focusable,
       textColor,
       noBackShape,
       backShapeSize,
@@ -27,6 +28,7 @@ export default Vue.extend({
   props: {
     size: { type: String, default: "25px" },
     float: { type: Boolean, default: false },
+    focusable: { type: Boolean, default: false },
 
     blur: { type: Number, default: 4 },
     opacity: { type: Number, validator: v => v > 0 && v < 1, default: 0.2 },
