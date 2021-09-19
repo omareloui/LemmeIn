@@ -74,8 +74,7 @@ export const actions = actionTree(
       const password = await dispatch("decryptPassword", passwordId)
       if (!password) return
       // Copy the password
-      navigator.clipboard.writeText(password)
-      this.$notify.success("Copied password!")
+      this.$copy(password)
     }
   }
 )
