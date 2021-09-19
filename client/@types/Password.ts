@@ -12,6 +12,8 @@ export interface Password {
   lastUsed: Date | null
   createdAt: Date
   updatedAt: Date
+
+  decryptedPassword?: string
 }
 
 export interface AddPasswordReceivedData {

@@ -2,28 +2,36 @@
   <container has-padding-bottom>
     <template #heading>{{ password.app }}</template>
     <main>
-      <icon
-        :name="`app-${icon.name}`"
-        :fill="icon.color"
-        :view-box="icon.viewBox"
-        size="50px"
-      />
+      <div class="app-info">
+        <icon
+          :name="`app-${icon.name}`"
+          :fill="icon.color"
+          :view-box="icon.viewBox"
+          size="50px"
+        />
 
-      <div v-if="password.accountIdentifier" class="account-identifier">
-        {{ password.accountIdentifier }}
-      </div>
+        <div v-if="password.accountIdentifier" class="account-identifier">
+          {{ password.accountIdentifier }}
+        </div>
 
-      <link-new-tab v-if="password.site" :to="password.site">
-        {{ password.site }}
-      </link-new-tab>
+        <link-new-tab v-if="password.site" :to="password.site">
+          {{ password.site }}
+        </link-new-tab>
 
-      <div>
-        <button-base @click="showQR" class="show-qr">
+        <button-base v-if="notOAuth" @click="showQR" class="show-qr">
           <icon name="q-r" />
         </button-base>
       </div>
 
-      <password-strength v-bind="{ decryptedPassword }" />
+      <div v-if="notOAuth" class="password">
+        <div class="password-reveal">{{ password.decryptedPassword }}</div>
+        <icon
+          name="copy"
+          clickable
+          @click="$copy(password.decryptedPassword)"
+        />
+        <password-strength :decrypted-password="password.decryptedPassword" />
+      </div>
 
       <div class="tags" v-if="password.tags.length > 0">
         <link-base
@@ -60,17 +68,13 @@ import getIcon from "~/assets/utils/getIcon"
 
 interface AsyncDataReturn {
   password: Password
-  decryptedPassword?: string
 }
 
 export default (Vue as ExtendVue<AsyncDataReturn>).extend({
-  async asyncData({ $axios, app, params: { passwordId }, error }) {
+  async asyncData({ app, params: { passwordId }, error }) {
     try {
-      const { data: password } = await $axios.get(`/passwords/${passwordId}`)
-      const decryptedPassword = (await app.$accessor.vault.decryptPassword(
-        password.id
-      )) as string
-      return { password, decryptedPassword }
+      const password = await app.$accessor.vault.getPassword(passwordId)
+      return { password }
     } catch (e) {
       return error(e.response.data)
     }
@@ -86,6 +90,12 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
       isQRShown: false,
       qrCode: "",
       passwordStrength: null as PasswordStrength | null
+    }
+  },
+
+  computed: {
+    notOAuth(): boolean {
+      return !this.password.password
     }
   },
 
