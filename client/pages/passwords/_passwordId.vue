@@ -1,7 +1,6 @@
 <template>
-  <container>
+  <container has-padding-bottom>
     <template #heading>{{ password.app }}</template>
-
     <main>
       <icon
         :name="`app-${icon.name}`"
@@ -10,12 +9,12 @@
         size="50px"
       />
 
-      <div class="account-identifier">
+      <div v-if="password.accountIdentifier" class="account-identifier">
         {{ password.accountIdentifier }}
-        <link-main :to="password.site">
-          {{ password.site }}
-        </link-main>
       </div>
+      <link-main v-if="password.site" :to="password.site">
+        {{ password.site }}
+      </link-main>
 
       <div>
         <button-base @click="showQR" class="show-qr">
@@ -23,20 +22,25 @@
         </button-base>
       </div>
 
+      <password-strength v-bind="{ decryptedPassword }" />
+
       <div class="tags" v-if="password.tags.length > 0">
-        <chip-tag
+        <link-base
           v-for="tag in password.tags"
           :key="tag.id"
-          class="tags__tag"
-          v-bind="{ tag }"
-          no-remove-button
-          invert
-          clickable
-          @click="gotToTag(tag)"
-        />
+          :to="`/vault?tags=${tag.id}`"
+        >
+          <chip-tag
+            class="tags__tag"
+            v-bind="{ tag }"
+            no-remove-button
+            invert
+            clickable
+          />
+        </link-base>
       </div>
 
-      <marked :content="password.note" class="note" />
+      <marked v-if="password.note" :content="password.note" class="note" />
     </main>
 
     <dialogue :is-shown="isQRShown" @close="closeQR">
@@ -50,44 +54,50 @@
 <script lang="ts">
 import Vue from "vue"
 import { toDataURL } from "qrcode"
-import { ExtendVue, Icon, Password, Tag } from "~/@types"
+import { ExtendVue, Icon, Password, PasswordStrength } from "~/@types"
 import getIcon from "~/assets/utils/getIcon"
 
-export default (Vue as ExtendVue<{ password: Password }>).extend({
-  async asyncData({ $axios, params: { passwordId }, error }) {
+interface AsyncDataReturn {
+  password: Password
+  decryptedPassword?: string
+}
+
+export default (Vue as ExtendVue<AsyncDataReturn>).extend({
+  async asyncData({ $axios, app, params: { passwordId }, error }) {
     try {
       const { data: password } = await $axios.get(`/passwords/${passwordId}`)
-      return { password }
+      const decryptedPassword = (await app.$accessor.vault.decryptPassword(
+        password.id
+      )) as string
+      return { password, decryptedPassword }
     } catch (e) {
       return error(e.response.data)
     }
   },
 
   created() {
-    this.icon = getIcon(this.password) as Icon
+    this.loadIcon()
   },
 
   data() {
     return {
       icon: {} as Icon,
       isQRShown: false,
-      qrCode: ""
+      qrCode: "",
+      passwordStrength: null as PasswordStrength | null
     }
   },
 
   methods: {
-    gotToTag(tag: Tag) {
-      this.$router.push(`/vault?tag=${tag.id}`)
+    loadIcon() {
+      this.icon = getIcon(this.password)
     },
 
-    async showQR() {
+    async createQR() {
       try {
         if (!this.qrCode) {
-          const password = await this.$accessor.vault.decryptPassword(
-            this.password.id
-          )
           // @ts-ignore
-          this.qrCode = await toDataURL(password, {
+          this.qrCode = await toDataURL(this.password, {
             errorCorrectionLevel: "H",
             margin: 1,
             color: {
@@ -102,10 +112,14 @@ export default (Vue as ExtendVue<{ password: Password }>).extend({
             }
           })
         }
-        this.isQRShown = true
       } catch (e) {
         this.$notify.error(e.message)
       }
+    },
+
+    showQR() {
+      if (!this.qrCode) this.createQR()
+      this.isQRShown = true
     },
 
     closeQR() {
@@ -114,17 +128,17 @@ export default (Vue as ExtendVue<{ password: Password }>).extend({
 
     removeCachedQRCode() {
       this.qrCode = ""
-    },
-
-    async deletePassword() {
-      try {
-        await this.$axios.delete(`/passwords/${this.$route.params.passwordId}`)
-        this.$router.push("/passwords")
-        this.$notify.success("Deleted password successfully")
-      } catch (e) {
-        throw new Error(e.response.data)
-      }
     }
+
+    // async deletePassword() {
+    //   try {
+    //     await this.$axios.delete(`/passwords/${this.$route.params.passwordId}`)
+    //     this.$router.push("/passwords")
+    //     this.$notify.success("Deleted password successfully")
+    //   } catch (e) {
+    //     throw new Error(e.response.data)
+    //   }
+    // }
   },
 
   watch: {
@@ -154,4 +168,9 @@ export default (Vue as ExtendVue<{ password: Password }>).extend({
   +br-md
   +pa(10px 20px)
   +clr-bg(secondary)
+
+.tags
+  +flex($gap: 4px 10px, $center-v: true)
+  +w(max 600px)
+  +mx(auto)
 </style>

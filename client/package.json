@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
+    "check-password-strength": "^2.0.3",
     "cookie-universal-nuxt": "^2.1.5",
     "fuse.js": "^6.4.6",
     "isomorphic-dompurify": "^0.15.0",

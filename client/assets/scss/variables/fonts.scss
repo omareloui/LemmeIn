@@ -9,7 +9,9 @@ $fonts-names: (
 $fonts-families: (
   heading: map.get($fonts-names, "be-vietnam"),
   nav: map.get($fonts-names, "be-vietnam"),
-  body: map.get($fonts-names, "space-mono")
+  body: map.get($fonts-names, "space-mono"),
+  marked: map.get($fonts-names, "be-vietnam"),
+  marked-code: map.get($fonts-names, "space-mono")
 );
 
 $fonts-weights: (

@@ -53,7 +53,7 @@ const icons = [
   { name: "li-chess", color: ["#000000", "#eeeeee"], regex: /li.?chess/ },
 
   // Shopping
-  { name: "amazon", color: "#ff9900", regex: /amazon/ },
+  { name: "amazon", color: "#ff9900", regex: /amazon|souq/ },
 
   // Development related
   // prettier-ignore

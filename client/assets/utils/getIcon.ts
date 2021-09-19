@@ -1,7 +1,7 @@
-import { Password } from "~/@types"
+import { Password, Icon } from "~/@types"
 import icons, { NO_ICON } from "~/config/icons"
 
-export default function getIcon(password: Password) {
+export default function getIcon(password: Password): Icon {
   const noIcon = icons.find(x => x.name === NO_ICON)
   let icon = icons
     .filter(x => x.name !== NO_ICON)
@@ -14,5 +14,5 @@ export default function getIcon(password: Password) {
     })
 
   if (!icon) icon = noIcon
-  return icon
+  return icon as Icon
 }

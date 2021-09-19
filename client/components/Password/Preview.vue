@@ -29,16 +29,19 @@
       </div>
 
       <div class="tags" v-if="password.tags.length > 0">
-        <chip-tag
+        <link-base
           v-for="tag in [...password.tags].splice(0, tagsToShow)"
           :key="tag.id"
-          class="tags__tag"
-          v-bind="{ tag }"
-          no-remove-button
-          invert
-          clickable
-          @click="gotToTag(tag)"
-        />
+          :to="`/vault?tags=${tag.id}`"
+        >
+          <chip-tag
+            class="tags__tag"
+            v-bind="{ tag }"
+            no-remove-button
+            invert
+            clickable
+          />
+        </link-base>
         <span v-if="password.tags.length > tagsToShow" class="tags__more">
           +{{ password.tags.length - tagsToShow }}
         </span>
@@ -53,7 +56,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { Password, Tag } from "~/@types"
+import { Password } from "~/@types"
 import getIcon from "~/assets/utils/getIcon"
 
 export default Vue.extend({
@@ -69,10 +72,6 @@ export default Vue.extend({
   },
 
   methods: {
-    gotToTag(tag: Tag) {
-      this.$router.push(`/vault?tag=${tag.id}`)
-    },
-
     copy() {
       this.$accessor.vault.copy(this.password.id)
     }
@@ -100,11 +99,8 @@ export default Vue.extend({
       align-self: center
 
   .tags
-    +mt(10px)
-    +e(tag)
-      +mb(5px)
-      &:not(:last-child)
-        +mr(5px)
+    +flex($gap: 4px 10px)
+    +my(10px)
 
     +e(more)
       +inline-block

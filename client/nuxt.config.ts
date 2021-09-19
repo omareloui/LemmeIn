@@ -46,7 +46,8 @@ const nuxt: NuxtConfig = {
   ],
   plugins: [
     { src: "~/plugins/axios" },
-    { src: "~/plugins/notify", mode: "client" }
+    { src: "~/plugins/notify", mode: "client" },
+    { src: "~/plugins/getPasswordStrength" }
   ],
   components: true,
   buildModules: ["@nuxt/typescript-build", "nuxt-typed-vuex", "@nuxtjs/moment"],

@@ -1,5 +1,5 @@
 <template>
-  <div v-html="parsed"></div>
+  <div v-html="parsed" class="parsed-md"></div>
 </template>
 
 <script lang="ts">
@@ -29,3 +29,30 @@ export default Vue.extend({
   }
 })
 </script>
+
+<style lang="sass">
+@use "~/assets/scss/mixins" as *
+
+.parsed-md
+  *
+    +fnt(marked)
+
+  * + *
+    +mb(5px)
+
+  code,
+  pre
+    +fnt(marked-code)
+    +clr-bg
+    +br-md
+
+  code
+    +px(5px)
+    +mx(-3px)
+
+  pre
+    +pa(10px)
+
+  hr
+    +clr-bg(text-main)
+</style>
