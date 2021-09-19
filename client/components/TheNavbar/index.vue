@@ -3,14 +3,14 @@
     <container no-heading>
       <div class="home header--left">
         <glass-card class="glass-nav" no-back-shape tint="background-main">
-          <nuxt-link to="/">
+          <link-base to="/">
             <icon
               name="logo"
               size="100%"
               fill="primary"
               view-box="32 30"
             ></icon>
-          </nuxt-link>
+          </link-base>
         </glass-card>
       </div>
 
@@ -43,8 +43,8 @@
         <nav class="auth header--right" v-if="!isSigned">
           <glass-card no-back-shape tint="background-main">
             <div class="glass-nav">
-              <nuxt-link to="/signin">Sign in</nuxt-link>
-              <nuxt-link class="cta" to="/sign-up" is-cta>Sign up</nuxt-link>
+              <link-base to="/signin">Sign in</link-base>
+              <link-base class="cta" to="/sign-up" is-cta>Sign up</link-base>
             </div>
           </glass-card>
         </nav>
@@ -203,11 +203,7 @@ header
     +size(100%)
 
   &::v-deep .container
-    display: grid
-    grid-template-columns: 1fr auto 2fr
-    grid-template-areas: "header-left - header-right"
-    gap: 10px
-    place-items: center
+    +grid(1fr auto 2fr, $areas: "header-left - header-right", $gap: 10px, $center: true)
     height: 100%
 
   // Add grid areas
@@ -233,16 +229,13 @@ header
   .menu
     +e(options)
       +pos-a
+      +grid($gap: 10px)
       top: calc(var(--header-height) + 10px)
-      display: grid
-      gap: 10px
 
   .auth
     .glass-nav
       +w(min-content)
-      display: grid
-      grid-template-columns: 1fr 1fr
-      gap: 15px
+      +grid(repeat(2, 1fr), $gap: 15px)
       +no-wrap
       +pa(5px 10px)
       +br-lg

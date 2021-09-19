@@ -152,19 +152,17 @@ $checker-size: 20px
   +e(heading)
 
   +e(options)
-    display: grid
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr))
-    gap: 20px
+    +auto-fit(100px, $gap: 20px, $center: false)
 
   .option
-    display: grid
-    justify-items: center
+    +grid($center-h: true)
     +pa(10px)
     +e(checkbox)
       +pos-r
       +mb(10px)
       +clickable
       +size(35px)
+      +br-md
       > div
         +size(100%)
     +e(checkbox-icon)

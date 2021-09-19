@@ -54,10 +54,7 @@ export default Vue.extend({
 
 .pattern-dots
   z-index: -1
-
-  display: grid
-  grid-template-columns: repeat(3, 1fr)
-  gap: var(--dots-gap)
+  +grid(repeat(3, 1fr), $gap: var(--dots-gap))
 
   .dot-container
     +pos-r

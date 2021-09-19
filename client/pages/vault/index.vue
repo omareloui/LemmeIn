@@ -60,8 +60,5 @@ export default Vue.extend({
 
   main
     .passwords
-      // +grid
-      .password
-        &:not(:last-child)
-          +mb(20px)
+      +grid($gap: 20px)
 </style>

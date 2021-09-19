@@ -5,7 +5,9 @@
   $auto-fit: null,
   $auto-fill: null,
   $gap: null,
-  $center: false
+  $center: false,
+  $center-v: false,
+  $center-h: false
 ) {
   display: grid;
 
@@ -29,8 +31,11 @@
     gap: $gap;
   }
 
-  @if $center {
-    place-items: center;
+  @if $center or $center-v {
+    align-items: center;
+  }
+  @if $center or $center-h {
+    justify-items: center;
   }
 }
 

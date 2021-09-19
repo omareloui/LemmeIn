@@ -120,6 +120,5 @@ export default Vue.extend({
   // Options buttons
   .options
     +pos-a(bottom 120%)
-    display: grid
-    gap: 10px
+    +grid($gap: 10px)
 </style>

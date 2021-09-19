@@ -227,9 +227,7 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 .form-generator
 
   .fields
-    display: grid
-    gap: 15px
-    grid-template-columns: 1fr 1fr
+    +grid(1fr 1fr, $gap: 15px)
 
   .form-field
     +m(gap)
@@ -241,8 +239,7 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
 
     +lt-mobile
       grid-column: unset
-      &:not(.form-field--half),
-      &:not(.expandable-field--half)
+      &:not(.form-field--half)
         grid-column: 1 / 3
 
   .expand-button

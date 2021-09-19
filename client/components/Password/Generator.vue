@@ -9,7 +9,9 @@
         {{ generatedPassword }}
       </div>
 
-      <button-main class="copy-button" large @click="copy">copy</button-main>
+      <button-main class="copy-button" large @click="$copy(generatedPassword)">
+        copy
+      </button-main>
     </div>
 
     <div class="password-generator__options">
@@ -185,11 +187,6 @@ export default Vue.extend({
 
     generateRandomNumber(max: number) {
       return Math.floor(Math.random() * max)
-    },
-
-    copy() {
-      navigator.clipboard.writeText(this.generatedPassword)
-      this.$notify.success("Copied password!")
     }
   }
 })

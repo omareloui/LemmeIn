@@ -31,19 +31,16 @@ $offset: 10px
 
 .notifications
   +zi(notifications)
-  display: grid
-  gap: 5px
-  grid-template-columns: 1fr
+  +grid($gap: 5px)
   +pos-f(bottom $offset right $offset)
   +w(100%)
   +not-clickable
 
   .notification
-    display: grid
-    justify-items: right
+    +grid($center-h: true)
     justify-self: right
     width: calc(100% - #{$offset} * 2)
-    text-align: center
+    +center-text
     +fnt-lg
 
     +lt-tablet
