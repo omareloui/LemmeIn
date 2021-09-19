@@ -1,7 +1,6 @@
 <template>
   <form
     @submit.prevent="onSubmit"
-    @keydown.enter.prevent
     class="form-generator"
     :class="{
       'form-generator--danger': danger

@@ -3,13 +3,40 @@
     <template #heading>{{ password.app }}</template>
 
     <main>
+      <icon
+        :name="`app-${icon.name}`"
+        :fill="icon.color"
+        :view-box="icon.viewBox"
+        size="50px"
+      />
+
+      <div class="account-identifier">
+        {{ password.accountIdentifier }}
+        <link-main :to="password.site">
+          {{ password.site }}
+        </link-main>
+      </div>
+
       <div>
         <button-base @click="showQR" class="show-qr">
           <icon name="q-r" />
         </button-base>
       </div>
 
-      <pre>{{ password }}</pre>
+      <div class="tags" v-if="password.tags.length > 0">
+        <chip-tag
+          v-for="tag in password.tags"
+          :key="tag.id"
+          class="tags__tag"
+          v-bind="{ tag }"
+          no-remove-button
+          invert
+          clickable
+          @click="gotToTag(tag)"
+        />
+      </div>
+
+      <marked :content="password.note" class="note" />
     </main>
 
     <dialogue :is-shown="isQRShown" @close="closeQR">
@@ -22,8 +49,9 @@
 
 <script lang="ts">
 import Vue from "vue"
-import QRCode from "qrcode"
-import { ExtendVue, Password } from "~/@types"
+import { toDataURL } from "qrcode"
+import { ExtendVue, Icon, Password, Tag } from "~/@types"
+import getIcon from "~/assets/utils/getIcon"
 
 export default (Vue as ExtendVue<{ password: Password }>).extend({
   async asyncData({ $axios, params: { passwordId }, error }) {
@@ -35,19 +63,44 @@ export default (Vue as ExtendVue<{ password: Password }>).extend({
     }
   },
 
-  data: () => ({
-    isQRShown: false,
-    qrCode: ""
-  }),
+  created() {
+    this.icon = getIcon(this.password) as Icon
+  },
+
+  data() {
+    return {
+      icon: {} as Icon,
+      isQRShown: false,
+      qrCode: ""
+    }
+  },
 
   methods: {
+    gotToTag(tag: Tag) {
+      this.$router.push(`/vault?tag=${tag.id}`)
+    },
+
     async showQR() {
       try {
         if (!this.qrCode) {
           const password = await this.$accessor.vault.decryptPassword(
             this.password.id
           )
-          this.qrCode = await QRCode.toDataURL(password)
+          // @ts-ignore
+          this.qrCode = await toDataURL(password, {
+            errorCorrectionLevel: "H",
+            margin: 1,
+            color: {
+              dark:
+                this.$accessor.theme.currentTheme === "dark"
+                  ? "#191b1f"
+                  : "#ffffff",
+              light:
+                this.$accessor.theme.currentTheme === "dark"
+                  ? "#ffffff"
+                  : "#191b1f"
+            }
+          })
         }
         this.isQRShown = true
       } catch (e) {
@@ -59,6 +112,10 @@ export default (Vue as ExtendVue<{ password: Password }>).extend({
       this.isQRShown = false
     },
 
+    removeCachedQRCode() {
+      this.qrCode = ""
+    },
+
     async deletePassword() {
       try {
         await this.$axios.delete(`/passwords/${this.$route.params.passwordId}`)
@@ -67,6 +124,12 @@ export default (Vue as ExtendVue<{ password: Password }>).extend({
       } catch (e) {
         throw new Error(e.response.data)
       }
+    }
+  },
+
+  watch: {
+    "$store.state.theme.currentTheme": function removeCache() {
+      this.removeCachedQRCode()
     }
   }
 })
@@ -86,4 +149,9 @@ export default (Vue as ExtendVue<{ password: Password }>).extend({
 .show-qr
   > i
     +block
+
+.note
+  +br-md
+  +pa(10px 20px)
+  +clr-bg(secondary)
 </style>
