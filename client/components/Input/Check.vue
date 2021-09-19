@@ -158,14 +158,15 @@ $checker-size: 20px
 
   .option
     display: grid
-    place-items: center
+    justify-items: center
     +pa(10px)
     +e(checkbox)
       +pos-r
       +mb(10px)
       +clickable
+      +size(35px)
       > div
-        +size(35px)
+        +size(100%)
     +e(checkbox-icon)
       +center-inset
     +e(label)
