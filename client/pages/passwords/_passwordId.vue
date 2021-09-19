@@ -12,9 +12,10 @@
       <div v-if="password.accountIdentifier" class="account-identifier">
         {{ password.accountIdentifier }}
       </div>
-      <link-main v-if="password.site" :to="password.site">
+
+      <link-new-tab v-if="password.site" :to="password.site">
         {{ password.site }}
-      </link-main>
+      </link-new-tab>
 
       <div>
         <button-base @click="showQR" class="show-qr">
