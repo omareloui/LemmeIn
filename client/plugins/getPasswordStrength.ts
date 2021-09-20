@@ -25,10 +25,12 @@ function calculateScore(
   const suggestions: string[] = []
 
   // Calc score for length
-  if (length > 8) score += 4
-  if (length >= 16) score += 2
+  if (length >= 16) score += 8
   else {
-    if (length >= 10) score++
+    if (length >= 10) score += 4
+    else if (length >= 8) score += 3
+    else if (length >= 6) score += 2
+    else if (length >= 4) score += 1
     suggestions.push("Make it longer")
   }
 
@@ -47,18 +49,18 @@ function calculateScore(
   if (Number(oldestDateToAccept) < Number(new Date(lastUpdated))) score++
   else suggestions.push("Too old, should be updated")
 
-  // Set the vault
-  let value: PasswordStrengthValues
-  if (score >= 10) value = "safe"
-  else if (score >= 8) value = "okay"
-  else if (score >= 6) value = "weak"
-  else value = "compromised"
-
   // Define max score
-  const maxScore = 12
+  const maxScore = 14
 
   // Set percentage
   const percentage = Math.floor(((score || 1) / (maxScore || 1)) * 100)
+
+  // Set the vault
+  let value: PasswordStrengthValues
+  if (percentage > 90) value = "safe"
+  else if (percentage > 75) value = "okay"
+  else if (percentage > 50) value = "weak"
+  else value = "compromised"
 
   // Set the color
   let color: PasswordStrengthColors
