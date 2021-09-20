@@ -65,4 +65,12 @@ export default Vue.extend({
     +h(3px)
     +clr-bg(text-main)
     +my(10px)
+
+  ul, ol
+    +ml(20px)
+
+  img
+    +block
+    +br-md
+    +w(max 100%)
 </style>
