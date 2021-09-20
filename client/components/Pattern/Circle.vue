@@ -2,10 +2,7 @@
   <pattern-base
     v-bind="{ fixed, top, right, left, bottom }"
     class="pattern-circle"
-    :style="{
-      width: size,
-      height: size
-    }"
+    :style="{ '--size': size }"
   >
     <span
       class="small-circles"
@@ -28,10 +25,12 @@
 
     <glass-circle
       class="glass"
-      v-bind="{ size, opacity, blur }"
+      v-bind="{ opacity, blur }"
       :tint="color"
       no-back-shape
-    ></glass-circle>
+    >
+      <span></span>
+    </glass-circle>
   </pattern-base>
 </template>
 
@@ -47,7 +46,7 @@ export default Vue.extend({
     left: { type: String },
     right: { type: String },
 
-    color: { type: String, default: "orange" },
+    color: { type: String, default: "safety-orange" },
     size: { type: String, default: "200px" },
     opacity: { type: Number, default: 0.1 },
     blur: { type: Number, default: 3 },
@@ -63,6 +62,7 @@ export default Vue.extend({
 .pattern-circle
   z-index: -1
   +w(min-content)
+  +size(var(--size))
 
   .small-circles
     +pos-a(right 40% bottom 30%)
@@ -84,5 +84,8 @@ export default Vue.extend({
         left: 0
 
   .glass
-    +pos-a
+    span
+      +pos-a
+      +br-cr
+      +size(var(--size))
 </style>

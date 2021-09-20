@@ -2,7 +2,11 @@
   <pattern-base
     v-bind="{ fixed, top, right, left, bottom }"
     class="pattern-dots"
-    :style="{ '--dots-gap': gridGap, '--dot-offset': dotsOffset }"
+    :style="{
+      '--dots-gap': gridGap,
+      '--dot-offset': dotsOffset,
+      '--dot-size': dotSize
+    }"
   >
     <span
       class="dot-container"
@@ -19,10 +23,11 @@
       <glass-circle
         class="dot-glass"
         v-bind="{ opacity, blur }"
-        :size="dotSize"
         :tint="color"
         no-back-shape
-      ></glass-circle>
+      >
+        <span></span>
+      </glass-circle>
     </span>
   </pattern-base>
 </template>
@@ -39,7 +44,7 @@ export default Vue.extend({
     left: { type: String },
     right: { type: String },
 
-    color: { type: String, default: "pink" },
+    color: { type: String, default: "persian-rose" },
     dotSize: { type: String, default: "30px" },
     opacity: { type: Number, default: 0.1 },
     blur: { type: Number, default: 3 },
@@ -63,8 +68,12 @@ export default Vue.extend({
     +inline-block
     +br-cr
     +size(100%)
+
   .dot-glass
-    +pos-a
-    top: var(--dot-offset)
-    left: var(--dot-offset)
+    span
+      +pos-a
+      top: var(--dot-offset)
+      left: var(--dot-offset)
+      +br-cr
+      +size(var(--dot-size))
 </style>

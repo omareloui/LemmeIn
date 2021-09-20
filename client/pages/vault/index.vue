@@ -2,6 +2,7 @@
   <container has-padding-bottom class="passwords-page">
     <template #heading>The Vault</template>
     <input-search
+      v-if="$accessor.vault.passwords.length !== 0"
       v-model="searchQuery"
       placeholder="Search passwords..."
       class="search-input"
@@ -9,7 +10,23 @@
     />
 
     <main>
-      <transition-group name="password" tag="div" class="passwords">
+      <div class="no-password" v-if="$accessor.vault.passwords.length === 0">
+        <pattern-dots left="40px" />
+        <div class="no-password__body">
+          <h2 class="no-password__heading">No password yet!</h2>
+          <span class="no-password__add">
+            You can add a password by clicking on the floating menu on the
+            bottom right.
+          </span>
+        </div>
+      </div>
+
+      <transition-group
+        v-if="$accessor.vault.passwords.length !== 0"
+        name="password"
+        tag="div"
+        class="passwords"
+      >
         <div
           class="password"
           v-for="password in searchQuery
@@ -61,4 +78,20 @@ export default Vue.extend({
   main
     .passwords
       +grid($gap: 20px)
+
+    .no-password
+      +grid($center: true)
+      +center-text
+      +h(min 400px)
+      +w(max 700px)
+      +mx(auto)
+      overflow: auto
+      +no-scroll
+
+      +e(heading)
+        +clr-txt(main, $opacity: 0.8)
+        +mb(20px)
+
+      +e(add)
+        +fnt-base
 </style>
