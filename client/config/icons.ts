@@ -3,6 +3,9 @@ import { Icon } from "~/@types"
 export const NO_ICON = "no-icon"
 
 const icons = [
+  // LemmeIn
+  { name: "lemme-in", color: "#5f6df2", regex: /lemme.?in/ },
+
   // Social media
   { name: "facebook", color: "#1877f2", regex: /facebook|fb\.com/ },
   { name: "instagram", color: "#c92c8e", regex: /instagram/ },
