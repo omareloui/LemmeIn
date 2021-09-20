@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="icons">
     <icon
       v-for="icon in icons"
       :key="icon.name"
@@ -22,3 +22,10 @@ export default Vue.extend({
   })
 })
 </script>
+
+<style lang="sass" scoped>
+@use "~/assets/scss/mixins" as *
+
+.icons
+  +auto-fit(50px, $gap: 3px)
+</style>
