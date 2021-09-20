@@ -129,7 +129,7 @@ export const actions = actionTree(
       const password = await dispatch("decryptPassword", passwordId)
       if (!password) return
       // Copy the password
-      this.$copy(password)
+      this.$copy(password, "Copied password!")
     }
   }
 )

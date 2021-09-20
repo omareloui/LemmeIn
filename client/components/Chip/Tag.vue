@@ -54,7 +54,6 @@ export default Vue.extend({
   +m(invert)
     +clr-bg(tertiary)
     +clr-txt(--color)
-    +fnt-bold
 
   +m(clickable)
     +clickable

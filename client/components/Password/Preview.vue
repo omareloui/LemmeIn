@@ -1,7 +1,22 @@
 <template>
   <glass-card no-back-shape tint="background-main" float>
-    <div class="password">
+    <div
+      class="password"
+      :class="{
+        'password--has-strength':
+          includeStrength && notOAuth && decryptedPassword
+      }"
+    >
       <div class="info">
+        <password-strength
+          class="info__strength"
+          v-if="includeStrength && notOAuth && decryptedPassword"
+          shape="dot"
+          dot-size="10px"
+          hide-score-text
+          :decrypted-password="decryptedPassword"
+        />
+
         <icon
           class="info__icon"
           :name="`app-${icon.name}`"
@@ -14,7 +29,19 @@
           <link-base class="app" :to="`/passwords/${password.id}`">
             {{ password.app }}
           </link-base>
-          <div class="account-identifier">{{ password.accountIdentifier }}</div>
+          <div v-if="password.accountIdentifier" class="account-identifier">
+            {{ password.accountIdentifier }}
+            <icon
+              name="copy"
+              clickable
+              @click="$copy(password.accountIdentifier)"
+              @keyup:enter="$copy(password.accountIdentifier)"
+              @keyup:space="$copy(password.accountIdentifier)"
+              aria-label="copy account identifier"
+              size="15px"
+              focusable
+            />
+          </div>
         </div>
 
         <icon
@@ -28,7 +55,7 @@
         />
       </div>
 
-      <div class="tags" v-if="password.tags.length > 0">
+      <div class="tags" v-if="!noTags && password.tags.length > 0">
         <link-base
           v-for="tag in [...password.tags].splice(0, tagsToShow)"
           :key="tag.id"
@@ -47,7 +74,7 @@
         </span>
       </div>
 
-      <div class="created-at">
+      <div v-if="!noDate" class="created-at">
         Added {{ $moment(password.createdAt).fromNow() }}
       </div>
     </div>
@@ -62,16 +89,36 @@ import getIcon from "~/assets/utils/getIcon"
 export default Vue.extend({
   props: {
     password: { type: Object as PropType<Password>, required: true },
-    tagsToShow: { type: Number, default: 5 }
+    tagsToShow: { type: Number, default: 5 },
+    noDate: { type: Boolean, default: false },
+    noTags: { type: Boolean, default: false },
+    includeStrength: { type: Boolean, default: false }
+  },
+
+  created() {
+    if (this.includeStrength && this.notOAuth) this.decryptPassword()
   },
 
   data() {
     return {
-      icon: getIcon(this.password)
+      icon: getIcon(this.password),
+      decryptedPassword: ""
+    }
+  },
+
+  computed: {
+    notOAuth(): boolean {
+      return !this.password.password
     }
   },
 
   methods: {
+    async decryptPassword() {
+      this.decryptedPassword = await this.$accessor.vault.decryptPassword(
+        this.password.id
+      )
+    },
+
     copy() {
       this.$accessor.vault.copy(this.password.id)
     }
@@ -88,15 +135,25 @@ export default Vue.extend({
 
   .info
     +grid(45px 1fr 30px, $gap: 15px)
+
     +e(text-info)
       align-self: center
+      overflow: auto
+      +no-scroll
       .app
         +fnt(heading)
         +mb(3px)
       .account-identifier
         +clr-txt(main, $opacity: 0.5)
+
     +e(copy)
       align-self: center
+
+  +m(has-strength)
+    .info
+      +grid(10px 45px 1fr 30px, $gap: 10px)
+      +e(strength)
+        align-self: center
 
   .tags
     +flex($gap: 4px 10px)

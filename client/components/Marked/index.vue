@@ -34,6 +34,9 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .parsed-md
+  overflow: auto
+  +no-scroll
+
   *
     +fnt(marked)
 
@@ -43,10 +46,15 @@ export default Vue.extend({
   code,
   pre
     +fnt(marked-code)
-    +clr-bg
     +br-md
 
-  code
+  pre
+    +clr-bg(tertiary)
+    +no-scroll
+    overflow: auto
+
+  :not(pre) code
+    +clr-bg(tertiary)
     +px(5px)
     +mx(-3px)
 
@@ -54,5 +62,7 @@ export default Vue.extend({
     +pa(10px)
 
   hr
+    +h(3px)
     +clr-bg(text-main)
+    +my(10px)
 </style>

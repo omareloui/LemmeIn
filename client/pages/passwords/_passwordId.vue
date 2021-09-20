@@ -1,8 +1,11 @@
 <template>
-  <container has-padding-bottom>
+  <container has-padding-bottom class="password-page">
     <template #heading>{{ password.app }}</template>
     <main>
-      <div class="app-info">
+      <section
+        class="primal-info"
+        :class="{ 'primal-info--is-oauth': !notOAuth }"
+      >
         <icon
           :name="`app-${icon.name}`"
           :fill="icon.color"
@@ -10,30 +13,67 @@
           size="50px"
         />
 
-        <div v-if="password.accountIdentifier" class="account-identifier">
-          {{ password.accountIdentifier }}
+        <!-- TODO: add last used for not oauth passwords -->
+        <div class="account-info">
+          <div v-if="password.accountIdentifier" class="account-identifier">
+            {{ password.accountIdentifier }}
+            <icon
+              name="copy"
+              clickable
+              @click="$copy(password.accountIdentifier)"
+              @keyup:enter="$copy(password.accountIdentifier)"
+              @keyup:space="$copy(password.accountIdentifier)"
+              aria-label="copy account identifier"
+              size="15px"
+              focusable
+            />
+          </div>
+
+          <div class="site" v-if="password.site">
+            <link-new-tab :to="password.site">
+              {{ password.site }}
+            </link-new-tab>
+          </div>
         </div>
 
-        <link-new-tab v-if="password.site" :to="password.site">
-          {{ password.site }}
-        </link-new-tab>
-
         <button-base v-if="notOAuth" @click="showQR" class="show-qr">
-          <icon name="q-r" />
+          <icon name="q-r" size="40px" />
         </button-base>
-      </div>
+      </section>
 
-      <div v-if="notOAuth" class="password">
-        <div class="password-reveal">{{ password.decryptedPassword }}</div>
+      <section v-if="notOAuth" class="password">
+        <password-reveal
+          class="password-reveal"
+          :password="password.decryptedPassword"
+        />
         <icon
           name="copy"
+          class="copy"
           clickable
+          focusable
+          size="35px"
+          aria-label="copy password"
           @click="$copy(password.decryptedPassword)"
         />
-        <password-strength :decrypted-password="password.decryptedPassword" />
-      </div>
+        <password-strength
+          class="strength"
+          line-height="10px"
+          hide-score-text
+          :decrypted-password="password.decryptedPassword"
+        />
+      </section>
 
-      <div class="tags" v-if="password.tags.length > 0">
+      <section v-if="!notOAuth" class="oauth">
+        <h3>Connected with</h3>
+        <password-preview
+          :password="password.password"
+          no-date
+          no-tags
+          include-strength
+        />
+      </section>
+
+      <section class="tags" v-if="password.tags.length > 0">
         <link-base
           v-for="tag in password.tags"
           :key="tag.id"
@@ -47,9 +87,11 @@
             clickable
           />
         </link-base>
-      </div>
+      </section>
 
-      <marked v-if="password.note" :content="password.note" class="note" />
+      <section class="note">
+        <marked v-if="password.note" :content="password.note" class="note" />
+      </section>
     </main>
 
     <dialogue :is-shown="isQRShown" @close="closeQR">
@@ -63,7 +105,7 @@
 <script lang="ts">
 import Vue from "vue"
 import { toDataURL } from "qrcode"
-import { ExtendVue, Icon, Password, PasswordStrength } from "~/@types"
+import { ExtendVue, Icon, Password } from "~/@types"
 import getIcon from "~/assets/utils/getIcon"
 
 interface AsyncDataReturn {
@@ -88,8 +130,7 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
     return {
       icon: {} as Icon,
       isQRShown: false,
-      qrCode: "",
-      passwordStrength: null as PasswordStrength | null
+      qrCode: ""
     }
   },
 
@@ -108,7 +149,7 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
       try {
         if (!this.qrCode) {
           // @ts-ignore
-          this.qrCode = await toDataURL(this.password, {
+          this.qrCode = await toDataURL(this.password.decryptedPassword, {
             errorCorrectionLevel: "H",
             margin: 1,
             color: {
@@ -163,25 +204,72 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.dialogue-content
-  +pos-r
-  +grid($center: true)
-  +pa(30px)
-  img
-    +size(50vmin)
-    +br-xl
+.password-page
 
-.show-qr
-  > i
-    +block
+  section.primal-info
+    +mt(10px)
+    +grid(50px 1fr 60px, $gap: 10px, $center-v: true)
 
-.note
-  +br-md
-  +pa(10px 20px)
-  +clr-bg(secondary)
+    .account-info
+      +w(max 100%)
+      overflow: hidden
+      .account-identifier
+        +no-wrap
+        +mb(8px)
 
-.tags
-  +flex($gap: 4px 10px, $center-v: true)
-  +w(max 600px)
-  +mx(auto)
+      .site
+        +mx(10px)
+        ::v-deep
+          .link
+            +fnt-xs
+            +py(5px)
+            > i
+              right: 2px
+              top: 2px
+
+    .show-qr
+      justify-self: end
+      align-self: center
+      > i
+        +block
+
+    +m(is-oauth)
+      grid-template-columns: 50px 1fr
+
+  section.password
+    +my(20px)
+    +grid($areas: "password copy" "strength strength", $columns: 1fr 50px, $gap: 15px 20px)
+    .password-reveal
+      grid-area: password
+      overflow: hidden
+      +w(max 100%)
+    .copy
+      grid-area: copy
+      place-self: center
+    .strength
+      grid-area: strength
+
+  section.oauth
+    h3
+      +my(5px)
+
+  section.tags
+    +flex($gap: 10px 15px, $center-v: true)
+    +w(max 600px)
+    +mx(auto)
+    +my(30px)
+
+  section.note
+    > :first-child
+      +br-xl
+      +pa(20px)
+      +clr-bg(secondary)
+
+  .dialogue-content
+    +pos-r
+    +grid($center: true)
+    +pa(30px)
+    img
+      +size(50vmin)
+      +br-xl
 </style>

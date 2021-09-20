@@ -93,10 +93,10 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
   },
 
   mounted() {
-    window.addEventListener("keyup", this.onKeyUp)
+    // window.addEventListener("keyup", this.onKeyUp)
   },
   beforeDestroy() {
-    window.removeEventListener("keyup", this.onKeyUp)
+    // window.removeEventListener("keyup", this.onKeyUp)
   },
 
   methods: {

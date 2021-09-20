@@ -52,11 +52,11 @@
         @keyup:enter="handleIconClick(side)"
         @keyup:space="handleIconClick(side)"
         size="28px"
-        :isClickable="
+        :clickable="
           (side === 'left' && isLeftIconClickable) ||
           (side === 'right' && isRightIconClickable)
         "
-        :isFocusable="
+        :focusable="
           (side === 'left' && isLeftIconClickable) ||
           (side === 'right' && isRightIconClickable)
         "

@@ -2,7 +2,7 @@
   <div
     class="password-strength"
     :class="{
-      'password-strength--has-text': shape === 'line' && showScoreText
+      'password-strength--has-text': shape === 'line' && !hideScoreText
     }"
   >
     <div
@@ -17,7 +17,7 @@
       <span class="progress"></span>
     </div>
     <span
-      v-if="strength && shape === 'line' && showScoreText"
+      v-if="strength && shape === 'line' && !hideScoreText"
       class="score-text"
     >
       {{ strength.score }}/{{ strength.maxScore }}
@@ -54,7 +54,7 @@ export default Vue.extend({
     },
     lineHeight: { type: String, default: "5px" },
     dotSize: { type: String, default: "15px" },
-    showScoreText: { type: Boolean, default: true }
+    hideScoreText: { type: Boolean, default: false }
     // showSuggestions: { type: Boolean, default: false },
   },
 
