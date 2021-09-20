@@ -43,7 +43,8 @@ export default Vue.extend({
             hint: "social_media",
             pattern: /^[^\s!@#$%^&=.,*-+`~|:;?"'/\\[\](){}<>]+$/,
             invalidPatternMessage:
-              "You can't use spaces or special characters in the tag"
+              "You can't use spaces or special characters in the tag",
+            focusOnMount: true
           }
         },
         {
