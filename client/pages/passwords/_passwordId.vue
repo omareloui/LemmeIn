@@ -96,7 +96,7 @@
 
     <dialogue :is-shown="isQRShown" @close="closeQR">
       <div class="dialogue-content">
-        <img :src="qrCode" alt="qr code for the password" />
+        <qr :text="password.decryptedPassword" />
       </div>
     </dialogue>
   </container>
@@ -104,7 +104,6 @@
 
 <script lang="ts">
 import Vue from "vue"
-import { toDataURL } from "qrcode"
 import { ExtendVue, Icon, Password } from "~/@types"
 import getIcon from "~/assets/utils/getIcon"
 
@@ -129,8 +128,7 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
   data() {
     return {
       icon: {} as Icon,
-      isQRShown: false,
-      qrCode: ""
+      isQRShown: false
     }
   },
 
@@ -145,41 +143,12 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
       this.icon = getIcon(this.password)
     },
 
-    async createQR() {
-      try {
-        if (!this.qrCode) {
-          // @ts-ignore
-          this.qrCode = await toDataURL(this.password.decryptedPassword, {
-            errorCorrectionLevel: "H",
-            margin: 1,
-            color: {
-              dark:
-                this.$accessor.theme.currentTheme === "dark"
-                  ? "#191b1f"
-                  : "#ffffff",
-              light:
-                this.$accessor.theme.currentTheme === "dark"
-                  ? "#ffffff"
-                  : "#191b1f"
-            }
-          })
-        }
-      } catch (e) {
-        this.$notify.error(e.message)
-      }
-    },
-
     showQR() {
-      if (!this.qrCode) this.createQR()
       this.isQRShown = true
     },
 
     closeQR() {
       this.isQRShown = false
-    },
-
-    removeCachedQRCode() {
-      this.qrCode = ""
     }
 
     // async deletePassword() {
@@ -191,12 +160,6 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
     //     throw new Error(e.response.data)
     //   }
     // }
-  },
-
-  watch: {
-    "$store.state.theme.currentTheme": function removeCache() {
-      this.removeCachedQRCode()
-    }
   }
 })
 </script>
