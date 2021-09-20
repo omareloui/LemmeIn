@@ -29,6 +29,10 @@ export const mutations = mutationTree(state, {
     password.lastUsed = new Date()
   },
 
+  removePassword(state, passwordId: string) {
+    state.passwords = state.passwords.filter(x => x.id !== passwordId)
+  },
+
   cacheDecryption(
     state,
     { passId, decryptedPass }: { passId: string; decryptedPass: string }
@@ -97,6 +101,18 @@ export const actions = actionTree(
       commit("unshiftToPasswords", password)
     },
 
+    async deletePassword({ commit }, passwordId: string) {
+      try {
+        // TODO: ask for the master password
+        await this.$axios.delete(`/passwords/${passwordId}`)
+        commit("removePassword", passwordId)
+        this.$notify.success("Deleted password successfully")
+      } catch (e) {
+        // @ts-ignore
+        throw new Error(e.response.message.data)
+      }
+    },
+
     async decryptPassword(
       { state, commit },
       passwordId: string
@@ -108,16 +124,19 @@ export const actions = actionTree(
         if (pass && pass.decryptedPassword) return pass.decryptedPassword
 
         // If the password isn't cached
-        const { data: decryptedPass } = await this.$axios.get(
+        let { data: decryptedPass } = await this.$axios.get(
           `/passwords/decrypt/${passwordId}`
         )
+
+        // Stringify it if it's a number
+        decryptedPass = decryptedPass.toString()
 
         // Cache the password
         commit("cacheDecryption", { passId: passwordId, decryptedPass })
 
         // Update the last used in passwords state
         commit("updateLastUsedToNow", passwordId)
-        return decryptedPass.toString()
+        return decryptedPass
       } catch (e) {
         // @ts-ignore
         return this.$notify.error(e.response.data.message)

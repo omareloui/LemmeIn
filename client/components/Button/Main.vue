@@ -5,8 +5,10 @@
       'button-main--cta': cta,
       'button-main--block': block,
       'button-main--large': large,
+      'button-main--custom-color': !!color,
       'button-main--dont-block-on-mobile': dontBlockOnMobile
     }"
+    :style="{ '--color': `var(--clr-${color}` }"
     v-bind="{ type, isDisabled, ariaLabel }"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
@@ -16,7 +18,7 @@
         <loader-primary
           :size="large ? 35 : 20"
           :stroke-width="large ? 3 : 2"
-          :color="cta ? 'text-light' : 'primary'"
+          :color="cta || !!color ? 'text-light' : 'primary'"
         ></loader-primary>
       </span>
     </transition>
@@ -41,7 +43,8 @@ export default Vue.extend({
     cta: { type: Boolean, default: false },
     large: { type: Boolean, default: false },
     block: { type: Boolean, default: false },
-    dontBlockOnMobile: { type: Boolean, default: false }
+    dontBlockOnMobile: { type: Boolean, default: false },
+    color: { type: String }
   },
 
   methods: {
@@ -82,6 +85,11 @@ $width-on-large: clamp(160px, 30vw,100%)
 
   +m(cta)
     +clr-bg(primary)
+    .button-main__content
+      +clr-txt(light)
+
+  +m(custom-color)
+    +clr-bg(--color)
     .button-main__content
       +clr-txt(light)
 

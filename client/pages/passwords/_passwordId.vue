@@ -92,6 +92,13 @@
       <section class="note">
         <marked v-if="password.note" :content="password.note" class="note" />
       </section>
+
+      <section class="edit-buttons">
+        <button-main large block color="info">Edit</button-main>
+        <button-main large block color="danger" @click="deletePassword"
+          >Delete</button-main
+        >
+      </section>
     </main>
 
     <dialogue :is-shown="isQRShown" @close="closeQR">
@@ -149,17 +156,16 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
 
     closeQR() {
       this.isQRShown = false
-    }
+    },
 
-    // async deletePassword() {
-    //   try {
-    //     await this.$axios.delete(`/passwords/${this.$route.params.passwordId}`)
-    //     this.$router.push("/passwords")
-    //     this.$notify.success("Deleted password successfully")
-    //   } catch (e) {
-    //     throw new Error(e.response.data)
-    //   }
-    // }
+    async deletePassword() {
+      try {
+        await this.$accessor.vault.deletePassword(this.password.id)
+        this.$router.push("/vault")
+      } catch (e) {
+        this.$notify.success(e.message)
+      }
+    }
   }
 })
 </script>
@@ -223,10 +229,14 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
     +my(30px)
 
   section.note
+    +mb(10px)
     > :first-child
       +br-xl
       +pa(20px)
       +clr-bg(secondary)
+
+  section.edit-buttons
+    +grid(1fr 1fr, $gap: 10px, $center: true)
 
   .dialogue-content
     +pos-r
