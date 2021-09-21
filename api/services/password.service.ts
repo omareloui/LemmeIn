@@ -241,6 +241,17 @@ export default class PasswordService extends BaseService {
       user: userId,
     });
     if (!password) return passwordErrorHelper.notFound();
+    // Make sure the password to delete doesn't have any passwords that
+    // point the the current one
+    const passwordsThatPointToTheOneToDelete = await Password.find({
+      password: id,
+    }).toArray();
+    if (passwordsThatPointToTheOneToDelete.length > 0)
+      return passwordErrorHelper.badRequest({
+        message:
+          "You can't delete this password because it has password(s) that point to it",
+      });
+
     const deleteCount = await Password.deleteOne({
       _id: new ObjectId(id),
       user: userId,

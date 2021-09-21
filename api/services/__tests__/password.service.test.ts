@@ -463,5 +463,39 @@ serviceTester.test(
   }
 );
 
-serviceTester.testRemovingOneMine();
+// =============== Deleting =============== //
+serviceTester.testAsyncError(
+  "should not delete the password if there's one pointing to the current one",
+  async () => {
+    const id = serviceTester.createdRecordId;
+    const userId = serviceTester.userId;
+
+    if (!id) throw new Error("Didn't create the record yet");
+
+    await Password.insertOne({
+      app: "any new pass",
+      password: id,
+      user: userId,
+    });
+    await PasswordService.removeOneMine(id, userId);
+  },
+  "You can't delete this password because it has password(s) that point to it"
+);
+
+serviceTester.test("should delete password fine", async () => {
+  const userId = serviceTester.userId;
+  const createdPasswordId = (
+    await Password.insertOne({
+      app: "any new pass",
+      password: "some_pass",
+      user: userId,
+    })
+  ).toString();
+  await PasswordService.removeOneMine(createdPasswordId, userId);
+  const deletedPassword = await Password.findOne({
+    _id: new ObjectId(createdPasswordId),
+  });
+  serviceTester.shouldEquals(!deletedPassword, true);
+});
+
 await Password.drop();
