@@ -10,7 +10,8 @@ export interface PasswordSchema {
   site: string;
   note: string;
   tags: string[];
-  lastUsed: Date;
+  lastUsed: Date | null;
+  lastPasswordUpdate: Date;
   createdAt: Date;
   updatedAt: Date;
 }

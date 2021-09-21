@@ -1,5 +1,6 @@
 import { ObjectId } from "../deps.ts";
 import { mongoIdRegExp } from "../utils/mongoIdRegExp.ts";
+import compareArrays from "../utils/compareArrays.ts";
 
 import EncryptionHelper from "../helpers/encryption.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
@@ -28,16 +29,25 @@ interface CreatePasswordOptions {
   isOAuth?: boolean;
 }
 
+type UpdatePasswordOptions = Partial<CreatePasswordOptions>;
+
+type InsertionData = Partial<
+  Omit<PasswordSchema, "_id"> & {
+    isOAuth: boolean;
+  }
+>;
+
 export default class PasswordService extends BaseService {
   public static async createMine(
     data: CreatePasswordOptions,
     userId: string
   ): Promise<VirtualPasswordSchema> {
     const currentDate = new Date();
-    const insertionData = {
+    const insertionData: InsertionData = {
       ...data,
       user: userId,
       lastUsed: null,
+      lastPasswordUpdate: currentDate,
       createdAt: currentDate,
       updatedAt: currentDate,
     };
@@ -77,27 +87,21 @@ export default class PasswordService extends BaseService {
     id: string,
     userId: string
   ): Promise<VirtualPasswordSchema> {
-    const passwordDoc = (await Password.findOne({
+    const passwordDoc = await Password.findOne({
       _id: new ObjectId(id),
       user: userId,
-    })) as PasswordSchema;
+    });
+    if (!passwordDoc) return passwordErrorHelper.notFound();
     return this.normalizeDoc(passwordDoc, userId);
   }
 
-  public static async removeOneMine(id: string, userId: string) {
-    const password = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!password) return passwordErrorHelper.notFound();
-    const deleteCount = await Password.deleteOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!deleteCount) {
-      return passwordErrorHelper.badRequest({ action: "delete" });
-    }
-    return deleteCount;
+  private static async getMyPasswordTags(
+    tags: string[],
+    userId: string
+  ): Promise<VirtualTagSchema[]> {
+    if (tags && tags.length > 0)
+      return await TagService.getMyPasswordAllTags(tags, userId);
+    return [];
   }
 
   public static async decrypt(id: string, userId: string) {
@@ -116,13 +120,116 @@ export default class PasswordService extends BaseService {
     return password;
   }
 
-  private static async getMyPasswordTags(
-    tags: string[],
+  public static async updateOneMine(
+    id: string,
+    {
+      app,
+      password,
+      accountIdentifier,
+      isOAuth,
+      note,
+      site,
+      tags,
+    }: UpdatePasswordOptions,
     userId: string
-  ): Promise<VirtualTagSchema[]> {
-    if (tags && tags.length > 0)
-      return await TagService.getMyPasswordAllTags(tags, userId);
-    return [];
+  ) {
+    const originalDoc = await Password.findOne({
+      _id: new ObjectId(id),
+      user: userId,
+    });
+    if (!originalDoc) return passwordErrorHelper.notFound();
+
+    const fieldsToUpdate: Partial<InsertionData> = {};
+    const currentDate = new Date();
+
+    // Check updating the password
+    if (password) {
+      // Set the original password
+      const encryptionHelper = new EncryptionHelper();
+      let originalPassword = originalDoc.password;
+      const isOriginalOAuth = this.checkIfPasswordOAuth(originalDoc.password);
+      // Decrypt the password if it's not oauth
+      if (!isOriginalOAuth) {
+        originalPassword = encryptionHelper.decrypt(originalPassword);
+      }
+
+      // Update if it's new password
+      if (password !== originalPassword) {
+        // Encrypt the password if it's not oauth
+        if (password && !isOAuth) {
+          const encryption = encryptionHelper.encrypt(password);
+          fieldsToUpdate.password = encryption;
+        } else if (password && isOAuth) {
+          // Making sure it's a valid password id to update to
+          let couldUpdate = true;
+          // Make sure it's valid mongo id
+          if (!password.match(mongoIdRegExp)) couldUpdate = false;
+          // Make sure it's not the current password id
+          else if (password === id) couldUpdate = false;
+          else {
+            const passwordToUpdateTo = await Password.findOne({
+              _id: new ObjectId(password),
+              user: userId,
+            });
+
+            // Make sure it exists
+            if (!passwordToUpdateTo) couldUpdate = false;
+            // Make sure it's not a password that points to the current password
+            if (passwordToUpdateTo?.password === id) couldUpdate = false;
+            // FIXME: recursion
+            // if it's two levels or more it still with have that problem
+          }
+          if (couldUpdate) fieldsToUpdate.password = password;
+        }
+        // Update password's last update date
+        if (fieldsToUpdate.password)
+          fieldsToUpdate.lastPasswordUpdate = currentDate;
+      }
+    }
+
+    // Check updating other fields
+    if (app && app !== originalDoc.app) fieldsToUpdate.app = app;
+    if (site && site !== originalDoc.site) fieldsToUpdate.site = site;
+    if (note && note !== originalDoc.note) fieldsToUpdate.note = note;
+    if (
+      accountIdentifier &&
+      accountIdentifier !== originalDoc.accountIdentifier
+    )
+      fieldsToUpdate.accountIdentifier = accountIdentifier;
+    if (tags && !compareArrays(tags, originalDoc.tags))
+      fieldsToUpdate.tags = tags;
+
+    // Return without saving if nothing to change
+    if (Object.keys(fieldsToUpdate).length === 0)
+      return this.normalizeDoc(originalDoc, userId);
+
+    fieldsToUpdate.updatedAt = currentDate;
+
+    const updatingData = await Password.updateOne(
+      { _id: new ObjectId(id), user: userId },
+      { $set: fieldsToUpdate }
+    );
+    if (!updatingData)
+      return passwordErrorHelper.badRequest({ action: "update" });
+
+    const newPassword = await this.getOneMine(id, userId);
+    return newPassword;
+  }
+
+  public static async removeOneMine(id: string, userId: string) {
+    const password = await Password.findOne({
+      _id: new ObjectId(id),
+      user: userId,
+    });
+    if (!password) return passwordErrorHelper.notFound();
+    const deleteCount = await Password.deleteOne({
+      _id: new ObjectId(id),
+      user: userId,
+    });
+    if (!deleteCount) {
+      return passwordErrorHelper.badRequest({ action: "delete" });
+    }
+    return deleteCount;
   }
 
   private static async normalizeDoc(
