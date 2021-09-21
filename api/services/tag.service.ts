@@ -3,6 +3,7 @@ import { ObjectId } from "../deps.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 
 import { normalizeDocument } from "../utils/normalizeDocuments.ts";
+import createRegex from "../utils/createRegex.ts";
 
 import { BaseService } from "./base.service.ts";
 import PasswordService from "./password.service.ts";
@@ -19,8 +20,9 @@ export default class TagService extends BaseService {
     { tag, color }: CreateTagOptions,
     userId: string
   ) {
+    const tagRegex = createRegex(tag, { i: true, exactMatch: true });
     const duplicatedTag = await Tag.findOne({
-      tag: new RegExp(`^${tag}$`, "i"),
+      tag: tagRegex,
       user: userId,
     });
     if (duplicatedTag)
@@ -80,9 +82,10 @@ export default class TagService extends BaseService {
     if (!tagDoc) return tagErrorHelper.notFound();
 
     // If the tag's new make sure it's not duplicated
-    if (tagDoc.tag !== options.tag) {
+    if (options.tag && tagDoc.tag !== options.tag) {
+      const tagRegex = createRegex(options.tag, { i: true, exactMatch: true });
       const duplicatedTag = await Tag.findOne({
-        tag: new RegExp(`^${options.tag}$`, "i"),
+        tag: tagRegex,
         user: userId,
       });
       if (duplicatedTag)

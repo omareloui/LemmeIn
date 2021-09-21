@@ -35,7 +35,7 @@ export default class UserService extends BaseService {
     const { firstName, lastName, email, password, role } = options;
 
     // Making sure the email is unique
-    const emailRegex = createRegex(email, { i: true, exactText: true });
+    const emailRegex = createRegex(email, { i: true, exactMatch: true });
     const sameEmailUser = await User.findOne({ email: emailRegex });
     if (sameEmailUser)
       return userErrorHelper.badRequest({
