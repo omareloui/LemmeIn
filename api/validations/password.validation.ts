@@ -2,13 +2,7 @@ import { yup } from "../deps.ts";
 import { requiredId } from "../utils/checkIfMongoId.ts";
 
 const createAndUpdatePasswordBody = {
-  app: yup
-    .string()
-    .min(3)
-    .min(3)
-    .max(256)
-    .trim()
-    .required(`Field "app" is required`),
+  app: yup.string().min(3).max(256).trim().required(`Field "app" is required`),
   password: yup
     .string()
     .min(3)

@@ -146,12 +146,11 @@ export default class PasswordService extends BaseService {
     if (password) {
       // Set the original password
       const encryptionHelper = new EncryptionHelper();
-      let originalPassword = originalDoc.password;
       const isOriginalOAuth = this.checkIfPasswordOAuth(originalDoc.password);
+      let originalPassword = originalDoc.password;
       // Decrypt the password if it's not oauth
-      if (!isOriginalOAuth) {
+      if (!isOriginalOAuth)
         originalPassword = encryptionHelper.decrypt(originalPassword);
-      }
 
       // Update if it's new password
       if (password !== originalPassword) {
@@ -161,52 +160,62 @@ export default class PasswordService extends BaseService {
           fieldsToUpdate.password = encryption;
         } else if (password && isOAuth) {
           // Making sure it's a valid password id to update to
-          let couldUpdate = true;
-          // Make sure it's valid mongo id
-          if (!password.match(mongoIdRegExp)) couldUpdate = false;
-          // Make sure it's not the current password id
-          else if (password === id) couldUpdate = false;
-          else {
-            // Make sure it exists
-            const passwordToUpdateTo = await Password.findOne({
-              _id: new ObjectId(password),
-              user: userId,
+          if (!password.match(mongoIdRegExp))
+            return passwordErrorHelper.badRequest({
+              message: "Can't update the password with invalid password id",
             });
-            if (!passwordToUpdateTo) couldUpdate = false;
-            // Make sure it's not a password that points to the current password
-            // nor one of it's references
-            const optimizedPasswordToUpdateTo = await this.getOneMine(
-              password,
-              userId
-            );
-            let currPass: VirtualPasswordSchema | undefined =
-              optimizedPasswordToUpdateTo.password;
-            while (currPass) {
-              if (currPass.id === id) {
-                couldUpdate = false;
-                break;
-              }
-              currPass = currPass.password;
-            }
+          // Make sure it's not the current password id
+          if (password === id)
+            return passwordErrorHelper.badRequest({
+              message: "Can't update the password to the current password",
+            });
+          // Make sure it exists
+          const passwordToUpdateTo = await Password.findOne({
+            _id: new ObjectId(password),
+            user: userId,
+          });
+          if (!passwordToUpdateTo)
+            return passwordErrorHelper.badRequest({
+              message: "Can't find the password you want to update to",
+            });
+          // Make sure it's not a password that points to the current password
+          // nor one of it's references
+          const optimizedPasswordToUpdateTo = await this.getOneMine(
+            password,
+            userId
+          );
+          let currPass: VirtualPasswordSchema | undefined =
+            optimizedPasswordToUpdateTo.password;
+          while (currPass) {
+            if (currPass.id === id)
+              return passwordErrorHelper.badRequest({
+                message:
+                  "Can't update the password to a password that points to the current one or one of it's references points to the current one",
+              });
+            currPass = currPass.password;
           }
-          if (couldUpdate) fieldsToUpdate.password = password;
+
+          fieldsToUpdate.password = password;
         }
         // Update password's last update date
-        if (fieldsToUpdate.password)
+        if (Object.hasOwn(fieldsToUpdate, "password"))
           fieldsToUpdate.lastPasswordUpdate = currentDate;
       }
     }
 
     // Check updating other fields
-    if (app && app !== originalDoc.app) fieldsToUpdate.app = app;
-    if (site && site !== originalDoc.site) fieldsToUpdate.site = site;
-    if (note && note !== originalDoc.note) fieldsToUpdate.note = note;
+    if (app && app.length >= 3 && app !== originalDoc.app)
+      fieldsToUpdate.app = app;
+    if (site !== undefined && site !== originalDoc.site)
+      fieldsToUpdate.site = site;
+    if (note !== undefined && note !== originalDoc.note)
+      fieldsToUpdate.note = note;
     if (
-      accountIdentifier &&
+      accountIdentifier !== undefined &&
       accountIdentifier !== originalDoc.accountIdentifier
     )
       fieldsToUpdate.accountIdentifier = accountIdentifier;
-    if (tags && !compareArrays(tags, originalDoc.tags))
+    if (tags !== undefined && !compareArrays(tags, originalDoc.tags))
       fieldsToUpdate.tags = tags;
 
     // Return without saving if nothing to change

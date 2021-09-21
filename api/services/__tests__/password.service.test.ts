@@ -74,6 +74,7 @@ oAuthServiceTester.test(
   }
 );
 
+// =============== Updating =============== //
 serviceTester.test("should updating the password's app", async () => {
   if (!serviceTester.createdRecordId)
     throw new Error("Didn't create the record yet");
@@ -118,6 +119,51 @@ serviceTester.test(
       Number(recordToUpdate.updatedAt) < Number(recordAfterUpdate.updatedAt),
       true
     );
+  }
+);
+
+serviceTester.test(
+  "should not update the site if provided with undefined value",
+  async () => {
+    if (!serviceTester.createdRecordId)
+      throw new Error("Didn't create the record yet");
+
+    // The update the app with the same last app name so it shouldn't update it
+    await PasswordService.updateOneMine(
+      serviceTester.createdRecordId,
+      { site: undefined },
+      serviceTester.userId
+    );
+    // await serviceTester.testUpdateOneMine({ site: "https://brandnewsite.com" });
+    const recordAfterUpdate = await PasswordService.getOneMine(
+      serviceTester.createdRecordId,
+      serviceTester.userId
+    );
+    serviceTester.shouldEquals(
+      recordAfterUpdate.site === "https://newsite.com",
+      true
+    );
+  }
+);
+
+serviceTester.test(
+  "should update the site if provided with empty string",
+  async () => {
+    if (!serviceTester.createdRecordId)
+      throw new Error("Didn't create the record yet");
+
+    // The update the app with the same last app name so it shouldn't update it
+    await PasswordService.updateOneMine(
+      serviceTester.createdRecordId,
+      { site: "" },
+      serviceTester.userId
+    );
+    // await serviceTester.testUpdateOneMine({ site: "https://brandnewsite.com" });
+    const recordAfterUpdate = await PasswordService.getOneMine(
+      serviceTester.createdRecordId,
+      serviceTester.userId
+    );
+    serviceTester.shouldEquals(recordAfterUpdate.site === "", true);
   }
 );
 
@@ -188,7 +234,7 @@ serviceTester.test(
   }
 );
 
-serviceTester.test(
+serviceTester.testAsyncError(
   "should not update the password if provided as oauth with invalid id",
   async () => {
     if (!serviceTester.createdRecordId)
@@ -225,10 +271,11 @@ serviceTester.test(
         recordAfterUpdate.password === recordToUpdate.password,
       true
     );
-  }
+  },
+  "Can't update the password with invalid password id"
 );
 
-serviceTester.test(
+serviceTester.testAsyncError(
   "should not update the password if it is an id for a password that is the current password id",
   async () => {
     if (!serviceTester.createdRecordId)
@@ -265,19 +312,26 @@ serviceTester.test(
         recordAfterUpdate.password === recordToUpdate.password,
       true
     );
-  }
+  },
+  "Can't update the password to the current password"
 );
 
-serviceTester.test(
+serviceTester.testAsyncError(
   "should not update the password if it is an id for a password that points to the current one",
   async () => {
     if (!serviceTester.createdRecordId)
       throw new Error("Didn't create the record yet");
 
     // The oauth was created pointing to the current one
-    const newPass = oAuthServiceTester.createdRecordId?.toString();
+    const newPass = (
+      await Password.insertOne({
+        app: "some app",
+        password: serviceTester.createdRecordId.toString(),
+        user: serviceTester.userId,
+      })
+    ).toString();
 
-    const id = serviceTester.createdRecordId;
+    const id = serviceTester.createdRecordId.toString();
     const userId = serviceTester.userId;
 
     const recordToUpdate = await Password.findOne({
@@ -306,10 +360,11 @@ serviceTester.test(
         recordAfterUpdate.password === recordToUpdate.password,
       true
     );
-  }
+  },
+  "Can't update the password to a password that points to the current one or one of it's references points to the current one"
 );
 
-serviceTester.test(
+serviceTester.testAsyncError(
   "should not update the password if it is an id for a password that points to a password that points to the current one",
   async () => {
     if (!serviceTester.createdRecordId)
@@ -364,7 +419,8 @@ serviceTester.test(
     await Password.deleteOne({
       _id: new ObjectId(passPointingToTheOnePointingToCurrentId),
     });
-  }
+  },
+  "Can't update the password to a password that points to the current one or one of it's references points to the current one"
 );
 
 serviceTester.test(
@@ -407,7 +463,5 @@ serviceTester.test(
   }
 );
 
-// TODO:
-// serviceTester.test("should not update the password if it is an id for a password that points to the current one two or more levels in")
-
 serviceTester.testRemovingOneMine();
+await Password.drop();
