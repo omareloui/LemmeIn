@@ -109,7 +109,7 @@ export const actions = actionTree(
         this.$notify.success("Deleted password successfully")
       } catch (e) {
         // @ts-ignore
-        throw new Error(e.response.message.data)
+        throw new Error(e.response.data.message)
       }
     },
 

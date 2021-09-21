@@ -163,7 +163,7 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
         await this.$accessor.vault.deletePassword(this.password.id)
         this.$router.push("/vault")
       } catch (e) {
-        this.$notify.success(e.message)
+        this.$notify.error(e.message)
       }
     }
   }
@@ -237,6 +237,7 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
 
   section.edit-buttons
     +grid(1fr 1fr, $gap: 10px, $center: true)
+    +my(30px)
 
   .dialogue-content
     +pos-r
