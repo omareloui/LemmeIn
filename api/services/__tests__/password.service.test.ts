@@ -234,7 +234,7 @@ serviceTester.test(
     if (!serviceTester.createdRecordId)
       throw new Error("Didn't create the record yet");
 
-    const newPass = serviceTester.createdRecordId;
+    const newPass = serviceTester.createdRecordId.toString();
 
     const id = serviceTester.createdRecordId;
     const userId = serviceTester.userId;
@@ -274,6 +274,7 @@ serviceTester.test(
     if (!serviceTester.createdRecordId)
       throw new Error("Didn't create the record yet");
 
+    // The oauth was created pointing to the current one
     const newPass = oAuthServiceTester.createdRecordId?.toString();
 
     const id = serviceTester.createdRecordId;
@@ -302,6 +303,59 @@ serviceTester.test(
 
     serviceTester.shouldEquals(
       recordAfterUpdate.password !== newPass &&
+        recordAfterUpdate.password === recordToUpdate.password,
+      true
+    );
+  }
+);
+
+serviceTester.test(
+  "should not update the password if it is an id for a password that points to a password that points to the current one",
+  async () => {
+    if (!serviceTester.createdRecordId)
+      throw new Error("Didn't create the record yet");
+
+    const passPointingToCurrentId = (
+      await Password.insertOne({
+        app: "some app",
+        password: serviceTester.createdRecordId.toString(),
+        user: serviceTester.userId,
+      })
+    ).toString();
+    const passPointingToTheOnePointingToCurrentId = (
+      await Password.insertOne({
+        app: "some app",
+        password: passPointingToCurrentId,
+        user: serviceTester.userId,
+      })
+    ).toString();
+
+    const id = serviceTester.createdRecordId;
+    const userId = serviceTester.userId;
+
+    const recordToUpdate = await Password.findOne({
+      _id: new ObjectId(id),
+      user: userId,
+    });
+    if (!recordToUpdate)
+      throw new Error("Couldn't find the record before update");
+
+    await PasswordService.updateOneMine(
+      id,
+      { password: passPointingToTheOnePointingToCurrentId, isOAuth: true },
+      userId
+    );
+
+    const recordAfterUpdate = await Password.findOne({
+      _id: new ObjectId(id),
+      user: userId,
+    });
+
+    if (!recordAfterUpdate)
+      throw new Error("Couldn't find the record after update");
+
+    serviceTester.shouldEquals(
+      recordAfterUpdate.password !== passPointingToTheOnePointingToCurrentId &&
         recordAfterUpdate.password === recordToUpdate.password,
       true
     );

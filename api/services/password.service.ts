@@ -167,17 +167,28 @@ export default class PasswordService extends BaseService {
           // Make sure it's not the current password id
           else if (password === id) couldUpdate = false;
           else {
+            // Make sure it exists
             const passwordToUpdateTo = await Password.findOne({
               _id: new ObjectId(password),
               user: userId,
             });
-
-            // Make sure it exists
             if (!passwordToUpdateTo) couldUpdate = false;
             // Make sure it's not a password that points to the current password
-            if (passwordToUpdateTo?.password === id) couldUpdate = false;
-            // FIXME: recursion
-            // if it's two levels or more it still with have that problem
+            // nor one of it's references
+            const optimizedPasswordToUpdateTo = await this.getOneMine(
+              password,
+              userId
+            );
+            let currPass: VirtualPasswordSchema | undefined =
+              optimizedPasswordToUpdateTo.password;
+            while (true) {
+              if (!currPass) break;
+              if (currPass.id === id) {
+                couldUpdate = false;
+                break;
+              }
+              currPass = currPass.password;
+            }
           }
           if (couldUpdate) fieldsToUpdate.password = password;
         }
