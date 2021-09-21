@@ -359,6 +359,11 @@ serviceTester.test(
         recordAfterUpdate.password === recordToUpdate.password,
       true
     );
+
+    await Password.deleteOne({ _id: new ObjectId(passPointingToCurrentId) });
+    await Password.deleteOne({
+      _id: new ObjectId(passPointingToTheOnePointingToCurrentId),
+    });
   }
 );
 

@@ -86,7 +86,7 @@ export class ServiceTester<
   }
 
   public testGetAllMine() {
-    this.test(`should get all ${this.serviceName}`, async () => {
+    this.test(`should get all my ${this.serviceName}`, async () => {
       if (!this.service.getAllMine)
         throw new Error("This service doesn't have getOneMine");
       const records = await this.service.getAllMine(this.userId);

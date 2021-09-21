@@ -181,8 +181,7 @@ export default class PasswordService extends BaseService {
             );
             let currPass: VirtualPasswordSchema | undefined =
               optimizedPasswordToUpdateTo.password;
-            while (true) {
-              if (!currPass) break;
+            while (currPass) {
               if (currPass.id === id) {
                 couldUpdate = false;
                 break;
