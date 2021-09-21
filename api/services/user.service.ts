@@ -4,6 +4,7 @@ import ErrorHelper from "../helpers/error.helper.ts";
 import { User, UserSchema } from "../models/user.model.ts";
 import { UserHistory } from "../models/user-history.model.ts";
 import { normalizeDocument } from "../utils/normalizeDocuments.ts";
+import createRegex from "../utils/createRegex.ts";
 import type { Role } from "../config/roles.ts";
 import { BaseService } from "./base.service.ts";
 
@@ -32,15 +33,17 @@ export interface UserDoc {
 export default class UserService extends BaseService {
   public static async create(options: CreateOptions) {
     const { firstName, lastName, email, password, role } = options;
-    const hashedPassword = await HashHelper.hash(password);
-    const currentDate = new Date();
 
     // Making sure the email is unique
-    const sameEmailUser = await User.findOne({ email });
+    const emailRegex = createRegex(email, { i: true, exactText: true });
+    const sameEmailUser = await User.findOne({ email: emailRegex });
     if (sameEmailUser)
       return userErrorHelper.badRequest({
-        message: `This email is already in use. Try signing in instead.`,
+        message: "This email is already in use. Try signing in instead.",
       });
+
+    const hashedPassword = await HashHelper.hash(password);
+    const currentDate = new Date();
 
     const userData: Omit<UserSchema, "_id"> = {
       firstName,

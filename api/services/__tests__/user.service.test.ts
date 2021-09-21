@@ -26,6 +26,19 @@ serviceDuplicatedEmailTest.testAsyncError(
   "email is already in use"
 );
 
+serviceDuplicatedEmailTest.testAsyncError(
+  "should not create a user with an already used email when entering it case insensitively",
+  async () => {
+    await UserService.create({
+      email: "OMARELOUI@HOTMAIL.COM",
+      firstName: "none",
+      lastName: "anything",
+      password: "12345",
+    });
+  },
+  "email is already in use"
+);
+
 serviceTester.testGetOne();
 serviceTester.testGetAll();
 
