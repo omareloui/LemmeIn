@@ -197,7 +197,6 @@ header
   +zi(nav)
   +pos-s(top 0)
   +not-clickable
-  height: var(--header-height)
 
   .glass-nav
     +size(100%)

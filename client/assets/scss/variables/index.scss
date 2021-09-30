@@ -3,7 +3,6 @@
 @use "screens" as bp;
 @use "z-indexes" as zi;
 @use "borders-radius" as br;
-@use "layout" as lo;
 
 :root {
   @include clr.colors;
@@ -11,7 +10,6 @@
   @include zi.z-index;
   @include bp.screens;
   @include br.borders-radius;
-  @include lo.layout;
 }
 
 :root[theme="dark"] {
