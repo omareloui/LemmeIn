@@ -197,6 +197,9 @@ export default Vue.extend({
   +pos-r
   +tran
 
+  *
+    +fnt(input)
+
   .input-glass
     > div
       +size(100% 45px)

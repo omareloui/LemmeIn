@@ -236,8 +236,10 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
       +clr-bg(secondary)
 
   section.edit-buttons
-    +grid(1fr 1fr, $gap: 10px, $center: true)
+    +grid(1fr, $gap: 10px, $center: true)
     +my(30px)
+    +lt-mobile
+      grid-template-columns: 1fr 1fr
 
   .dialogue-content
     +pos-r

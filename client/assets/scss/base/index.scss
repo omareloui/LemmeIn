@@ -14,14 +14,14 @@
 }
 
 * {
-  @include ff.fnt(body);
-  @include fs.fnt-base;
-  @include c.clr-txt;
   @include t.tran(color background fill);
 }
 
 body {
   @include c.clr-bg;
+  @include c.clr-txt;
+  @include ff.fnt(body);
+  @include fs.fnt-base;
   scroll-padding-top: var(--header-height);
 }
 

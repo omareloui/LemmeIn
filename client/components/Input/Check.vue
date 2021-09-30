@@ -151,6 +151,9 @@ $checker-size: 20px
   +tran
   +e(heading)
 
+  *
+    +fnt(input)
+
   +e(options)
     +auto-fit(100px, $gap: 20px, $center: false)
 

@@ -1,6 +1,8 @@
 <template>
   <div class="update-tag">
-    <h2 class="update-tag__heading">Edit Tag</h2>
+    <h2 class="update-tag__heading">
+      Edit <span class="update-tag__heading-tag-name">“{{ tag.tag }}”</span> Tag
+    </h2>
     <form-generator
       class="update-tag__form"
       :form-fields="formFields"
@@ -96,8 +98,9 @@ export default Vue.extend({
     +clr-txt(primary)
     +center-text
 
+  +e(heading-tag-name)
+    word-break: break-word
+
   +e(remove)
     +mt(40px)
-    // ::v-deep .submit
-    //   +clr-bg(danger)
 </style>

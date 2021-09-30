@@ -88,6 +88,9 @@ export default Vue.extend({
   --track-width: 100%
   --track-height: 10px
 
+  *
+    +fnt(input)
+
   +w(clamp(150px, 80%, 330px))
 
   +m(show-value)

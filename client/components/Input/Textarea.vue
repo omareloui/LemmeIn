@@ -192,6 +192,9 @@ export default Vue.extend({
   +pos-r
   +tran
 
+  *
+    +fnt(input)
+
   .input-glass
     > div
       +br-md

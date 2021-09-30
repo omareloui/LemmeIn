@@ -47,7 +47,8 @@ export default Vue.extend({
 @use "~/assets/scss/mixins" as *
 
 .tag
-  > :first-child
+  > div
+    +br-md
     +pa(20px)
 
   +e(color)

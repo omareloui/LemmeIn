@@ -39,6 +39,7 @@ export default Vue.extend({
   +brdr(none)
   +clickable
   +center-text
+  +fnt(body)
   background: none
 
   &.button-base
