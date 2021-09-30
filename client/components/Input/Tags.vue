@@ -120,7 +120,8 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     value: { type: Array as PropType<TagId[]>, required: true },
     label: { type: String, default: "Tags" },
     notRequired: { type: Boolean, default: true },
-    leftIcon: { type: String, default: "tags" }
+    leftIcon: { type: String, default: "tags" },
+    default: { type: Array as PropType<TagId[]> }
   },
 
   data: () => ({
@@ -174,6 +175,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
   async created() {
     const { data } = await this.$axios.get("/tags")
     this.tags = data
+    if (this.default) this.$emit("input", this.default)
   },
 
   methods: {

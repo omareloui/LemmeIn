@@ -7,6 +7,7 @@ import {
   deletePasswordValidation,
   getPasswordsValidation,
   getPasswordValidation,
+  updatePasswordValidation,
   decryptPasswordValidation,
 } from "../validations/password.validation.ts";
 
@@ -38,6 +39,13 @@ router.get(
   validate(getPasswordValidation),
   auth("manageMyPasswords"),
   PasswordController.viewOneMine
+);
+
+router.put(
+  "/passwords/:id",
+  validate(updatePasswordValidation),
+  auth("manageMyPasswords"),
+  PasswordController.updateOneMine
 );
 
 router.delete(

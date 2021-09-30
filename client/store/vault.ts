@@ -1,5 +1,5 @@
 import { mutationTree, actionTree } from "typed-vuex"
-import { AddPassword, Password } from "~/@types"
+import { AddPassword, Password, UpdatePassword } from "~/@types"
 
 export const state = () => ({
   gotPasswords: false,
@@ -45,6 +45,13 @@ export const mutations = mutationTree(state, {
     pass.decryptedPassword = decryptedPass
   },
 
+  updatePasswordCache(state, password) {
+    const passIndex = state.passwords.findIndex(x => x.id === password.id)
+    if (passIndex === -1)
+      throw new Error("Can't find the password to update last used")
+    state.passwords[passIndex] = password
+  },
+
   clearDecryptionsCache(state) {
     state.passwords.forEach(x => delete x.decryptedPassword)
   },
@@ -57,7 +64,7 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, mutations },
   {
-    async updatePasswords({ commit }) {
+    async updatePasswordsCache({ commit }) {
       const { data } = await this.$axios.get("/passwords")
       commit("setPasswords", data as Password[])
       commit("setGotPasswords")
@@ -65,7 +72,7 @@ export const actions = actionTree(
 
     async getPasswords({ state, dispatch }) {
       if (!this.app.$accessor.auth.isSigned || state.gotPasswords) return
-      dispatch("updatePasswords")
+      dispatch("updatePasswordsCache")
     },
 
     async getPassword(
@@ -99,6 +106,19 @@ export const actions = actionTree(
       const password = response.data as Password
       this.$notify.success("Created password.")
       commit("unshiftToPasswords", password)
+    },
+
+    async updatePassword({ commit }, options: UpdatePassword) {
+      const { id } = options
+      delete (options as { id?: string }).id
+      const response = await this.$axios.put(`/passwords/${id}`, options)
+      const newPassword = response.data as Password
+      this.$notify.success("Updated password.")
+      commit("updatePasswordCache", {
+        ...newPassword,
+        decryptedPassword: !options.isOAuth ? options.password : undefined
+      })
+      return newPassword
     },
 
     async deletePassword({ commit }, passwordId: string) {

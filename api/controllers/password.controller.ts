@@ -5,8 +5,7 @@ export default class PasswordController {
   public static async create({ request, response, state }: RouterContext) {
     const body = request.body();
     const data = await body.value;
-    const userId = state.user.id;
-    response.body = await PasswordService.createMine(data, userId);
+    response.body = await PasswordService.createMine(data, state.user.id);
   }
 
   public static async viewAllMine({ response, state }: RouterContext) {
@@ -19,6 +18,21 @@ export default class PasswordController {
 
   public static async decrypt({ params, response, state }: RouterContext) {
     response.body = await PasswordService.decrypt(params.id!, state.user.id);
+  }
+
+  public static async updateOneMine({
+    request,
+    params,
+    response,
+    state,
+  }: RouterContext) {
+    const body = request.body();
+    const data = await body.value;
+    response.body = await PasswordService.updateOneMine(
+      params.id!,
+      data,
+      state.user.id
+    );
   }
 
   public static async deleteMine({ response, params, state }: RouterContext) {

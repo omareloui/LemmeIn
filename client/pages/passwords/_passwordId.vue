@@ -94,7 +94,9 @@
       </section>
 
       <section class="edit-buttons">
-        <button-main large block color="info">Edit</button-main>
+        <button-main large block color="info" @click="shownEditPass"
+          >Edit</button-main
+        >
         <button-main large block color="danger" @click="deletePassword"
           >Delete</button-main
         >
@@ -105,6 +107,14 @@
       <div class="dialogue-content">
         <qr :text="password.decryptedPassword" />
       </div>
+    </dialogue>
+    <dialogue :is-shown="isEditPassShown" @close="closeEditPass">
+      <password-edit
+        v-bind="password"
+        :tags="password.tags.map(x => x.id)"
+        @update-password="updatePasswordData"
+        @close-dialogue="closeEditPass"
+      />
     </dialogue>
   </container>
 </template>
@@ -132,12 +142,11 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
     this.loadIcon()
   },
 
-  data() {
-    return {
-      icon: {} as Icon,
-      isQRShown: false
-    }
-  },
+  data: () => ({
+    icon: {} as Icon,
+    isQRShown: false,
+    isEditPassShown: false
+  }),
 
   computed: {
     notOAuth(): boolean {
@@ -156,6 +165,18 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
 
     closeQR() {
       this.isQRShown = false
+    },
+
+    shownEditPass() {
+      this.isEditPassShown = true
+    },
+
+    closeEditPass() {
+      this.isEditPassShown = false
+    },
+
+    async updatePasswordData(newPassword: Password) {
+      this.password = await this.$accessor.vault.getPassword(newPassword.id)
     },
 
     async deletePassword() {

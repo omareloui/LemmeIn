@@ -35,6 +35,17 @@ export interface AddPassword {
   tags?: string[]
 }
 
+export interface UpdatePassword {
+  id: string
+  app: string
+  password: string
+  isOAuth: boolean
+  accountIdentifier?: string
+  site?: string
+  note?: string
+  tags?: string[]
+}
+
 export type PasswordStrengthIDs = 0 | 1 | 2 | 3
 export type PasswordDiversity = "lowercase" | "uppercase" | "symbol" | "number"
 export type PasswordStrengthValues = "compromised" | "weak" | "okay" | "safe"
