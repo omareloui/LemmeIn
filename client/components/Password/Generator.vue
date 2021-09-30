@@ -256,7 +256,9 @@ export default Vue.extend({
         +mx(auto)
 
   +e(save)
-    +w(max 500px)
-    +mx(auto)
+    +mx(15px)
     +mt(15px)
+    overflow: hidden
+    +lt-mobile
+      +mx(50px)
 </style>
