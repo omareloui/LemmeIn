@@ -58,20 +58,14 @@ export default Vue.extend({
     // showSuggestions: { type: Boolean, default: false },
   },
 
-  data: () => ({
-    strength: null as PasswordStrength | null
-  }),
-
-  created() {
-    this.loadPasswordStrength()
+  computed: {
+    strength(): PasswordStrength {
+      return this.getPasswordStrength()
+    }
   },
 
   methods: {
-    async loadPasswordStrength() {
-      this.strength = await this.getPasswordStrength()
-    },
-
-    async getPasswordStrength() {
+    getPasswordStrength() {
       return this.$getPasswordStrength(
         this.decryptedPassword,
         this.lastUpdated as Date,
@@ -97,6 +91,7 @@ export default Vue.extend({
 
     .progress
       +block
+      +tran
       +br-bl
       +h(100%)
       +w(calc(var(--percentage) * 1%))

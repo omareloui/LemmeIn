@@ -27,7 +27,12 @@ export default Vue.extend({
         id: "password",
         type: "password",
         value: "",
-        props: { noIcon: true, minLength: 3, hasOAuth: true }
+        props: {
+          noIcon: true,
+          minLength: 3,
+          hasOAuth: true,
+          showPasswordStrength: true
+        }
       },
       {
         expandableFields: [

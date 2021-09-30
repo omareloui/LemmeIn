@@ -25,7 +25,7 @@ function calculateScore(
   const suggestions: string[] = []
 
   // Calc score for length
-  if (length >= 16) score += 8
+  if (length >= 16) score += 6
   else {
     if (length >= 10) score += 4
     else if (length >= 8) score += 3
@@ -35,8 +35,15 @@ function calculateScore(
   }
 
   // Calc score if it's duplicated or not
-  if (!isDuplicated) score++
-  else suggestions.push("It's duplicated should be changed")
+  if (length > 0) {
+    if (!isDuplicated) score++
+    else suggestions.push("It's duplicated should be changed")
+
+    // Calc score for last update date
+    const oldestDateToAccept = getDatePrevMonths(3)
+    if (Number(oldestDateToAccept) < Number(new Date(lastUpdated))) score++
+    else suggestions.push("Too old, should be updated")
+  }
 
   // Calc score if diversity
   DIVERSITIES.forEach(x => {
@@ -44,21 +51,16 @@ function calculateScore(
     else suggestions.push(`Add ${x}`)
   })
 
-  // Calc score for last update date
-  const oldestDateToAccept = getDatePrevMonths(3)
-  if (Number(oldestDateToAccept) < Number(new Date(lastUpdated))) score++
-  else suggestions.push("Too old, should be updated")
-
   // Define max score
-  const maxScore = 14
+  const maxScore = 12
 
   // Set percentage
   const percentage = Math.floor(((score || 1) / (maxScore || 1)) * 100)
 
-  // Set the vault
+  // Set the value
   let value: PasswordStrengthValues
-  if (percentage > 90) value = "safe"
-  else if (percentage > 75) value = "okay"
+  if (percentage > 80) value = "safe"
+  else if (percentage > 70) value = "okay"
   else if (percentage > 50) value = "weak"
   else value = "compromised"
 
@@ -105,6 +107,7 @@ declare module "@nuxt/types" {
   }
 }
 declare module "vuex/types/index" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Store<S> {
     $getPasswordStrength: GetPasswordStrength
   }

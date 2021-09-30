@@ -2,7 +2,7 @@
   <div
     class="input-password"
     :class="{
-      'input-password--has-oauth': hasOAuth,
+      'input-password--has-oauth': hasOAuth && hasOtherPasswords,
       'input-password--has-error': isErred
     }"
   >
@@ -46,6 +46,14 @@
       is-searchable
     />
 
+    <password-strength
+      v-if="showPasswordStrength && !isOAuth"
+      class="input-password__strength"
+      line-height="10px"
+      hide-score-text
+      :decrypted-password="value"
+    />
+
     <button-base
       v-if="hasOAuth && hasOtherPasswords"
       class="input-password__oauth-button"
@@ -76,10 +84,15 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
     noAutocomplete: { type: Boolean, default: false },
     focusOnMount: { type: Boolean, default: false },
     noIcon: { type: Boolean, default: false },
-    hasOAuth: { type: Boolean, default: false }
+    hasOAuth: { type: Boolean, default: false },
+    showPasswordStrength: { type: Boolean, default: false }
   },
 
-  data: () => ({ isShown: false, isOAuth: false, isErred: false }),
+  data: () => ({
+    isShown: false,
+    isOAuth: false,
+    isErred: false
+  }),
 
   async beforeCreate() {
     await this.$accessor.vault.getPasswords()
@@ -144,18 +157,21 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
   +pos-r
 
   +m(has-oauth)
-    +mb(28px)
-    &.input-password--has-error
-      +mb(55px)
-      .input-password__oauth-button
-        bottom: -25px
+    +mb(34px)
+
+  +m(has-error)
+    +e(input-password, strength)
+      +mt(30px)
 
   +e(oauth-button)
     +center-h
-    bottom: 0
+    bottom: -6px
     transform: translate(-50%, 100%)
     opacity: 0.8
     +w(max-content)
     +fnt-sm
     +br-md
+
+  +e(strength)
+    +my(10px)
 </style>
