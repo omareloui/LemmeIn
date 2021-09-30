@@ -13,16 +13,15 @@
   @include c.clr-txt(light);
 }
 
-* {
-  @include t.tran(color background fill);
-}
-
 body {
   @include c.clr-bg;
   @include c.clr-txt;
   @include ff.fnt(body);
   @include fs.fnt-base;
   scroll-padding-top: var(--header-height);
+  > * {
+    @include t.tran(color background fill);
+  }
 }
 
 @for $size-number from 1 through 6 {
