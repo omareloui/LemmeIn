@@ -29,6 +29,12 @@
         must-have-one-at-least
       />
     </div>
+
+    <div class="password-generator__save">
+      <button-main cta block large @click="savePassword"
+        >Save Password</button-main
+      >
+    </div>
   </div>
 </template>
 
@@ -153,6 +159,10 @@ export default Vue.extend({
       }
     },
 
+    savePassword() {
+      this.$emit("save-password", this.generatedPassword)
+    },
+
     // Options utils //
     getCheckboxValue(checkboxId: "lower" | "upper" | "numbers" | "symbols") {
       const checkBox = this.checkBoxes.find(x => x.id === checkboxId)
@@ -244,4 +254,9 @@ export default Vue.extend({
     ::v-deep
       .input-range-container
         +mx(auto)
+
+  +e(save)
+    +w(max 500px)
+    +mx(auto)
+    +mt(15px)
 </style>

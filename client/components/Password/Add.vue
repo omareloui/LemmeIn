@@ -14,68 +14,83 @@ import Vue from "vue"
 import { FormStructure, AddPassword, AddPasswordReceivedData } from "~/@types"
 
 export default Vue.extend({
+  props: {
+    password: { type: String, default: "" }
+  },
+
+  created() {
+    this.setFormFields()
+  },
+
   data: () => ({
-    formFields: [
-      {
-        id: "app",
-        type: "text",
-        value: "",
-        label: "App or Website",
-        props: { hint: "Facebook", focusOnMount: true }
-      },
-      {
-        id: "password",
-        type: "password",
-        value: "",
-        props: {
-          noIcon: true,
-          minLength: 3,
-          hasOAuth: true,
-          showPasswordStrength: true
-        }
-      },
-      {
-        expandableFields: [
-          "gap",
-          {
-            id: "accountIdentifier",
-            type: "text",
-            value: "",
-            label: "Account identifier",
-            props: {
-              placeholder: "email or username",
-              notRequired: true
-            }
-          },
-          {
-            id: "site",
-            type: "text",
-            label: "Link",
-            value: "",
-            props: {
-              hing: "https://google.com",
-              notRequired: true
-            }
-          },
-          {
-            id: "tags",
-            type: "tags",
-            value: [],
-            props: { leftIcon: "" }
-          },
-          {
-            id: "note",
-            type: "textarea",
-            label: "Note",
-            value: "",
-            props: { notRequired: true }
-          }
-        ]
-      }
-    ] as FormStructure
+    formFields: [] as FormStructure
   }),
 
   methods: {
+    setFormFields() {
+      const { password } = this
+
+      this.formFields = [
+        {
+          id: "app",
+          type: "text",
+          value: "",
+          label: "App or Website",
+          props: { hint: "Facebook", focusOnMount: true }
+        },
+        {
+          id: "password",
+          type: "password",
+          value: password,
+          props: {
+            default: password,
+            noIcon: true,
+            minLength: 3,
+            hasOAuth: true,
+            showPasswordStrength: true
+          }
+        },
+        {
+          expandableFields: [
+            "gap",
+            {
+              id: "accountIdentifier",
+              type: "text",
+              value: "",
+              label: "Account identifier",
+              props: {
+                placeholder: "email or username",
+                notRequired: true
+              }
+            },
+            {
+              id: "site",
+              type: "text",
+              label: "Link",
+              value: "",
+              props: {
+                hint: "https://google.com",
+                notRequired: true
+              }
+            },
+            {
+              id: "tags",
+              type: "tags",
+              value: [],
+              props: { leftIcon: "" }
+            },
+            {
+              id: "note",
+              type: "textarea",
+              label: "Note",
+              value: "",
+              props: { notRequired: true }
+            }
+          ]
+        }
+      ]
+    },
+
     async addPassword({
       app,
       password,

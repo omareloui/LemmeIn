@@ -31,10 +31,13 @@
     </transition>
 
     <dialogue :is-shown="isAddPassShown" @close="closeAddPass">
-      <password-add @close-dialogue="closeAddPass" />
+      <password-add
+        @close-dialogue="closeAddPass"
+        :password="defaultPasswordForAddPass"
+      />
     </dialogue>
     <dialogue :is-shown="isPassGenShown" @close="closePassGen">
-      <password-generator />
+      <password-generator @save-password="savePassword" />
     </dialogue>
   </div>
 </template>
@@ -46,7 +49,9 @@ export default Vue.extend({
   data: () => ({
     isMenuOpen: false,
     isPassGenShown: false,
-    isAddPassShown: false
+    isAddPassShown: false,
+
+    defaultPasswordForAddPass: ""
   }),
 
   mounted() {
@@ -57,6 +62,16 @@ export default Vue.extend({
   },
 
   methods: {
+    savePassword(password: string) {
+      this.closeAllDialogues()
+      this.openAddPass()
+      this.defaultPasswordForAddPass = password
+    },
+
+    clearDefaultPass() {
+      this.defaultPasswordForAddPass = ""
+    },
+
     closeMenu() {
       this.isMenuOpen = false
     },
@@ -89,6 +104,7 @@ export default Vue.extend({
     },
     closeAddPass() {
       this.isAddPassShown = false
+      this.clearDefaultPass()
     },
 
     openPassGen() {
