@@ -13,7 +13,8 @@ export {
   assertThrows,
   assertThrowsAsync,
 } from "https://deno.land/std@0.109.0/testing/asserts.ts";
-export { ensureFile } from "https://deno.land/std@0.109.0/fs/mod.ts";
+export { ensureDir } from "https://deno.land/std@0.109.0/fs/mod.ts";
+export { join } from "https://deno.land/std@0.109.0/path/mod.ts";
 
 export {
   Application,

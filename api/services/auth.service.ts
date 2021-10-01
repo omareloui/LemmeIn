@@ -8,6 +8,9 @@ import { BaseService } from "./base.service.ts";
 import UserService from "./user.service.ts";
 import type { UserDoc } from "./user.service.ts";
 import type { Role } from "../config/roles.ts";
+import { CollectionHelper } from "../helpers/collection.helper.ts";
+
+const UserHelper = new CollectionHelper(User);
 
 interface RegisterOptions {
   email: string;
@@ -38,7 +41,7 @@ export default class AuthService extends BaseService {
     password,
   }: LoginOptions): Promise<LoggingStructure> {
     // Get the user and validate him
-    const user = await User.findOne({ email: enteredEmail });
+    const user = await UserHelper.findOne({ email: enteredEmail });
     const isValidPass =
       user && (await HashHelper.compare(password, user.password));
     if (!user?.password || !isValidPass)
@@ -47,7 +50,7 @@ export default class AuthService extends BaseService {
         path: "login",
       });
     // Get the token
-    const id = user._id.toString();
+    const id = user.id.toString();
     const token = await JwtService.create(id);
     const { firstName, lastName, email, role, createdAt, updatedAt } = user;
     return {

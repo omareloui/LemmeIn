@@ -1,13 +1,25 @@
-import { ensureFile, getLogger, handlers, setup, LogRecord } from "../deps.ts";
+import {
+  ensureDir,
+  getLogger,
+  handlers,
+  setup,
+  LogRecord,
+  join,
+} from "../deps.ts";
 import configs from "../config/config.ts";
 
 const { env } = configs;
 const currentDate = new Date().toLocaleString();
-const dateForFileName = currentDate.replace(/\//g, "-").replace(/:/g, "_");
-const logFileLocation = `./logs/${dateForFileName} [${env}].log`;
+const dateForFileName = currentDate
+  .replace(/\//g, "-")
+  .replace(/:/g, "_")
+  .replace(/,/g, "")
+  .replace(/ [AP]M/, (v: string) => v.trim());
+const logFolder = join(".", "logs");
+const logFileLocation = join(logFolder, `${dateForFileName} [${env}].log`);
 
 // Create log file if it doesn't exist
-await ensureFile(logFileLocation);
+await ensureDir(logFolder);
 
 function normalizeMessage(msg: string) {
   const isFistMessageAnObject = !!msg.match(/^\{".+?":.+\}$/);
@@ -32,17 +44,18 @@ function normalizeArgs(args: unknown[]) {
   return result;
 }
 
+function getFullMessage({ args, msg }: LogRecord) {
+  return `${normalizeMessage(msg)}${normalizeArgs(args)}`;
+}
+
 function formatter(logRecord: LogRecord) {
-  const { levelName, args, msg } = logRecord;
-  return `[${levelName}] ${normalizeMessage(msg)}${normalizeArgs(args)}`;
+  const { levelName } = logRecord;
+  return `[${levelName}] ${getFullMessage(logRecord)}`;
 }
 
 function formatterWithDatetime(logRecord: LogRecord) {
   const time = new Date().toISOString();
-  const { levelName, args, msg } = logRecord;
-  return `${time} [${levelName}] ${normalizeMessage(msg)}${normalizeArgs(
-    args
-  )}`;
+  return `[${time}] ${getFullMessage(logRecord)}`;
 }
 
 await setup({
@@ -72,12 +85,8 @@ await setup({
   },
 });
 
-let log = getLogger();
-if (env === "development") log = getLogger("developer");
-else if (env === "test") log = getLogger("tests");
+let log = getLogger("development");
+if (env === "test") log = getLogger("tests");
 else if (env === "production") log = getLogger("production");
-
-// Remove the created log file if test env
-if (env === "test") await Deno.remove(logFileLocation);
 
 export { log };

@@ -1,5 +1,5 @@
 import configs from "../config/config.ts";
-import { Context, isHttpError } from "../deps.ts";
+import { Context } from "../deps.ts";
 import { log } from "../utils/logger.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 
@@ -12,17 +12,18 @@ export async function errorHandler(
   try {
     await next();
   } catch (err) {
-    let message = err.message;
+    const message = err.message;
     const name = err.name;
     const path = err.path;
     const type = err.type;
     const status =
       err.status || err.statusCode || ErrorHelper.status.internalServerError;
 
-    if (!isHttpError(err))
-      message = env === "development" ? message : "Internal Server Error";
+    if (env !== "production") {
+      if (status >= 400 && status < 500) log.warning(message);
+      else if (status >= 500) log.critical(message);
+    }
 
-    log.error(err);
     response.status = status;
     response.body = { message, name, path, type, status };
   }

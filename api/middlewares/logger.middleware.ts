@@ -5,9 +5,14 @@ export default function (app: Application) {
   app.use(async ({ response, request }, next) => {
     await next();
     const responseTime = response.headers.get("X-Response-Time");
-    log.info(
-      `${request.method} [${response.status}] ${request.url} - ${responseTime}`
-    );
+    const { status } = response;
+    const { method, url } = request;
+    const message = `${method} [${status}] ${url} - ${responseTime}`;
+
+    // Set the log function
+    if (status < 400) log.info(message);
+    else if (status >= 400 && status < 500) log.warning(message);
+    else if (status >= 500) log.critical(message);
   });
 
   app.use(async (ctx, next) => {
