@@ -1,6 +1,8 @@
 // deno-lint-ignore-file
+import { Document } from "../deps.ts";
+
 type ID = string;
-type Doc = { id: string; [key: string]: any };
+type Doc = { id: string | Document; [key: string]: any };
 
 type CreateReturn = Promise<Doc>;
 type GetOneReturn = Promise<Doc>;

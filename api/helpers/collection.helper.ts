@@ -11,7 +11,10 @@ const { env } = config;
 
 type ID = Document | string;
 type CollectionDocument = { _id: ID };
-type CollectionFindOptions<T> = Partial<Record<keyof T, string | RegExp>>;
+type CollectionFindOptions<T> = Partial<
+  // deno-lint-ignore no-explicit-any
+  Record<keyof T, string | RegExp | ID | { $in: Array<any> }>
+>;
 type CollectionUpdateOptions<T> = Partial<Omit<T, "_id">>;
 
 export class CollectionHelper<T extends CollectionDocument> {
@@ -38,9 +41,19 @@ export class CollectionHelper<T extends CollectionDocument> {
     return this.findOne({ _id: new ObjectId(id) });
   }
 
+  findMineById(id: ID, userId: string) {
+    // @ts-ignore 'cause it might not have a user property
+    return this.findOne({ _id: new ObjectId(id), user: userId });
+  }
+
+  findAllMine(userId: string) {
+    // @ts-ignore 'cause it might not have a user property
+    return this.find({ user: userId });
+  }
+
   async createOne(data: Partial<T>) {
     const createdCollectionId = await this.collection.insertOne(data);
-    return this.findById(createdCollectionId);
+    return (await this.findById(createdCollectionId))!;
   }
 
   async updateById(id: ID, newOptions: CollectionUpdateOptions<T>) {
@@ -51,7 +64,27 @@ export class CollectionHelper<T extends CollectionDocument> {
     return this.findById(id);
   }
 
+  async updateMineById(
+    id: ID,
+    newOptions: CollectionUpdateOptions<T>,
+    userId: string
+  ) {
+    await this.collection.updateOne(
+      { _id: new ObjectId(id), user: userId },
+      { $set: newOptions }
+    );
+    return this.findById(id);
+  }
+
   async deleteById(id: ID) {
     await this.collection.deleteOne({ _id: new ObjectId(id) });
+  }
+
+  async deleteMineById(id: ID, userId: string) {
+    await this.collection.deleteOne({ _id: new ObjectId(id), user: userId });
+  }
+
+  async drop() {
+    await this.collection.drop();
   }
 }

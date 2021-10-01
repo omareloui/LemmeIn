@@ -1,23 +1,26 @@
-import { ObjectId } from "../../deps.ts";
 import { ServiceTester } from "./service.test.helper.ts";
-import PasswordService from "../password.service.ts";
+import { CollectionHelper } from "../../helpers/collection.helper.ts";
+import AccountService from "../account.service.ts";
 import TagService from "../tag.service.ts";
-import { Password } from "../../models/password.model.ts";
+import { Account } from "../../models/account.model.ts";
 
 import { mongoIdRegExp } from "../../utils/mongoIdRegExp.ts";
 import generateRandomText from "../../utils/generateRandomText.ts";
 
-const serviceTester = new ServiceTester("password", PasswordService);
-const oAuthServiceTester = new ServiceTester("password", PasswordService);
+const AccountHelper = new CollectionHelper(Account);
+const serviceTester = new ServiceTester("account", AccountService);
+const oAuthServiceTester = new ServiceTester("account", AccountService);
 
 const passwordToTestOn = "134.a2!4~234";
 
 const tagName = generateRandomText(20);
 const tag = await TagService.createMine(
-  { tag: tagName, color: "#333" },
+  { name: tagName, color: "#333" },
   serviceTester.userId
 );
-const tagId = tag.id;
+const tagId = tag.id.toString();
+
+await AccountHelper.drop();
 
 serviceTester.testCreateMine({
   app: "google.com",
@@ -29,7 +32,7 @@ serviceTester.testGetOneMine();
 serviceTester.testGetAllMine();
 
 serviceTester.test("should decrypt password correctly", async () => {
-  const password = await PasswordService.decrypt(
+  const password = await AccountService.decrypt(
     serviceTester.createdRecordId!,
     serviceTester.userId
   );
@@ -37,11 +40,11 @@ serviceTester.test("should decrypt password correctly", async () => {
 });
 
 serviceTester.test("should get password and populate the tags", async () => {
-  const password = await PasswordService.getOneMine(
+  const password = await AccountService.getOneMine(
     serviceTester.createdRecordId!,
     serviceTester.userId
   );
-  serviceTester.shouldEquals(password!.tags![0].tag, tagName);
+  serviceTester.shouldEquals(password!.tags![0].name, tagName);
   await TagService.removeOneMine(tagId, serviceTester.userId);
 });
 
@@ -50,7 +53,7 @@ oAuthServiceTester.test(
   async () => {
     if (!serviceTester.createdRecordId)
       throw new Error("No record created yet for the oAuth");
-    const newPassword = await PasswordService.createMine(
+    const newPassword = await AccountService.createMine(
       {
         app: "oAuthed app",
         password: serviceTester.createdRecordId.toString(),
@@ -59,7 +62,7 @@ oAuthServiceTester.test(
       oAuthServiceTester.userId
     );
     const newPasswordId = newPassword.id.toString();
-    const password = await PasswordService.getOneMine(
+    const password = await AccountService.getOneMine(
       newPasswordId,
       oAuthServiceTester.userId
     );
@@ -67,7 +70,7 @@ oAuthServiceTester.test(
       throw new Error("Got no password for oAuth");
     // @ts-ignore ignore that the password could  be as string
     serviceTester.shouldMatch(password.password.id, mongoIdRegExp);
-    await PasswordService.removeOneMine(
+    await AccountService.removeOneMine(
       newPasswordId,
       oAuthServiceTester.userId
     );
@@ -80,13 +83,13 @@ serviceTester.test("should updating the password's app", async () => {
     throw new Error("Didn't create the record yet");
 
   const newApp = "new app name";
-  await PasswordService.updateOneMine(
+  await AccountService.updateOneMine(
     serviceTester.createdRecordId,
     { app: newApp },
     serviceTester.userId
   );
 
-  const doc = await PasswordService.getOneMine(
+  const doc = await AccountService.getOneMine(
     serviceTester.createdRecordId,
     serviceTester.userId
   );
@@ -100,18 +103,18 @@ serviceTester.test(
     if (!serviceTester.createdRecordId)
       throw new Error("Didn't create the record yet");
 
-    const recordToUpdate = await PasswordService.getOneMine(
+    const recordToUpdate = await AccountService.getOneMine(
       serviceTester.createdRecordId,
       serviceTester.userId
     );
     // The update the app with the same last app name so it shouldn't update it
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       serviceTester.createdRecordId,
       { site: "https://newsite.com" },
       serviceTester.userId
     );
     // await serviceTester.testUpdateOneMine({ site: "https://brandnewsite.com" });
-    const recordAfterUpdate = await PasswordService.getOneMine(
+    const recordAfterUpdate = await AccountService.getOneMine(
       serviceTester.createdRecordId,
       serviceTester.userId
     );
@@ -129,13 +132,13 @@ serviceTester.test(
       throw new Error("Didn't create the record yet");
 
     // The update the app with the same last app name so it shouldn't update it
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       serviceTester.createdRecordId,
       { site: undefined },
       serviceTester.userId
     );
     // await serviceTester.testUpdateOneMine({ site: "https://brandnewsite.com" });
-    const recordAfterUpdate = await PasswordService.getOneMine(
+    const recordAfterUpdate = await AccountService.getOneMine(
       serviceTester.createdRecordId,
       serviceTester.userId
     );
@@ -153,13 +156,13 @@ serviceTester.test(
       throw new Error("Didn't create the record yet");
 
     // The update the app with the same last app name so it shouldn't update it
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       serviceTester.createdRecordId,
       { site: "" },
       serviceTester.userId
     );
     // await serviceTester.testUpdateOneMine({ site: "https://brandnewsite.com" });
-    const recordAfterUpdate = await PasswordService.getOneMine(
+    const recordAfterUpdate = await AccountService.getOneMine(
       serviceTester.createdRecordId,
       serviceTester.userId
     );
@@ -173,13 +176,13 @@ serviceTester.test(
     if (!serviceTester.createdRecordId)
       throw new Error("Didn't create the record yet");
 
-    const recordToUpdate = await PasswordService.getOneMine(
+    const recordToUpdate = await AccountService.getOneMine(
       serviceTester.createdRecordId,
       serviceTester.userId
     );
     // The update the app with the same last app name so it shouldn't update it
     await serviceTester.testUpdateOneMine({ app: "new app name" });
-    const recordAfterUpdate = await PasswordService.getOneMine(
+    const recordAfterUpdate = await AccountService.getOneMine(
       serviceTester.createdRecordId,
       serviceTester.userId
     );
@@ -201,23 +204,17 @@ serviceTester.test(
     const id = serviceTester.createdRecordId;
     const userId = serviceTester.userId;
 
-    const recordToUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordToUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordToUpdate)
       throw new Error("Couldn't find the record before update");
 
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       id,
       { password: newPass, isOAuth: false },
       userId
     );
 
-    const recordAfterUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordAfterUpdate = await AccountHelper.findMineById(id, userId);
 
     if (!recordAfterUpdate)
       throw new Error("Couldn't find the record after update");
@@ -245,23 +242,17 @@ serviceTester.testAsyncError(
     const id = serviceTester.createdRecordId;
     const userId = serviceTester.userId;
 
-    const recordToUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordToUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordToUpdate)
       throw new Error("Couldn't find the record before update");
 
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       id,
       { password: newPassId, isOAuth: true },
       userId
     );
 
-    const recordAfterUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordAfterUpdate = await AccountHelper.findMineById(id, userId);
 
     if (!recordAfterUpdate)
       throw new Error("Couldn't find the record after update");
@@ -286,23 +277,17 @@ serviceTester.testAsyncError(
     const id = serviceTester.createdRecordId;
     const userId = serviceTester.userId;
 
-    const recordToUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordToUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordToUpdate)
       throw new Error("Couldn't find the record before update");
 
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       id,
       { password: newPass, isOAuth: true },
       userId
     );
 
-    const recordAfterUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordAfterUpdate = await AccountHelper.findMineById(id, userId);
 
     if (!recordAfterUpdate)
       throw new Error("Couldn't find the record after update");
@@ -323,35 +308,26 @@ serviceTester.testAsyncError(
       throw new Error("Didn't create the record yet");
 
     // The oauth was created pointing to the current one
-    const newPass = (
-      await Password.insertOne({
-        app: "some app",
-        password: serviceTester.createdRecordId.toString(),
-        user: serviceTester.userId,
-      })
-    ).toString();
+    const newPass = await AccountHelper.createOne({
+      app: "some app",
+      password: serviceTester.createdRecordId.toString(),
+      user: serviceTester.userId,
+    });
 
     const id = serviceTester.createdRecordId.toString();
     const userId = serviceTester.userId;
 
-    const recordToUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordToUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordToUpdate)
       throw new Error("Couldn't find the record before update");
 
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       id,
-      { password: newPass, isOAuth: true },
+      { password: newPass.id.toString(), isOAuth: true },
       userId
     );
 
-    const recordAfterUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-
+    const recordAfterUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordAfterUpdate)
       throw new Error("Couldn't find the record after update");
 
@@ -371,41 +347,34 @@ serviceTester.testAsyncError(
       throw new Error("Didn't create the record yet");
 
     const passPointingToCurrentId = (
-      await Password.insertOne({
+      await AccountHelper.createOne({
         app: "some app",
         password: serviceTester.createdRecordId.toString(),
         user: serviceTester.userId,
       })
-    ).toString();
+    ).id.toString();
     const passPointingToTheOnePointingToCurrentId = (
-      await Password.insertOne({
+      await AccountHelper.createOne({
         app: "some app",
         password: passPointingToCurrentId,
         user: serviceTester.userId,
       })
-    ).toString();
+    ).id.toString();
 
     const id = serviceTester.createdRecordId;
     const userId = serviceTester.userId;
 
-    const recordToUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordToUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordToUpdate)
       throw new Error("Couldn't find the record before update");
 
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       id,
       { password: passPointingToTheOnePointingToCurrentId, isOAuth: true },
       userId
     );
 
-    const recordAfterUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-
+    const recordAfterUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordAfterUpdate)
       throw new Error("Couldn't find the record after update");
 
@@ -415,10 +384,11 @@ serviceTester.testAsyncError(
       true
     );
 
-    await Password.deleteOne({ _id: new ObjectId(passPointingToCurrentId) });
-    await Password.deleteOne({
-      _id: new ObjectId(passPointingToTheOnePointingToCurrentId),
-    });
+    await Promise.all(
+      [passPointingToCurrentId, passPointingToCurrentId].map((id) =>
+        AccountHelper.deleteMineById(id, userId)
+      )
+    );
   },
   "Can't update the password to a password that points to the current one or one of it's references points to the current one"
 );
@@ -431,27 +401,21 @@ serviceTester.test(
     const id = serviceTester.createdRecordId.toString();
     const userId = serviceTester.userId;
     const createdId = (
-      await Password.insertOne({
+      await AccountHelper.createOne({
         app: "any new pass",
         password: "just_for_the_id",
         user: userId,
       })
-    ).toString();
-    const recordToUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    ).id.toString();
+    const recordToUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordToUpdate)
       throw new Error("Couldn't find the record before update");
-    await PasswordService.updateOneMine(
+    await AccountService.updateOneMine(
       id,
       { password: createdId, isOAuth: true },
       userId
     );
-    const recordAfterUpdate = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const recordAfterUpdate = await AccountHelper.findMineById(id, userId);
     if (!recordAfterUpdate)
       throw new Error("Couldn't find the record after update");
     serviceTester.shouldEquals(
@@ -459,7 +423,7 @@ serviceTester.test(
         recordAfterUpdate.password !== recordToUpdate.password,
       true
     );
-    await Password.deleteOne({ _id: new ObjectId(createdId) });
+    await AccountHelper.deleteById(createdId);
   }
 );
 
@@ -469,33 +433,27 @@ serviceTester.testAsyncError(
   async () => {
     const id = serviceTester.createdRecordId;
     const userId = serviceTester.userId;
-
     if (!id) throw new Error("Didn't create the record yet");
-
-    await Password.insertOne({
+    await AccountHelper.createOne({
       app: "any new pass",
       password: id,
       user: userId,
     });
-    await PasswordService.removeOneMine(id, userId);
+    await AccountService.removeOneMine(id, userId);
   },
-  "You can't delete this password because it has password(s) that point to it"
+  "You can't delete this account because it has password(s) that point to it"
 );
 
 serviceTester.test("should delete password fine", async () => {
   const userId = serviceTester.userId;
   const createdPasswordId = (
-    await Password.insertOne({
+    await AccountHelper.createOne({
       app: "any new pass",
       password: "some_pass",
       user: userId,
     })
-  ).toString();
-  await PasswordService.removeOneMine(createdPasswordId, userId);
-  const deletedPassword = await Password.findOne({
-    _id: new ObjectId(createdPasswordId),
-  });
+  ).id.toString();
+  await AccountService.removeOneMine(createdPasswordId, userId);
+  const deletedPassword = await AccountHelper.findById(createdPasswordId);
   serviceTester.shouldEquals(!deletedPassword, true);
 });
-
-await Password.drop();

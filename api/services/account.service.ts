@@ -3,23 +3,28 @@ import { mongoIdRegExp } from "../utils/mongoIdRegExp.ts";
 import compareArrays from "../utils/compareArrays.ts";
 
 import EncryptionHelper from "../helpers/encryption.helper.ts";
+import { CollectionHelper } from "../helpers/collection.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
-import { normalizeDocument } from "../utils/normalizeDocuments.ts";
 import { BaseService } from "./base.service.ts";
 
 import {
-  Password,
-  PasswordSchema,
-  VirtualPasswordSchema,
-} from "../models/password.model.ts";
-import type { VirtualTagSchema } from "../models/tag.model.ts";
+  Account,
+  AccountSchema,
+  VirtualAccountSchema,
+} from "../models/account.model.ts";
+
+import type { Document } from "../deps.ts";
+import type { NormalizedDoc } from "../utils/normalizeDocuments.ts";
+import type { TagSchema } from "../models/tag.model.ts";
+
 import TagService from "./tag.service.ts";
 
-const passwordErrorHelper = new ErrorHelper("password");
+const AccountHelper = new CollectionHelper(Account);
+const accountErrorHelper = new ErrorHelper("account");
 
 const ENCRYPTED_PASSWORD_REG_EXP = /[\da-z]\.[\da-z]/;
 
-interface CreatePasswordOptions {
+interface CreateAccountOptions {
   app: string;
   password: string;
   accountIdentifier?: string;
@@ -29,19 +34,19 @@ interface CreatePasswordOptions {
   isOAuth?: boolean;
 }
 
-type UpdatePasswordOptions = Partial<CreatePasswordOptions>;
+type UpdateAccountOptions = Partial<CreateAccountOptions>;
 
 type InsertionData = Partial<
-  Omit<PasswordSchema, "_id"> & {
+  Omit<AccountSchema, "_id"> & {
     isOAuth: boolean;
   }
 >;
 
-export default class PasswordService extends BaseService {
+export default class AccountService extends BaseService {
   public static async createMine(
-    data: CreatePasswordOptions,
+    data: CreateAccountOptions,
     userId: string
-  ): Promise<VirtualPasswordSchema> {
+  ): Promise<VirtualAccountSchema> {
     const currentDate = new Date();
     const insertionData: InsertionData = {
       ...data,
@@ -56,67 +61,54 @@ export default class PasswordService extends BaseService {
       insertionData.password = encryptHelper.encrypt(data.password);
     }
     delete insertionData.isOAuth;
-    const passwordId = await Password.insertOne(insertionData);
-    if (!passwordId)
-      return passwordErrorHelper.badRequest({ action: "create" });
-    const newPassword = await Password.findOne({ _id: passwordId });
-    if (!newPassword) return passwordErrorHelper.notFound();
-    return this.normalizeDoc(newPassword, userId);
+    const account = await AccountHelper.createOne(insertionData);
+    if (!account) return accountErrorHelper.badRequest({ action: "create" });
+    return this.populate(account, userId);
   }
 
   public static async getAllMine(
     userId: string
-  ): Promise<VirtualPasswordSchema[]> {
-    const passwords = await Password.find({ user: userId }).toArray();
-    const normalizedDocs = await this.normalizeAndSortDocs(passwords, userId);
-    return normalizedDocs;
+  ): Promise<VirtualAccountSchema[]> {
+    const accounts = await AccountHelper.findAllMine(userId);
+    return await this.populateAndSort(accounts, userId);
   }
 
   public static async getMineWithTag(
     tagId: string,
     userId: string
-  ): Promise<VirtualPasswordSchema[]> {
-    const passwords = await Password.find({
-      user: userId,
-      tags: tagId,
-    }).toArray();
-    return this.normalizeAndSortDocs(passwords, userId);
+  ): Promise<VirtualAccountSchema[]> {
+    const accounts = await AccountHelper.find({ user: userId, tags: tagId });
+    return this.populateAndSort(accounts, userId);
   }
 
   public static async getOneMine(
     id: string,
     userId: string
-  ): Promise<VirtualPasswordSchema> {
-    const passwordDoc = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!passwordDoc) return passwordErrorHelper.notFound();
-    return this.normalizeDoc(passwordDoc, userId);
+  ): Promise<VirtualAccountSchema> {
+    const account = await AccountHelper.findMineById(id, userId);
+    if (!account) return accountErrorHelper.notFound();
+    return this.populate(account, userId);
   }
 
-  private static async getMyPasswordTags(
+  private static async getMyAccountTags(
     tags: string[],
     userId: string
-  ): Promise<VirtualTagSchema[]> {
+  ): Promise<NormalizedDoc<TagSchema>[]> {
     if (tags && tags.length > 0)
-      return await TagService.getMyPasswordAllTags(tags, userId);
+      return await TagService.getMyAccountAllTags(tags, userId);
     return [];
   }
 
   public static async decrypt(id: string, userId: string) {
-    const passwordDoc = await Password.findOne({
+    const account = await AccountHelper.findOne({
       _id: new ObjectId(id),
       user: userId,
-      password: { $regex: ENCRYPTED_PASSWORD_REG_EXP },
+      password: ENCRYPTED_PASSWORD_REG_EXP,
     });
-    if (!passwordDoc) return passwordErrorHelper.notFound();
+    if (!account) return accountErrorHelper.notFound();
     const encryptionHelper = new EncryptionHelper();
-    const password = encryptionHelper.decrypt(passwordDoc.password);
-    await Password.updateOne(
-      { _id: new ObjectId(id), user: userId },
-      { $set: { lastUsed: new Date() } }
-    );
+    const password = encryptionHelper.decrypt(account.password);
+    await AccountHelper.updateMineById(id, { lastUsed: new Date() }, userId);
     return password;
   }
 
@@ -130,14 +122,11 @@ export default class PasswordService extends BaseService {
       note,
       site,
       tags,
-    }: UpdatePasswordOptions,
+    }: UpdateAccountOptions,
     userId: string
   ) {
-    const originalDoc = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!originalDoc) return passwordErrorHelper.notFound();
+    const originalDoc = await AccountHelper.findMineById(id, userId);
+    if (!originalDoc) return accountErrorHelper.notFound();
 
     const fieldsToUpdate: Partial<InsertionData> = {};
     const currentDate = new Date();
@@ -161,21 +150,21 @@ export default class PasswordService extends BaseService {
         } else if (password && isOAuth) {
           // Making sure it's a valid password id to update to
           if (!password.match(mongoIdRegExp))
-            return passwordErrorHelper.badRequest({
+            return accountErrorHelper.badRequest({
               message: "Can't update the password with invalid password id",
             });
           // Make sure it's not the current password id
           if (password === id)
-            return passwordErrorHelper.badRequest({
+            return accountErrorHelper.badRequest({
               message: "Can't update the password to the current password",
             });
           // Make sure it exists
-          const passwordToUpdateTo = await Password.findOne({
-            _id: new ObjectId(password),
-            user: userId,
-          });
+          const passwordToUpdateTo = await AccountHelper.findMineById(
+            password,
+            userId
+          );
           if (!passwordToUpdateTo)
-            return passwordErrorHelper.badRequest({
+            return accountErrorHelper.badRequest({
               message: "Can't find the password you want to update to",
             });
           // Make sure it's not a password that points to the current password
@@ -184,11 +173,11 @@ export default class PasswordService extends BaseService {
             password,
             userId
           );
-          let currPass: VirtualPasswordSchema | undefined =
+          let currPass: VirtualAccountSchema | undefined =
             optimizedPasswordToUpdateTo.password;
           while (currPass) {
-            if (currPass.id === id)
-              return passwordErrorHelper.badRequest({
+            if (currPass.id.toString() === id)
+              return accountErrorHelper.badRequest({
                 message:
                   "Can't update the password to a password that points to the current one or one of it's references points to the current one",
               });
@@ -220,86 +209,70 @@ export default class PasswordService extends BaseService {
 
     // Return without saving if nothing to change
     if (Object.keys(fieldsToUpdate).length === 0)
-      return this.normalizeDoc(originalDoc, userId);
+      return this.populate(originalDoc, userId);
 
     fieldsToUpdate.updatedAt = currentDate;
 
-    const updatingData = await Password.updateOne(
-      { _id: new ObjectId(id), user: userId },
-      { $set: fieldsToUpdate }
+    const newAccount = await AccountHelper.updateMineById(
+      id,
+      fieldsToUpdate,
+      userId
     );
-    if (!updatingData)
-      return passwordErrorHelper.badRequest({ action: "update" });
-
-    const newPassword = await this.getOneMine(id, userId);
-    return newPassword;
+    if (!newAccount) return accountErrorHelper.badRequest({ action: "update" });
+    return newAccount;
   }
 
   public static async removeOneMine(id: string, userId: string) {
-    const password = await Password.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!password) return passwordErrorHelper.notFound();
-    // Make sure the password to delete doesn't have any passwords that
+    const account = await AccountHelper.findMineById(id, userId);
+    if (!account) return accountErrorHelper.notFound();
+    // Make sure the account to delete doesn't have any passwords that
     // point the the current one
-    const passwordsThatPointToTheOneToDelete = await Password.find({
+    const accountThatPointToTheOneToDelete = await AccountHelper.find({
       password: id,
-    }).toArray();
-    if (passwordsThatPointToTheOneToDelete.length > 0)
-      return passwordErrorHelper.badRequest({
+    });
+    if (accountThatPointToTheOneToDelete.length > 0)
+      return accountErrorHelper.badRequest({
         message:
-          "You can't delete this password because it has password(s) that point to it",
+          "You can't delete this account because it has password(s) that point to it",
       });
 
-    const deleteCount = await Password.deleteOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!deleteCount) {
-      return passwordErrorHelper.badRequest({ action: "delete" });
-    }
-    return deleteCount;
+    await AccountHelper.deleteMineById(id, userId);
+    return true;
   }
 
-  private static async normalizeDoc(
-    doc: PasswordSchema,
+  private static async populate(
+    doc: NormalizedDoc<AccountSchema>,
     userId: string
-  ): Promise<VirtualPasswordSchema> {
-    const p = { ...normalizeDocument(doc), id: doc._id.toString() };
-    const isOAuth = this.checkIfPasswordOAuth(p.password);
+  ): Promise<VirtualAccountSchema> {
+    const isOAuth = this.checkIfPasswordOAuth(doc.password);
     // @ts-ignore accept the password type as virtual password
-    const result = { ...p } as VirtualPasswordSchema;
+    const result = { ...doc } as VirtualPasswordSchema;
     // Set password
     if (!isOAuth) {
       delete (result as { password?: string }).password;
     } else {
-      result.password = await this.getOneMine(p.password, userId);
+      result.password = await this.getOneMine(result.password, userId);
     }
     // Set tags
-    result.tags = await this.getMyPasswordTags(doc.tags, userId);
+    result.tags = await this.getMyAccountTags(doc.tags, userId);
     return result;
   }
 
-  private static async normalizeAndSortDocs(
-    docs: PasswordSchema[],
+  private static async populateAndSort(
+    docs: NormalizedDoc<AccountSchema>[],
     userId: string
-  ): Promise<VirtualPasswordSchema[]> {
-    docs = docs.map((x) => {
-      x._id = x._id.toString();
-      return x;
-    });
-    const normalized = await Promise.all(
-      docs.map((x) => this.normalizeDoc(x, userId))
+  ): Promise<VirtualAccountSchema[]> {
+    const populated = await Promise.all(
+      docs.map((x) => this.populate(x, userId))
     );
-    return this.sort(normalized);
+    return this.sort(populated);
   }
 
-  private static checkIfPasswordOAuth(password: string) {
+  private static checkIfPasswordOAuth(password: string | Document) {
     return !!password.toString().match(mongoIdRegExp);
   }
 
-  private static sort(docs: VirtualPasswordSchema[]): VirtualPasswordSchema[] {
+  private static sort(docs: VirtualAccountSchema[]): VirtualAccountSchema[] {
     return docs.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
   }
 }

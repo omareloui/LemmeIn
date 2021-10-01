@@ -12,11 +12,16 @@ class Database {
   }
 
   async connect() {
-    log.info("Database connecting...");
-    const client: MongoClient = new MongoClient();
-    await client.connect(this.url);
-    this.client = client;
-    log.info("Database connected!");
+    try {
+      log.info("Database connecting...");
+      const client: MongoClient = new MongoClient();
+      await client.connect(this.url);
+      this.client = client;
+      log.info("Database connected!");
+    } catch (e) {
+      log.critical(e.message);
+      Deno.exit(1);
+    }
   }
 
   get getDatabase() {

@@ -10,6 +10,7 @@ dist-ssr
 client/node_modules
 client/.nuxt
 
+api/**/logs
 api/**/.deno_plugins
 api/**/.env.development
 api/**/.env.production

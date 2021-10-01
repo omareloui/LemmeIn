@@ -4,12 +4,12 @@ import TagService from "../tag.service.ts";
 const serviceTester = new ServiceTester("tag", TagService);
 const serviceTesterDuplication = new ServiceTester("tag", TagService);
 
-serviceTester.testCreateMine({ tag: "testingTag", color: "#fff" });
+serviceTester.testCreateMine({ name: "testingTag", color: "#fff" });
 serviceTester.testGetAllMine();
 serviceTester.testGetOneMine();
 
 serviceTester.test(
-  "should normalize all tags with passwords count",
+  "should normalize all tags with accounts count",
   async () => {
     if (!serviceTester.service.getAllMine)
       throw new Error("This service doesn't have getOneMine");
@@ -17,7 +17,7 @@ serviceTester.test(
       serviceTester.userId
     );
     // deno-lint-ignore no-explicit-any
-    serviceTester.shouldHaveProperty(records[0] as any, "passwordsCount");
+    serviceTester.shouldHaveProperty(records[0] as any, "accountsCount");
   }
 );
 
@@ -25,24 +25,24 @@ serviceTester.testAsyncError(
   "should throw error on creating new testing with the same name",
   async () => {
     await TagService.createMine(
-      { tag: "testingTag", color: "#123" },
+      { name: "testingTag", color: "#123" },
       serviceTester.userId
     );
   },
   "already exists"
 );
 
-serviceTester.testUpdateOneMine({ tag: "testingTag" });
+serviceTester.testUpdateOneMine({ name: "testingTag" });
 serviceTester.testUpdateOneMine({ color: "#ooo" });
-serviceTester.testUpdateOneMine({ tag: "updatedTag" });
+serviceTester.testUpdateOneMine({ name: "updatedTag" });
 
-serviceTesterDuplication.testCreateMine({ tag: "shouldNotDuplicate" });
+serviceTesterDuplication.testCreateMine({ name: "shouldNotDuplicate" });
 serviceTester.testAsyncError(
   "should throw error on updating tag with a name that another tag holds",
   async () => {
     await TagService.updateOneMine(
       serviceTester.createdRecordId!,
-      { tag: "shouldNotDuplicate" },
+      { name: "shouldNotDuplicate" },
       serviceTester.userId
     );
   },

@@ -1,7 +1,7 @@
 import db from "../db/db.ts";
 import { VirtualTagSchema } from "./tag.model.ts";
 
-export interface PasswordSchema {
+export interface AccountSchema {
   _id: string;
   user: string;
   password: string;
@@ -16,11 +16,11 @@ export interface PasswordSchema {
   updatedAt: Date;
 }
 
-export interface VirtualPasswordSchema
-  extends Omit<PasswordSchema, "_id" | "password" | "tags"> {
+export interface VirtualAccountSchema
+  extends Omit<AccountSchema, "_id" | "password" | "tags"> {
   id: string;
   tags: VirtualTagSchema[];
-  password?: VirtualPasswordSchema;
+  password?: VirtualAccountSchema;
 }
 
-export const Password = db.getDatabase.collection<PasswordSchema>("passwords");
+export const Account = db.getDatabase.collection<AccountSchema>("accounts");

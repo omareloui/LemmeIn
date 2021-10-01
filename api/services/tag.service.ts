@@ -1,73 +1,67 @@
 import { Tag, TagSchema, VirtualTagSchema } from "../models/tag.model.ts";
 import { ObjectId } from "../deps.ts";
+import { CollectionHelper } from "../helpers/collection.helper.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
 
-import { normalizeDocument } from "../utils/normalizeDocuments.ts";
+import type { NormalizedDoc } from "../utils/normalizeDocuments.ts";
 import createRegex from "../utils/createRegex.ts";
 
 import { BaseService } from "./base.service.ts";
-import PasswordService from "./password.service.ts";
+import AccountService from "./account.service.ts";
 
+const TagHelper = new CollectionHelper(Tag);
 const tagErrorHelper = new ErrorHelper("tag");
 
 export interface CreateTagOptions {
-  tag: string;
+  name: string;
   color: string;
 }
 
 export default class TagService extends BaseService {
   public static async createMine(
-    { tag, color }: CreateTagOptions,
+    { name, color }: CreateTagOptions,
     userId: string
   ) {
-    const tagRegex = createRegex(tag, { i: true, exactMatch: true });
-    const duplicatedTag = await Tag.findOne({
-      tag: tagRegex,
+    const tagNameRegex = createRegex(name, { i: true, exactMatch: true });
+    const duplicatedTag = await TagHelper.findOne({
+      name: tagNameRegex,
       user: userId,
     });
     if (duplicatedTag)
       return tagErrorHelper.badRequest({ message: "The tag already exists" });
     const currentDate = new Date();
-    const tagDoc = await Tag.insertOne({
-      tag,
+    const tag = await TagHelper.createOne({
+      name,
       color,
       user: userId,
       createdAt: currentDate,
       updatedAt: currentDate,
     });
-    if (!tagDoc) return tagErrorHelper.badRequest({ action: "create" });
-    const newTag = await Tag.findOne({ _id: tagDoc });
-    if (!newTag) return tagErrorHelper.notFound();
-    return normalizeDocument(newTag);
+    if (!tag) return tagErrorHelper.notFound();
+    return tag;
   }
 
   public static async getOneMine(id: string, userId: string) {
-    const password = await Tag.findOne({ _id: new ObjectId(id), user: userId });
-    if (!password) return tagErrorHelper.notFound();
-    return normalizeDocument(password);
+    const tag = await TagHelper.findMineById(id, userId);
+    if (!tag) return tagErrorHelper.notFound();
+    return tag;
   }
 
   public static async getAllMine(userId: string) {
-    const tags = await Tag.find({ user: userId }).toArray();
+    const tags = await TagHelper.findAllMine(userId);
     const normalizedTags: VirtualTagSchema[] = await Promise.all(
-      tags.map((x) => this.normalizeDoc(x, userId))
+      tags.map((x) => this.populate(x, userId))
     );
     const sortedTags = this.sort(normalizedTags);
     return sortedTags;
   }
 
-  public static async getMyPasswordAllTags(
+  public static getMyAccountAllTags(
     tagsIds: string[],
     userId: string
-  ): Promise<VirtualTagSchema[]> {
+  ): Promise<NormalizedDoc<TagSchema>[]> {
     const ids = tagsIds.map((x) => new ObjectId(x));
-    const tagsDocs = await Tag.find({ _id: { $in: ids }, user: userId });
-    const tagsArray = await tagsDocs.toArray();
-    const normalizedTags = tagsArray.map((x) => {
-      x._id.toString();
-      return normalizeDocument(x);
-    });
-    return normalizedTags as VirtualTagSchema[];
+    return TagHelper.find({ _id: { $in: ids }, user: userId });
   }
 
   public static async updateOneMine(
@@ -82,10 +76,10 @@ export default class TagService extends BaseService {
     if (!tagDoc) return tagErrorHelper.notFound();
 
     // If the tag's new make sure it's not duplicated
-    if (options.tag && tagDoc.tag !== options.tag) {
-      const tagRegex = createRegex(options.tag, { i: true, exactMatch: true });
-      const duplicatedTag = await Tag.findOne({
-        tag: tagRegex,
+    if (options.name && tagDoc.name !== options.name) {
+      const tagRegex = createRegex(options.name, { i: true, exactMatch: true });
+      const duplicatedTag = await TagHelper.findOne({
+        name: tagRegex,
         user: userId,
       });
       if (duplicatedTag)
@@ -93,46 +87,36 @@ export default class TagService extends BaseService {
           message: "You have a tag with the same name. You can't duplicate it.",
         });
     }
-    const updateResult = await Tag.updateOne(
-      { _id: new ObjectId(id), user: userId },
-      {
-        $set: { tag: options.tag, color: options.color, updatedAt: new Date() },
-      }
+    const newTag = await TagHelper.updateMineById(
+      id,
+      { name: options.name, color: options.color, updatedAt: new Date() },
+      userId
     );
-    if (!updateResult) return tagErrorHelper.badRequest({ action: "update" });
-    const newTag = await TagService.getOneMine(id, userId);
-    return newTag;
+    return newTag as NormalizedDoc<TagSchema>;
   }
 
   public static async removeOneMine(id: string, userId: string) {
     // TODO: remove the tag from all the passwords that uses them
-    const tag = await Tag.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const tag = await TagHelper.findMineById(id, userId);
     if (!tag) return tagErrorHelper.notFound();
-    const deleteCount = await Tag.deleteOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
-    if (!deleteCount) return tagErrorHelper.notFound();
-    return deleteCount;
+    await TagHelper.deleteMineById(id, userId);
+    return true;
   }
 
   private static sort(docs: VirtualTagSchema[]): VirtualTagSchema[] {
     return docs.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
   }
 
-  private static async normalizeDoc(
-    doc: TagSchema,
+  private static async populate(
+    doc: NormalizedDoc<TagSchema>,
     userId: string
   ): Promise<VirtualTagSchema> {
-    const t = normalizeDocument(doc) as VirtualTagSchema;
-    const passwords = await PasswordService.getMineWithTag(
-      doc._id.toString(),
+    const tag = doc as VirtualTagSchema;
+    const accounts = await AccountService.getMineWithTag(
+      doc.id.toString(),
       userId
     );
-    t.passwordsCount = passwords.length;
-    return t;
+    tag.accountsCount = accounts.length;
+    return tag;
   }
 }
