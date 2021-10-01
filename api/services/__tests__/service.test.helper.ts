@@ -70,8 +70,8 @@ export class ServiceTester<
         throw new Error("No record was provided to test deleting");
       if (!this.service.removeOne)
         throw new Error("This service doesn't have removeOne");
-      const deletionCount = await this.service.removeOne(this.createdRecordId);
-      this.shouldEquals(deletionCount, 1);
+      const result = await this.service.removeOne(this.createdRecordId);
+      this.shouldEquals(result, true);
     });
   }
 
@@ -129,11 +129,11 @@ export class ServiceTester<
         throw new Error("No record was provided to test deleting");
       if (!this.service.removeOneMine)
         throw new Error("This service doesn't have removeOneMine");
-      const deletionCount = await this.service.removeOneMine(
+      const result = await this.service.removeOneMine(
         this.createdRecordId,
         this.userId
       );
-      this.shouldEquals(deletionCount, 1);
+      this.shouldEquals(result, true);
     });
   }
 }

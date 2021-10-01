@@ -1,12 +1,11 @@
 // deno-lint-ignore-file
 type ID = string;
 type Doc = { id: string; [key: string]: any };
-type DeletionCount = number;
 
 type CreateReturn = Promise<Doc>;
 type GetOneReturn = Promise<Doc>;
 type GetAllReturn = Promise<Doc[]>;
-type RemoveOneReturn = Promise<DeletionCount>;
+type RemoveOneReturn = Promise<boolean>;
 type UpdateOneReturn = Promise<Doc>; // The new document
 
 export class BaseService {

@@ -1,6 +1,10 @@
-export type NormalizedDoc<T> = { id: string } & Omit<T, "_id">;
+import type { Document } from "../deps.ts";
 
-function replaceUnderScoreIdWithId<T extends { _id: string }>(
+type ID = string | Document;
+
+export type NormalizedDoc<T> = { id: ID } & Omit<T, "_id">;
+
+function replaceUnderScoreIdWithId<T extends { _id: ID }>(
   doc: T
 ): NormalizedDoc<T> {
   const y = { id: doc._id, ...doc };
@@ -8,14 +12,15 @@ function replaceUnderScoreIdWithId<T extends { _id: string }>(
   return y;
 }
 
-export function normalizeDocument<T extends { _id: string }>(
-  document: T
-): NormalizedDoc<T> {
+export function normalizeDocument<T extends { _id: ID }>(
+  document: T | undefined
+): NormalizedDoc<T> | undefined {
+  if (!document) return undefined;
   return replaceUnderScoreIdWithId(document);
 }
 
-export function normalizeDocuments<T extends { _id: string }>(
+export function normalizeDocuments<T extends { _id: ID }>(
   documents: T[]
 ): NormalizedDoc<T>[] {
-  return documents.map((x) => normalizeDocument(x));
+  return documents.map((x) => normalizeDocument(x) as NormalizedDoc<T>);
 }

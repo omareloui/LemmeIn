@@ -51,10 +51,8 @@ class UserController {
     response,
   }: RouterContext): Promise<void> {
     const { id } = params;
-    const deleteCount: number | Error = await UserService.removeOne(
-      id as string
-    );
-    response.body = { deleted: deleteCount };
+    await UserService.removeOne(id as string);
+    response.status = 200;
   }
 }
 
