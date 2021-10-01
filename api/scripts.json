@@ -19,7 +19,7 @@
     },
 
     "prod": {
-      "cmd": "deno run app.ts",
+      "cmd": "deno run dist/app.bundle.js",
       "desc": "Run the server.",
       "env": { "ENV": "production" },
       "watch": false
