@@ -4,14 +4,16 @@ export {
   getLogger,
   handlers,
   setup,
-} from "https://deno.land/std@0.105.0/log/mod.ts";
+  LogRecord,
+} from "https://deno.land/std@0.109.0/log/mod.ts";
 export {
   assert,
   assertMatch,
   assertEquals,
   assertThrows,
   assertThrowsAsync,
-} from "https://deno.land/std@0.106.0/testing/asserts.ts";
+} from "https://deno.land/std@0.109.0/testing/asserts.ts";
+export { ensureFile } from "https://deno.land/std@0.109.0/fs/mod.ts";
 
 export {
   Application,

@@ -1,39 +1,19 @@
-import { getLogger, handlers, setup } from "../deps.ts";
-import configs from "../config/config.ts";
+import { Application } from "../deps.ts";
+import { log } from "../utils/logger.ts";
 
-const { env } = configs;
+export default function (app: Application) {
+  app.use(async ({ response, request }, next) => {
+    await next();
+    const responseTime = response.headers.get("X-Response-Time");
+    log.info(
+      `${request.method} [${response.status}] ${request.url} - ${responseTime}`
+    );
+  });
 
-await setup({
-  handlers: {
-    functionFmt: new handlers.ConsoleHandler("DEBUG", {
-      formatter: (logRecord) => {
-        const time = new Date().toISOString();
-        let msg = `${time} [${logRecord.level}] ${logRecord.msg}`;
-
-        logRecord.args.forEach((arg: unknown, index: number) => {
-          msg += `, arg${index}: ${arg}`;
-        });
-        return msg;
-      },
-    }),
-  },
-
-  loggers: {
-    default: {
-      level: "DEBUG",
-      handlers: ["functionFmt"],
-    },
-    tests: {
-      level: "CRITICAL",
-      handlers: ["functionFmt"],
-    },
-  },
-});
-
-let loggerMiddleware = getLogger();
-
-if (env === "test") {
-  loggerMiddleware = getLogger("tests");
+  app.use(async (ctx, next) => {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    ctx.response.headers.set("X-Response-Time", `${ms}ms`);
+  });
 }
-
-export default loggerMiddleware;

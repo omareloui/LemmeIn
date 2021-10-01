@@ -1,7 +1,7 @@
 import { Application, oakCors } from "./deps.ts";
 import { errorHandler } from "./middlewares/error-handler.middleware.ts";
-import logger from "./utils/logger.ts";
-import log from "./middlewares/logger.middleware.ts";
+import loggerMiddleware from "./middlewares/logger.middleware.ts";
+import { log } from "./utils/logger.ts";
 import configs from "./config/config.ts";
 import router from "./routers/index.ts";
 
@@ -17,7 +17,7 @@ const corsOptions = {
   credentials: true,
 };
 
-logger(app);
+loggerMiddleware(app);
 app.use(oakCors(corsOptions));
 app.use(errorHandler);
 

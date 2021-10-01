@@ -1,6 +1,6 @@
 import configs from "../config/config.ts";
 import { MongoClient } from "../deps.ts";
-import log from "../middlewares/logger.middleware.ts";
+import { log } from "../utils/logger.ts";
 
 const { dbName, mongoUrl } = configs;
 

@@ -1,7 +1,9 @@
 import configs from "../config/config.ts";
 import { Context, isHttpError } from "../deps.ts";
-import log from "./logger.middleware.ts";
+import { log } from "../utils/logger.ts";
 import ErrorHelper from "../helpers/error.helper.ts";
+
+const { env } = configs;
 
 export async function errorHandler(
   { response }: Context,
@@ -17,18 +19,10 @@ export async function errorHandler(
     const status =
       err.status || err.statusCode || ErrorHelper.status.internalServerError;
 
-    const { env } = configs;
-    if (!isHttpError(err)) {
-      message =
-        env === "dev" || env === "development"
-          ? message
-          : "Internal Server Error";
-    }
+    if (!isHttpError(err))
+      message = env === "development" ? message : "Internal Server Error";
 
-    if (env === "dev" || env === "development") {
-      log.debug(err);
-    }
-
+    log.error(err);
     response.status = status;
     response.body = { message, name, path, type, status };
   }
