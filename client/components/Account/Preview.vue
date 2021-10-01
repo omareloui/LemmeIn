@@ -1,16 +1,15 @@
 <template>
   <glass-card no-back-shape tint="background-main" float>
     <div
-      class="password"
+      class="account"
       :class="{
-        'password--has-strength':
-          includeStrength && notOAuth && decryptedPassword
+        'account--has-strength': showStrength
       }"
     >
       <div class="info">
         <password-strength
           class="info__strength"
-          v-if="includeStrength && notOAuth && decryptedPassword"
+          v-if="showStrength"
           shape="dot"
           dot-size="10px"
           hide-score-text
@@ -26,17 +25,17 @@
         />
 
         <div class="info__text-info">
-          <link-base class="app" :to="`/passwords/${password.id}`">
-            {{ password.app }}
+          <link-base class="app" :to="`/vault/${account.id}`">
+            {{ account.app }}
           </link-base>
-          <div v-if="password.accountIdentifier" class="account-identifier">
-            {{ password.accountIdentifier }}
+          <div v-if="account.accountIdentifier" class="account-identifier">
+            {{ account.accountIdentifier }}
             <icon
               name="copy"
               clickable
-              @click="$copy(password.accountIdentifier)"
-              @keyup:enter="$copy(password.accountIdentifier)"
-              @keyup:space="$copy(password.accountIdentifier)"
+              @click="copyAccId"
+              @keyup:enter="copyAccId"
+              @keyup:space="copyAccId"
               aria-label="copy account identifier"
               size="15px"
               focusable
@@ -45,7 +44,7 @@
         </div>
 
         <icon
-          v-if="!password.password"
+          v-if="notOAuth"
           class="info__copy"
           name="copy"
           size="25px"
@@ -55,9 +54,9 @@
         />
       </div>
 
-      <div class="tags" v-if="!noTags && password.tags.length > 0">
+      <div class="tags" v-if="!noTags && account.tags.length > 0">
         <link-base
-          v-for="tag in [...password.tags].splice(0, tagsToShow)"
+          v-for="tag in [...account.tags].splice(0, tagsToShow)"
           :key="tag.id"
           :to="`/vault?tags=${tag.id}`"
         >
@@ -69,13 +68,13 @@
             clickable
           />
         </link-base>
-        <span v-if="password.tags.length > tagsToShow" class="tags__more">
-          +{{ password.tags.length - tagsToShow }}
+        <span v-if="account.tags.length > tagsToShow" class="tags__more">
+          +{{ account.tags.length - tagsToShow }}
         </span>
       </div>
 
       <div v-if="!noDate" class="created-at">
-        Added {{ $moment(password.createdAt).fromNow() }}
+        Added {{ $moment(account.createdAt).fromNow() }}
       </div>
     </div>
   </glass-card>
@@ -83,12 +82,12 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { Password } from "~/@types"
+import { Account } from "~/@types"
 import getIcon from "~/assets/utils/getIcon"
 
 export default Vue.extend({
   props: {
-    password: { type: Object as PropType<Password>, required: true },
+    account: { type: Object as PropType<Account>, required: true },
     tagsToShow: { type: Number, default: 5 },
     noDate: { type: Boolean, default: false },
     noTags: { type: Boolean, default: false },
@@ -101,26 +100,35 @@ export default Vue.extend({
 
   data() {
     return {
-      icon: getIcon(this.password),
+      icon: getIcon(this.account),
       decryptedPassword: ""
     }
   },
 
   computed: {
+    showStrength(): boolean {
+      return this.includeStrength && this.notOAuth && !!this.decryptedPassword
+    },
+
     notOAuth(): boolean {
-      return !this.password.password
+      return !this.account.password
     }
   },
 
   methods: {
+    copyAccId() {
+      if (!this.account.accountIdentifier)
+        this.$notify.error("No account identifier")
+      else this.$copy(this.account.accountIdentifier)
+    },
     async decryptPassword() {
       this.decryptedPassword = await this.$accessor.vault.decryptPassword(
-        this.password.id
+        this.account.id
       )
     },
 
     copy() {
-      this.$accessor.vault.copy(this.password.id)
+      this.$accessor.vault.copy(this.account.id)
     }
   }
 })
@@ -129,7 +137,7 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.password
+.account
   +br-lg
   +pa(10px 20px)
 

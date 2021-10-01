@@ -9,7 +9,7 @@
     :style="{ '--color': `var(--clr-${tag.color})` }"
     @click="$emit('click')"
   >
-    {{ tag.tag }}
+    {{ tag.name }}
     <button-glass
       v-if="!noRemoveButton"
       class="remove-button"

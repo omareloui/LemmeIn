@@ -58,7 +58,7 @@ export default Vue.extend({
   computed: {
     searchResult(): Tag[] {
       // @ts-ignore
-      const fuse = new Fuse<Tag>(this.tags, { keys: ["tag"] })
+      const fuse = new Fuse<Tag>(this.tags, { keys: ["name"] })
       return fuse.search(this.searchQuery).map(x => x.item)
     }
   },

@@ -1,132 +1,129 @@
 import { mutationTree, actionTree } from "typed-vuex"
-import { AddPassword, Password, UpdatePassword } from "~/@types"
+import { AddAccount, Account, UpdateAccount } from "~/@types"
 
 export const state = () => ({
-  gotPasswords: false,
-  passwords: [] as Password[]
+  gotAccounts: false, // TODO: to remove when called within nuxtServerInit
+  accounts: [] as Account[]
 })
 
-export type PasswordsState = ReturnType<typeof state>
+export type AccountsState = ReturnType<typeof state>
 
 export const mutations = mutationTree(state, {
-  setPasswords(state, passwords) {
-    state.passwords = passwords
+  setAccounts(state, accounts) {
+    state.accounts = accounts
   },
 
-  clearPasswords(state) {
-    state.passwords = []
+  clearAccounts(state) {
+    state.accounts = []
   },
 
-  unshiftToPasswords(state, password: Password) {
-    state.passwords.unshift(password)
+  unshiftToAccounts(state, account: Account) {
+    state.accounts.unshift(account)
   },
 
-  updateLastUsedToNow(state, passwordId: string) {
-    if (state.passwords.length === 0) return
-    const password = state.passwords.find(x => x?.id === passwordId)
-    if (!password)
-      throw new Error("Can't find the password to update last used")
-    password.lastUsed = new Date()
+  updateLastUsedToNow(state, accountId: string) {
+    if (state.accounts.length === 0) return
+    const account = state.accounts.find(x => x?.id === accountId)
+    if (!account) throw new Error("Can't find the account to update last used")
+    account.lastUsed = new Date()
   },
 
-  removePassword(state, passwordId: string) {
-    state.passwords = state.passwords.filter(x => x.id !== passwordId)
+  removeAccount(state, accountId: string) {
+    state.accounts = state.accounts.filter(x => x.id !== accountId)
   },
 
   cacheDecryption(
     state,
     { passId, decryptedPass }: { passId: string; decryptedPass: string }
   ) {
-    if (!state.gotPasswords) return
-    const pass = state.passwords.find(x => x.id === passId)
-    if (!pass) throw new Error("Can't find the password to update last used")
-    if (pass.password)
-      throw new Error("Can't update an oAuth password's decryption cache")
-    pass.decryptedPassword = decryptedPass
+    if (!state.gotAccounts) return
+    const acc = state.accounts.find(x => x.id === passId)
+    if (!acc) throw new Error("Can't find the account to update last used")
+    if (acc.password)
+      throw new Error("Can't update an oAuth account's decryption cache")
+    acc.decryptedPassword = decryptedPass
   },
 
-  updatePasswordCache(state, password) {
-    const passIndex = state.passwords.findIndex(x => x.id === password.id)
-    if (passIndex === -1)
-      throw new Error("Can't find the password to update last used")
-    state.passwords[passIndex] = password
+  updateAccountCache(state, account) {
+    const accIndex = state.accounts.findIndex(x => x.id === account.id)
+    if (accIndex === -1)
+      throw new Error("Can't find the account to update last used")
+    state.accounts[accIndex] = account
   },
 
   clearDecryptionsCache(state) {
-    state.passwords.forEach(x => delete x.decryptedPassword)
+    state.accounts.forEach(x => delete x.decryptedPassword)
   },
 
-  setGotPasswords(state, value = true) {
-    state.gotPasswords = value
+  setGotAccounts(state, value = true) {
+    state.gotAccounts = value
   }
 })
 
 export const actions = actionTree(
   { state, mutations },
   {
-    async updatePasswordsCache({ commit }) {
-      const { data } = await this.$axios.get("/passwords")
-      commit("setPasswords", data as Password[])
-      commit("setGotPasswords")
+    async updateAccountsCache({ commit }) {
+      const { data } = await this.$axios.get("/accounts")
+      commit("setAccounts", data as Account[])
+      commit("setGotAccounts")
     },
 
-    async getPasswords({ state, dispatch }) {
-      if (!this.app.$accessor.auth.isSigned || state.gotPasswords) return
-      dispatch("updatePasswordsCache")
+    async getAccounts({ state, dispatch }) {
+      if (!this.app.$accessor.auth.isSigned || state.gotAccounts) return
+      dispatch("updateAccountsCache")
     },
 
-    async getPassword(
-      { state, dispatch },
-      passwordId: string
-    ): Promise<Password> {
+    async getAccount({ state, dispatch }, accountId: string): Promise<Account> {
       try {
-        let pass = state.passwords.find(x => x.id === passwordId)
+        // Check first from cache
+        let acc = state.accounts.find(x => x.id === accountId)
 
-        if (!pass) {
-          const { data: password } = await this.$axios.get(
-            `/passwords/${passwordId}`
+        // Get the password if not in cache
+        if (!acc) {
+          const { data: account } = await this.$axios.get(
+            `/accounts/${accountId}`
           )
-          pass = password
+          acc = account
         }
 
-        if (!pass) throw new Error("Can't find the password")
+        if (!acc) throw new Error("Can't find the account")
 
-        if (!pass.password && !pass.decryptedPassword) {
-          pass.decryptedPassword = await dispatch("decryptPassword", passwordId)
-        }
-        return pass
+        // Decrypt the password if it's not decrypted
+        if (!acc.password && !acc.decryptedPassword)
+          acc.decryptedPassword = await dispatch("decryptPassword", accountId)
+        return acc
       } catch (e) {
         // @ts-ignore
         return this.$notify.error(e.response.data.message)
       }
     },
 
-    async addPassword({ commit }, options: AddPassword) {
-      const response = await this.$axios.post("/passwords", options)
-      const password = response.data as Password
-      this.$notify.success("Created password.")
-      commit("unshiftToPasswords", password)
+    async addAccount({ commit }, options: AddAccount) {
+      const response = await this.$axios.post("/accounts", options)
+      const account = response.data as Account
+      this.$notify.success("Created account.")
+      commit("unshiftToAccounts", account)
     },
 
-    async updatePassword({ commit }, options: UpdatePassword) {
+    async updateAccount({ commit }, options: UpdateAccount) {
       const { id } = options
       delete (options as { id?: string }).id
-      const response = await this.$axios.put(`/passwords/${id}`, options)
-      const newPassword = response.data as Password
-      this.$notify.success("Updated password.")
-      commit("updatePasswordCache", {
-        ...newPassword,
+      const response = await this.$axios.put(`/accounts/${id}`, options)
+      const newAccount = response.data as Account
+      this.$notify.success("Updated account.")
+      commit("updateAccountCache", {
+        ...newAccount,
         decryptedPassword: !options.isOAuth ? options.password : undefined
       })
-      return newPassword
+      return newAccount
     },
 
-    async deletePassword({ commit }, passwordId: string) {
+    async deleteAccount({ commit }, accountId: string) {
       try {
-        // TODO: ask for the master password
-        await this.$axios.delete(`/passwords/${passwordId}`)
-        commit("removePassword", passwordId)
-        this.$notify.success("Deleted password successfully")
+        await this.$axios.delete(`/accounts/${accountId}`)
+        commit("removeAccount", accountId)
+        this.$notify.success("Deleted account successfully")
       } catch (e) {
         // @ts-ignore
         throw new Error(e.response.data.message)
@@ -135,27 +132,27 @@ export const actions = actionTree(
 
     async decryptPassword(
       { state, commit },
-      passwordId: string
+      accountId: string
     ): Promise<string> {
-      // Get the password
+      // Get the account
       try {
         // See if the decryption is cached
-        const pass = state.passwords.find(x => x.id === passwordId)
-        if (pass && pass.decryptedPassword) return pass.decryptedPassword
+        const acc = state.accounts.find(x => x.id === accountId)
+        if (acc && acc.decryptedPassword) return acc.decryptedPassword
 
-        // If the password isn't cached
+        // If the account isn't cached
         let { data: decryptedPass } = await this.$axios.get(
-          `/passwords/decrypt/${passwordId}`
+          `/accounts/decrypt/${accountId}`
         )
 
         // Stringify it if it's a number
         decryptedPass = decryptedPass.toString()
 
-        // Cache the password
-        commit("cacheDecryption", { passId: passwordId, decryptedPass })
+        // Cache the account
+        commit("cacheDecryption", { passId: accountId, decryptedPass })
 
-        // Update the last used in passwords state
-        commit("updateLastUsedToNow", passwordId)
+        // Update the last used in accounts state
+        commit("updateLastUsedToNow", accountId)
         return decryptedPass
       } catch (e) {
         // @ts-ignore
@@ -163,12 +160,12 @@ export const actions = actionTree(
       }
     },
 
-    async copy({ dispatch }, passwordId: string) {
-      // Get the password
-      const password = await dispatch("decryptPassword", passwordId)
-      if (!password) return
-      // Copy the password
-      this.$copy(password, "Copied password!")
+    async copy({ dispatch }, accountId: string) {
+      // Get the account
+      const pass = await dispatch("decryptPassword", accountId)
+      if (!pass) return
+      // Copy the account
+      this.$copy(pass, "Copied password!")
     }
   }
 )

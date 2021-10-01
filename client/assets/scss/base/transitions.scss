@@ -115,13 +115,13 @@
   margin-left: -100px;
 }
 
-// Passwords
-.password-enter-active,
-.password-leave-active {
+// accounts
+.account-enter-active,
+.account-leave-active {
   @include t.tran($duration: 500ms);
 }
-.password-enter,
-.password-leave-to {
+.account-enter,
+.account-leave-to {
   opacity: 0;
   transform: translateY(-100px);
 }

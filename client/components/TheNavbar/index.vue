@@ -229,7 +229,7 @@ header
     +e(options)
       +pos-a
       +grid($gap: 10px)
-      top: calc(var(--header-height) + 10px)
+      top: calc(100% - 10px)
 
   .auth
     .glass-nav

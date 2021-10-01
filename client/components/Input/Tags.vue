@@ -94,7 +94,7 @@
               @keyup.enter="selectTag(tag)"
             >
               <span class="tag__color"></span>
-              <div class="tag__name">{{ tag.tag }}</div>
+              <div class="tag__name">{{ tag.name }}</div>
             </div>
           </transition-group>
         </div>
@@ -148,7 +148,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 
     couldCreate(): boolean {
       const { query } = this
-      return !!query && this.tags.findIndex(x => x.tag === query) === -1
+      return !!query && this.tags.findIndex(x => x.name === query) === -1
     },
 
     selectedTags(): Tag[] {
@@ -182,7 +182,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     async createTag() {
       try {
         this.clearError()
-        const tag: AddTag = { tag: this.query, color: getRandomColor() }
+        const tag: AddTag = { name: this.query, color: getRandomColor() }
         this.isLoadingCreating = true
         const response = await this.$axios.post("/tags", tag)
         const createdTag = response.data as Tag

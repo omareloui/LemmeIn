@@ -3,7 +3,7 @@ import tagColor from "~/config/tag-colors"
 export type TagColor = typeof tagColor[number]
 
 export interface AddTag {
-  tag: string
+  name: string
   color: TagColor
 }
 
@@ -11,8 +11,8 @@ export type UpdateTag = AddTag
 
 export interface Tag {
   id: string
-  tag: string
+  name: string
   color: TagColor
   user: string
-  passwordsCount: number
+  accountsCount: number
 }

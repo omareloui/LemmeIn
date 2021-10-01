@@ -1,9 +1,9 @@
 import { Tag } from "."
 
-export interface Password {
+export interface Account {
   id: string
   user: string
-  password?: Password | string
+  password?: Account | string
   app: string
   accountIdentifier?: string
   site?: string
@@ -16,7 +16,7 @@ export interface Password {
   decryptedPassword?: string
 }
 
-export interface AddPasswordReceivedData {
+export interface AddAccountReceivedData {
   app: string
   password: { value: string; isOAuth: boolean }
   accountIdentifier?: string
@@ -25,7 +25,7 @@ export interface AddPasswordReceivedData {
   tags?: string[]
 }
 
-export interface AddPassword {
+export interface AddAccount {
   app: string
   password: string
   isOAuth: boolean
@@ -35,7 +35,7 @@ export interface AddPassword {
   tags?: string[]
 }
 
-export interface UpdatePassword {
+export interface UpdateAccount {
   id: string
   app: string
   password: string

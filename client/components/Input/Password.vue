@@ -95,7 +95,7 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
   }),
 
   async beforeCreate() {
-    await this.$accessor.vault.getPasswords()
+    await this.$accessor.vault.getAccounts()
   },
 
   computed: {
@@ -105,7 +105,7 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
     },
 
     hasOtherPasswords(): boolean {
-      return this.$accessor.vault.passwords.length > 0
+      return this.$accessor.vault.accounts.length > 0
     }
   },
 

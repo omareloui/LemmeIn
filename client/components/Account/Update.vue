@@ -1,25 +1,21 @@
 <template>
-  <div class="update-password">
-    <h2 class="update-password__heading">
+  <div class="update-account">
+    <h2 class="update-account__heading">
       Update
       <span class="update-password__heading-tag-name">“{{ app }}”</span>
-      Password
+      Account
     </h2>
     <form-generator
       :form-fields="formFields"
-      submit-button-text="Update Password"
-      :submit-function="updatePassword"
+      submit-button-text="Update Account"
+      :submit-function="updateAccount"
     />
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import {
-  FormStructure,
-  AddPasswordReceivedData,
-  UpdatePassword
-} from "~/@types"
+import { FormStructure, AddAccountReceivedData, UpdateAccount } from "~/@types"
 
 export default Vue.extend({
   props: {
@@ -101,15 +97,15 @@ export default Vue.extend({
       ]
     },
 
-    async updatePassword({
+    async updateAccount({
       app,
       password,
       accountIdentifier,
       site,
       note,
       tags
-    }: AddPasswordReceivedData) {
-      const options: UpdatePassword = {
+    }: AddAccountReceivedData) {
+      const options: UpdateAccount = {
         id: this.id,
         app,
         password: password.value,
@@ -120,8 +116,8 @@ export default Vue.extend({
         tags
       }
       try {
-        const newPassword = await this.$accessor.vault.updatePassword(options)
-        this.$emit("update-password", newPassword)
+        const newAccount = await this.$accessor.vault.updateAccount(options)
+        this.$emit("update-account", newAccount)
         this.$emit("close-dialogue")
       } catch (e) {
         this.$notify.error(e.response ? e.response.data.message : e.message)
@@ -134,7 +130,7 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.update-password
+.update-account
   +pa(55px 30px)
 
   +e(heading)

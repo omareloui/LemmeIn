@@ -1,17 +1,17 @@
 <template>
-  <div class="add-password">
-    <h2 class="add-password__heading">Add Password</h2>
+  <div class="add-account">
+    <h2 class="add-account__heading">Add Account</h2>
     <form-generator
       :form-fields="formFields"
-      submit-button-text="Save Password"
-      :submit-function="addPassword"
+      submit-button-text="Save Account"
+      :submit-function="addAccount"
     />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue"
-import { FormStructure, AddPassword, AddPasswordReceivedData } from "~/@types"
+import { FormStructure, AddAccount, AddAccountReceivedData } from "~/@types"
 
 export default Vue.extend({
   props: {
@@ -91,15 +91,15 @@ export default Vue.extend({
       ]
     },
 
-    async addPassword({
+    async addAccount({
       app,
       password,
       accountIdentifier,
       site,
       note,
       tags
-    }: AddPasswordReceivedData) {
-      const options: AddPassword = {
+    }: AddAccountReceivedData) {
+      const options: AddAccount = {
         app,
         password: password.value,
         isOAuth: password?.isOAuth,
@@ -109,7 +109,7 @@ export default Vue.extend({
         tags
       }
       try {
-        this.$accessor.vault.addPassword(options)
+        this.$accessor.vault.addAccount(options)
         this.$emit("close-dialogue")
       } catch (e) {
         this.$notify.error(e.response.data.message)
@@ -122,7 +122,7 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.add-password
+.add-account
   +pa(55px 30px)
 
   +e(heading)

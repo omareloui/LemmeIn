@@ -1,7 +1,8 @@
 <template>
   <div class="update-tag">
     <h2 class="update-tag__heading">
-      Edit <span class="update-tag__heading-tag-name">“{{ tag.tag }}”</span> Tag
+      Edit
+      <span class="update-tag__heading-tag-name">“{{ tag.name }}”</span> Tag
     </h2>
     <form-generator
       class="update-tag__form"
@@ -41,7 +42,7 @@ export default Vue.extend({
           value: "",
           props: {
             minLength: 2,
-            default: this.tag.tag,
+            default: this.tag.name,
             hint: "social_media",
             pattern: /^[^\s!@#$%^&=.,*-+`~|:;?"'/\\[\](){}<>]+$/,
             invalidPatternMessage:

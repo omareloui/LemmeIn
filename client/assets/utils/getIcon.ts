@@ -1,15 +1,15 @@
-import { Password, Icon } from "~/@types"
+import { Account, Icon } from "~/@types"
 import icons, { NO_ICON } from "~/config/icons"
 
-export default function getIcon(password: Password): Icon {
+export default function getIcon(account: Account): Icon {
   const noIcon = icons.find(x => x.name === NO_ICON)
   let icon = icons
     .filter(x => x.name !== NO_ICON)
     .find(x => {
       const regex = new RegExp(x.regex, "i")
       let hasMatched = false
-      hasMatched = !!(password.site && password.site.match(regex))
-      if (!hasMatched) hasMatched = !!password.app.match(regex)
+      hasMatched = !!(account.site && account.site.match(regex))
+      if (!hasMatched) hasMatched = !!account.app.match(regex)
       return hasMatched
     })
 

@@ -1,6 +1,6 @@
 <template>
-  <container has-padding-bottom class="password-page">
-    <template #heading>{{ password.app }}</template>
+  <container has-padding-bottom class="account-page">
+    <template #heading>{{ account.app }}</template>
     <main>
       <section
         class="primal-info"
@@ -15,24 +15,22 @@
 
         <!-- TODO: add last used for not oauth passwords -->
         <div class="account-info">
-          <div v-if="password.accountIdentifier" class="account-identifier">
-            {{ password.accountIdentifier }}
+          <div v-if="account.accountIdentifier" class="account-identifier">
+            {{ account.accountIdentifier }}
             <icon
               name="copy"
               clickable
-              @click="$copy(password.accountIdentifier)"
-              @keyup:enter="$copy(password.accountIdentifier)"
-              @keyup:space="$copy(password.accountIdentifier)"
+              @click="copyAccId"
+              @keyup:enter="copyAccId"
+              @keyup:space="copyAccId"
               aria-label="copy account identifier"
               size="15px"
               focusable
             />
           </div>
 
-          <div class="site" v-if="password.site">
-            <link-new-tab :to="password.site">
-              {{ password.site }}
-            </link-new-tab>
+          <div class="site" v-if="account.site">
+            <link-new-tab :to="account.site"> {{ account.site }} </link-new-tab>
           </div>
         </div>
 
@@ -44,7 +42,7 @@
       <section v-if="notOAuth" class="password">
         <password-reveal
           class="password-reveal"
-          :password="password.decryptedPassword"
+          :password="account.decryptedPassword"
         />
         <icon
           name="copy"
@@ -53,29 +51,29 @@
           focusable
           size="35px"
           aria-label="copy password"
-          @click="$copy(password.decryptedPassword)"
+          @click="$copy(account.decryptedPassword)"
         />
         <password-strength
           class="strength"
           line-height="10px"
           hide-score-text
-          :decrypted-password="password.decryptedPassword"
+          :decrypted-password="account.decryptedPassword"
         />
       </section>
 
       <section v-if="!notOAuth" class="oauth">
         <h3>Connected with</h3>
         <password-preview
-          :password="password.password"
+          :password="account.password"
           no-date
           no-tags
           include-strength
         />
       </section>
 
-      <section class="tags" v-if="password.tags.length > 0">
+      <section class="tags" v-if="account.tags.length > 0">
         <link-base
-          v-for="tag in password.tags"
+          v-for="tag in account.tags"
           :key="tag.id"
           :to="`/vault?tags=${tag.id}`"
         >
@@ -89,31 +87,31 @@
         </link-base>
       </section>
 
-      <section class="note">
-        <marked v-if="password.note" :content="password.note" class="note" />
+      <section class="note" v-if="account.note">
+        <marked :content="account.note" class="note" />
       </section>
 
       <section class="edit-buttons">
-        <button-main large block color="info" @click="shownEditPass"
-          >Edit</button-main
-        >
-        <button-main large block color="danger" @click="deletePassword"
-          >Delete</button-main
-        >
+        <button-main large block color="info" @click="showUpdateAccount">
+          Edit
+        </button-main>
+        <button-main large block color="danger" @click="deleteAccount">
+          Delete
+        </button-main>
       </section>
     </main>
 
     <dialogue :is-shown="isQRShown" @close="closeQR">
       <div class="dialogue-content">
-        <qr :text="password.decryptedPassword" />
+        <qr :text="account.decryptedPassword" />
       </div>
     </dialogue>
-    <dialogue :is-shown="isEditPassShown" @close="closeEditPass">
-      <password-edit
-        v-bind="password"
-        :tags="password.tags.map(x => x.id)"
-        @update-password="updatePasswordData"
-        @close-dialogue="closeEditPass"
+    <dialogue :is-shown="isUpdateAccountShown" @close="closeUpdateAccount">
+      <account-update
+        v-bind="account"
+        :tags="account.tags.map(x => x.id)"
+        @update-account="updateAccountData"
+        @close-dialogue="closeUpdateAccount"
       />
     </dialogue>
   </container>
@@ -121,18 +119,18 @@
 
 <script lang="ts">
 import Vue from "vue"
-import { ExtendVue, Icon, Password } from "~/@types"
+import { ExtendVue, Icon, Account } from "~/@types"
 import getIcon from "~/assets/utils/getIcon"
 
 interface AsyncDataReturn {
-  password: Password
+  account: Account
 }
 
 export default (Vue as ExtendVue<AsyncDataReturn>).extend({
-  async asyncData({ app, params: { passwordId }, error }) {
+  async asyncData({ app, params: { accountId }, error }) {
     try {
-      const password = await app.$accessor.vault.getPassword(passwordId)
-      return { password }
+      const account = await app.$accessor.vault.getAccount(accountId)
+      return { account }
     } catch (e) {
       return error(e.response.data)
     }
@@ -145,18 +143,24 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
   data: () => ({
     icon: {} as Icon,
     isQRShown: false,
-    isEditPassShown: false
+    isUpdateAccountShown: false
   }),
 
   computed: {
     notOAuth(): boolean {
-      return !this.password.password
+      return !this.account.password
     }
   },
 
   methods: {
+    copyAccId() {
+      const accId = this.account.accountIdentifier
+      if (!accId) this.$notify.error("No account identifier")
+      else this.$copy(accId)
+    },
+
     loadIcon() {
-      this.icon = getIcon(this.password)
+      this.icon = getIcon(this.account)
     },
 
     showQR() {
@@ -167,21 +171,21 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
       this.isQRShown = false
     },
 
-    shownEditPass() {
-      this.isEditPassShown = true
+    showUpdateAccount() {
+      this.isUpdateAccountShown = true
     },
 
-    closeEditPass() {
-      this.isEditPassShown = false
+    closeUpdateAccount() {
+      this.isUpdateAccountShown = false
     },
 
-    async updatePasswordData(newPassword: Password) {
-      this.password = await this.$accessor.vault.getPassword(newPassword.id)
+    async updateAccountData(newAccount: Account) {
+      this.account = await this.$accessor.vault.getAccount(newAccount.id)
     },
 
-    async deletePassword() {
+    async deleteAccount() {
       try {
-        await this.$accessor.vault.deletePassword(this.password.id)
+        await this.$accessor.vault.deleteAccount(this.account.id)
         this.$router.push("/vault")
       } catch (e) {
         this.$notify.error(e.message)
@@ -194,7 +198,7 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.password-page
+.account-page
 
   section.primal-info
     +mt(10px)

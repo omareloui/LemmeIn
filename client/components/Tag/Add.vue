@@ -19,7 +19,7 @@ export default Vue.extend({
     color: "",
     formFields: [
       {
-        id: "tag",
+        id: "name",
         type: "text",
         label: "Tag name",
         value: "",

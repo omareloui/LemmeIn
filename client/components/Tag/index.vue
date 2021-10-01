@@ -16,8 +16,8 @@
         class="tag__color"
         :style="{ '--color': `var(--clr-${tag.color})` }"
       ></span>
-      <div class="tag__name">{{ tag.tag }}</div>
-      <div class="tag__passwords-count">{{ tag.passwordsCount || 0 }}</div>
+      <div class="tag__name">{{ tag.name }}</div>
+      <div class="tag__accounts-count">{{ tag.accountsCount || 0 }}</div>
     </div>
   </glass-card>
 </template>
@@ -60,7 +60,7 @@ export default Vue.extend({
   +e(name)
     +pl(35px)
 
-  +e(passwords-count)
+  +e(accounts-count)
     --size: 30px
     +center-v
     +size(min-content var(--size))

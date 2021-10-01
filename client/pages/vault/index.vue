@@ -1,40 +1,39 @@
  <template>
-  <container has-padding-bottom class="passwords-page">
+  <container has-padding-bottom class="accounts-page">
     <template #heading>The Vault</template>
     <input-search
-      v-if="$accessor.vault.passwords.length !== 0"
+      v-if="hasAccounts"
       v-model="searchQuery"
-      placeholder="Search passwords..."
+      placeholder="Search the vault..."
       class="search-input"
       @clear="searchQuery = ''"
     />
 
     <main>
-      <div class="no-password" v-if="$accessor.vault.passwords.length === 0">
+      <div class="no-accounts" v-if="!hasAccounts">
         <pattern-dots left="40px" />
-        <div class="no-password__body">
-          <h2 class="no-password__heading">No password yet!</h2>
-          <span class="no-password__add">
-            You can add a password by clicking on the floating menu on the
+        <div class="no-account__body">
+          <h2 class="no-account__heading">No accounts yet!</h2>
+          <span class="no-account__add">
+            You can add an account by clicking on the floating menu on the
             bottom right.
           </span>
         </div>
       </div>
 
       <transition-group
-        v-if="$accessor.vault.passwords.length !== 0"
-        name="password"
+        v-if="hasAccounts"
+        name="account"
         tag="div"
-        class="passwords"
+        class="accounts"
       >
         <div
-          class="password"
-          v-for="password in searchQuery
+          v-for="account in searchQuery
             ? searchResult
-            : $accessor.vault.passwords"
-          :key="password.id"
+            : $accessor.vault.accounts"
+          :key="account.id"
         >
-          <password-preview v-bind="{ password }" />
+          <account-preview v-bind="{ account }" />
         </div>
       </transition-group>
     </main>
@@ -44,16 +43,20 @@
 <script lang="ts">
 import Vue from "vue"
 import Fuse from "fuse.js"
-import { Password } from "~/@types"
+import { Account } from "~/@types"
 
 export default Vue.extend({
   async beforeCreate() {
-    await this.$accessor.vault.getPasswords()
+    await this.$accessor.vault.getAccounts()
   },
 
   computed: {
-    searchResult(): Password[] {
-      const fuse = new Fuse<Password>(this.$accessor.vault.passwords, {
+    hasAccounts(): boolean {
+      return this.$accessor.vault.accounts.length > 0
+    },
+
+    searchResult(): Account[] {
+      const fuse = new Fuse<Account>(this.$accessor.vault.accounts, {
         keys: ["app", "accountIdentifier", "site", "tags.tag"]
       })
       return fuse.search(this.searchQuery).map(x => x.item)
@@ -69,17 +72,17 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.passwords-page
+.accounts-page
   .search-input
     +my(20px)
     +lt-tablet
       +mx(min(100px, 5vw))
 
   main
-    .passwords
+    .accounts
       +grid($gap: 20px)
 
-    .no-password
+    .no-account
       +grid($center: true)
       +center-text
       +h(min 400px)

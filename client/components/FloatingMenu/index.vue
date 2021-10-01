@@ -31,7 +31,7 @@
     </transition>
 
     <dialogue :is-shown="isAddPassShown" @close="closeAddPass">
-      <password-add
+      <account-add
         @close-dialogue="closeAddPass"
         :password="defaultPasswordForAddPass"
       />
