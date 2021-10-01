@@ -59,9 +59,21 @@ export function validate(schema: any) {
     ];
 
     for (const _q of allQueries) {
+      // Validate the provided data
       if (_q._schema?.fields && _q._data) {
-        await checkValidation(_q._schema, _q._data);
-      } else if (
+        try {
+          await checkValidation(_q._schema, _q._data);
+        } catch (e) {
+          console.log(e.message);
+          return validateErrorHelper.badRequest({
+            name: "ValidationError",
+            message: e.message,
+            param: _q.type,
+          });
+        }
+      }
+      // Validate if there's extra data provided
+      else if (
         _q._data &&
         Object.keys(_q._data).length &&
         (!_q._schema || (_q._schema && !_q._schema.has("fields")))
