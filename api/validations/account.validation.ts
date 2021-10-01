@@ -1,7 +1,7 @@
 import { yup } from "../deps.ts";
 import { requiredId } from "../utils/checkIfMongoId.ts";
 
-const createAndUpdatePasswordBody = {
+const createAndUpdateAccountBody = {
   app: yup.string().min(3).max(256).trim().required(`Field "app" is required`),
   password: yup
     .string()
@@ -16,26 +16,26 @@ const createAndUpdatePasswordBody = {
   isOAuth: yup.boolean(),
 };
 
-export const createPasswordValidation = {
-  body: yup.object(createAndUpdatePasswordBody),
+export const createAccountValidation = {
+  body: yup.object(createAndUpdateAccountBody),
 };
 
-export const getPasswordValidation = {
+export const getAccountValidation = {
   params: yup.object({ id: requiredId }),
 };
 
-export const getPasswordsValidation = {};
+export const getAccountsValidation = {};
 
-export const decryptPasswordValidation = {
+export const decryptAccountValidation = {
   params: yup.object({ id: requiredId }),
 };
 
-export const updatePasswordValidation = {
+export const updateAccountValidation = {
   params: yup.object({ id: requiredId }),
-  body: yup.object(createAndUpdatePasswordBody),
+  body: yup.object(createAndUpdateAccountBody),
 };
 
-export const deletePasswordValidation = {
+export const deleteAccountValidation = {
   params: yup.object({
     id: requiredId,
   }),

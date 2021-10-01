@@ -4,8 +4,8 @@ import TagService from "../services/tag.service.ts";
 export default class TagController {
   public static async create({ request, response, state }: RouterContext) {
     const body = request.body();
-    const { tag, color } = await body.value;
-    response.body = await TagService.createMine({ tag, color }, state.user.id);
+    const { name, color } = await body.value;
+    response.body = await TagService.createMine({ name, color }, state.user.id);
   }
 
   public static async viewAllMine({ response, state }: RouterContext) {
@@ -19,10 +19,10 @@ export default class TagController {
     state,
   }: RouterContext) {
     const body = request.body();
-    const { tag, color } = await body.value;
+    const { name, color } = await body.value;
     response.body = await TagService.updateOneMine(
       params.id!,
-      { tag, color },
+      { name, color },
       state.user.id
     );
   }

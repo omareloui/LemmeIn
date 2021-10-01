@@ -2,7 +2,7 @@ import { yup } from "../deps.ts";
 import { requiredId } from "../utils/checkIfMongoId.ts";
 
 const createAndUpdateValidationBody = {
-  tag: yup
+  name: yup
     .string()
     .min(2)
     .max(16)
@@ -11,8 +11,13 @@ const createAndUpdateValidationBody = {
       "You can't have spaces or special character in the tag name."
     )
     .trim()
-    .required("Field tag is required"),
-  color: yup.string().min(2).max(30).trim().required("Field color is required"),
+    .required(`Field "name" is required`),
+  color: yup
+    .string()
+    .min(2)
+    .max(30)
+    .trim()
+    .required(`Field "color" is required`),
 };
 
 export const createTagValidation = {

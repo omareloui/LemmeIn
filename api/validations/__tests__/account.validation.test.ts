@@ -5,37 +5,37 @@ import type {
 } from "./validate.test.helper.ts";
 
 import {
-  getPasswordValidation,
-  getPasswordsValidation,
-  createPasswordValidation,
-  updatePasswordValidation,
-  deletePasswordValidation,
-} from "../password.validation.ts";
+  getAccountValidation,
+  getAccountsValidation,
+  createAccountValidation,
+  updateAccountValidation,
+  deleteAccountValidation,
+} from "../account.validation.ts";
 
-const validationTester = new ValidationTester("password");
+const validationTester = new ValidationTester("account");
 
 const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
   {
     description:
-      "should have 'app' as required on creating and updating password",
+      "should have 'app' as required on creating and updating account",
     body: { password: "valid pass" },
     errorIncludes: '"app" is required',
   },
   {
     description:
-      "should have 'password' as required on creating and updating password",
+      "should have 'password' as required on creating and updating account",
     body: { app: "google.com" },
     errorIncludes: '"password" is required',
   },
   {
     description:
-      "should throw error on password less than 3 characters on creating and updating password",
+      "should throw error on password less than 3 characters on creating and updating account",
     body: { app: "some app", password: "no" },
     errorIncludes: "at least 3 characters",
   },
   {
     description:
-      "should throw error on providing extra field on creating and updating password",
+      "should throw error on providing extra field on creating and updating account",
     body: { app: "some app", password: "validPass", notValidField: false },
     errorIncludes: "notValidField is not allowed",
   },
@@ -44,8 +44,8 @@ const errorValidationData: ErrorValidationDataForCreationAndUpdate[] = [
 const passingValidations: ValidData[] = [
   {
     description:
-      "should pass on providing only app and password on creating password",
-    schema: createPasswordValidation,
+      "should pass on providing only app and password on creating account",
+    schema: createAccountValidation,
     body: {
       app: "google.com",
       password: "SomePassword",
@@ -53,7 +53,7 @@ const passingValidations: ValidData[] = [
   },
   {
     description: "should accept accountIdentifier",
-    schema: createPasswordValidation,
+    schema: createAccountValidation,
     body: {
       app: "google.com",
       password: "SomePassword",
@@ -62,7 +62,7 @@ const passingValidations: ValidData[] = [
   },
   {
     description: "should accept note",
-    schema: createPasswordValidation,
+    schema: createAccountValidation,
     body: {
       app: "google.com",
       password: "SomePassword",
@@ -71,7 +71,7 @@ const passingValidations: ValidData[] = [
   },
   {
     description: "should accept site",
-    schema: createPasswordValidation,
+    schema: createAccountValidation,
     body: {
       app: "google.com",
       password: "SomePassword",
@@ -79,19 +79,19 @@ const passingValidations: ValidData[] = [
     },
   },
   {
-    description: "should take id on requesting a password",
-    schema: getPasswordValidation,
+    description: "should take id on requesting an account",
+    schema: getAccountValidation,
     params: {
       id: "ea22f9203c4ea22fa21123c4",
     },
   },
   {
-    description: "should take nothing on requesting all passwords",
-    schema: getPasswordsValidation,
+    description: "should take nothing on requesting all accounts",
+    schema: getAccountsValidation,
   },
   {
-    description: "should take id for deleting password",
-    schema: deletePasswordValidation,
+    description: "should take id for deleting account",
+    schema: deleteAccountValidation,
     params: {
       id: "ea22f9203c4ea22fa21123c4",
     },
@@ -100,7 +100,7 @@ const passingValidations: ValidData[] = [
 
 validationTester.validateCreateAndUpdateErrors(
   errorValidationData,
-  createPasswordValidation,
-  updatePasswordValidation
+  createAccountValidation,
+  updateAccountValidation
 );
 validationTester.testValidData(passingValidations);

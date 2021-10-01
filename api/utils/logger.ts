@@ -34,13 +34,13 @@ function normalizeArgs(args: unknown[]) {
 
 function formatter(logRecord: LogRecord) {
   const { levelName, args, msg } = logRecord;
-  return `\n[${levelName}] ${normalizeMessage(msg)}${normalizeArgs(args)}`;
+  return `[${levelName}] ${normalizeMessage(msg)}${normalizeArgs(args)}`;
 }
 
 function formatterWithDatetime(logRecord: LogRecord) {
   const time = new Date().toISOString();
   const { levelName, args, msg } = logRecord;
-  return `\n${time} [${levelName}] ${normalizeMessage(msg)}${normalizeArgs(
+  return `${time} [${levelName}] ${normalizeMessage(msg)}${normalizeArgs(
     args
   )}`;
 }
@@ -64,7 +64,7 @@ await setup({
 
   loggers: {
     development: { level: "DEBUG", handlers: ["console", "file"] },
-    tests: { level: "DEBUG", handlers: ["console", "file"] },
+    tests: { level: "WARNING", handlers: ["console"] },
     production: {
       level: "INFO",
       handlers: ["productionConsole", "productionFile"],
@@ -72,8 +72,12 @@ await setup({
   },
 });
 
-let log = getLogger("development");
-if (env === "test") log = getLogger("tests");
-if (env === "production") log = getLogger("production");
+let log = getLogger();
+if (env === "development") log = getLogger("developer");
+else if (env === "test") log = getLogger("tests");
+else if (env === "production") log = getLogger("production");
+
+// Remove the created log file if test env
+if (env === "test") await Deno.remove(logFileLocation);
 
 export { log };
