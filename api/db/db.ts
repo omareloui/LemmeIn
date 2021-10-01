@@ -8,8 +8,6 @@ class Database {
   public client: MongoClient;
 
   constructor(public dbName: string, public url: string) {
-    this.dbName = dbName;
-    this.url = url;
     this.client = {} as MongoClient;
   }
 

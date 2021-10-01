@@ -1,10 +1,11 @@
 {
   "$schema": "https://deno.land/x/denon/schema.json",
   "allow": ["net", "env", "read", "write"],
+  "unstable": true,
+
   "scripts": {
     "start": {
       "cmd": "deno run app.ts",
-      "unstable": true,
       "desc": "run server",
       "env": { "ENV": "development" },
       "watch": true
@@ -13,18 +14,22 @@
     "test": {
       "cmd": "deno test",
       "desc": "Test the server.",
-      "unstable": true,
       "env": { "ENV": "test" },
       "watch": false
     },
 
     "prod": {
-      "cmd": "deno run app.bundle.js",
+      "cmd": "deno run app.ts",
       "desc": "Run the server.",
-      "unstable": true,
       "env": { "ENV": "production" },
+      "watch": false
+    },
+
+    "build": {
+      "cmd": "deno bundle app.ts dist/app.bundle.js",
+      "desc": "Build the code for production",
       "watch": false,
-      "lock": "lock.json"
+      "allow": []
     },
 
     "fmt": {
@@ -37,7 +42,6 @@
     "lint": {
       "cmd": "deno lint",
       "desc": "Code linter for JavaScript and TypeScript",
-      "unstable": true,
       "watch": false,
       "allow": []
     }

@@ -6,13 +6,12 @@ const envConfig = dotEnv({
   path: envPath,
 });
 
-let mongoUrl = `mongodb://${envConfig.DB_USER}:${encodeURIComponent(
-  envConfig.DB_PASS
-)}@${envConfig.DB_HOST}/${envConfig.DB_NAME}`;
-if (env === "development" || env === "test") {
-  if (envConfig.DB_USER === "" && envConfig.DB_PASS === "") {
-    mongoUrl = `mongodb://${envConfig.DB_HOST}/${envConfig.DB_NAME}`;
-  }
+let mongoUrl = `mongodb://${envConfig.DB_HOST}/${envConfig.DB_NAME}`;
+
+if (env === "production") {
+  mongoUrl = `mongodb+srv://${envConfig.DB_USER}:${encodeURIComponent(
+    envConfig.DB_PASS
+  )}@${envConfig.DB_HOST}/${envConfig.DB_NAME}?authMechanism=SCRAM-SHA-1`;
 }
 
 const config: {
