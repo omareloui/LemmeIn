@@ -62,6 +62,9 @@ export default Vue.extend({
   +br-md
   +mx(-5px)
   +px(5px)
+  &:not(.link--disabled)
+    +clickable
+
   +m(disabled)
     +clr-txt($opacity: 0.5)
     +not-allowed
