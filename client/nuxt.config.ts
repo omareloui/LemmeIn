@@ -37,7 +37,10 @@ const nuxt: NuxtConfig = {
     ]
   },
 
-  router: {},
+  router: {
+    middleware: ["protectMustBeSignedRoutes", "protectMustNotBeSignedRoutes"]
+  },
+
   css: [
     "~/assets/scss/core/index.scss",
     "~/assets/scss/variables/index.scss",
