@@ -18,7 +18,6 @@ const config: {
   env: string;
   appName: string;
   jwtExpiration: number;
-  key: string;
   ip: string;
   host: string;
   port: number;
@@ -34,7 +33,6 @@ const config: {
 } = {
   env,
   appName: envConfig.APP_NAME,
-  key: envConfig.KEY,
   jwtExpiration: Number(envConfig.JWT_EXP),
   ip: envConfig.IP,
   host: envConfig.HOST,
