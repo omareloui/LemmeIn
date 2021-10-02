@@ -222,6 +222,16 @@ export default class AccountService extends BaseService {
     return newAccount;
   }
 
+  public static async removeTagFromAccounts(tagId: string, userId: string) {
+    const accounts = await AccountHelper.find({ user: userId, tags: tagId });
+    for (const account of accounts) {
+      if (!account.tags || account.tags.length === 0) continue;
+      const newTags = account.tags.filter((tag) => tag !== tagId);
+      await AccountHelper.updateMineById(account.id, { tags: newTags }, userId);
+    }
+    return true;
+  }
+
   public static async removeOneMine(id: string, userId: string) {
     const account = await AccountHelper.findMineById(id, userId);
     if (!account) return accountErrorHelper.notFound();

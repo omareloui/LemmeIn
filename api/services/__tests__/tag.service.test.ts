@@ -1,5 +1,6 @@
 import { ServiceTester } from "./service.test.helper.ts";
 import TagService from "../tag.service.ts";
+import AccountService from "../account.service.ts";
 
 const serviceTester = new ServiceTester("tag", TagService);
 const serviceTesterDuplication = new ServiceTester("tag", TagService);
@@ -51,3 +52,51 @@ serviceTester.testAsyncError(
 
 serviceTester.testRemovingOneMine();
 serviceTesterDuplication.testRemovingOneMine();
+
+serviceTester.test(
+  "should delete the tag from created account on deletion",
+  () => {
+    async () => {
+      const { userId } = serviceTester;
+      const createdTag = await TagService.createMine(
+        { name: "testingTag", color: "#fff" },
+        userId
+      );
+      const createdAccount1 = await AccountService.createMine(
+        {
+          app: "some app",
+          password: "123456789",
+          tags: [createdTag.id.toString()],
+        },
+        userId
+      );
+      const createdAccount2 = await AccountService.createMine(
+        {
+          app: "some app 2",
+          password: "123456789",
+          tags: [createdTag.id.toString()],
+        },
+        userId
+      );
+      await TagService.removeOneMine(createdTag.id.toString(), userId);
+      const createdAccount1After = await AccountService.getOneMine(
+        createdAccount1.id.toString(),
+        userId
+      );
+      const createdAccount2After = await AccountService.getOneMine(
+        createdAccount2.id.toString(),
+        userId
+      );
+      serviceTester.shouldEquals(
+        createdAccount1After.tags.length === 0 &&
+          createdAccount2After.tags.length === 0,
+        true
+      );
+
+      [
+        createdAccount1.id.toString(),
+        createdAccount2.id.toString(),
+      ].forEach((id) => AccountService.removeOneMine(id, userId));
+    };
+  }
+);

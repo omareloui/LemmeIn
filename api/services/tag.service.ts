@@ -96,7 +96,7 @@ export default class TagService extends BaseService {
   }
 
   public static async removeOneMine(id: string, userId: string) {
-    // TODO: remove the tag from all the passwords that uses them
+    await AccountService.removeTagFromAccounts(id, userId);
     const tag = await TagHelper.findMineById(id, userId);
     if (!tag) return tagErrorHelper.notFound();
     await TagHelper.deleteMineById(id, userId);
