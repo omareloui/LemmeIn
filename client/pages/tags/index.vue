@@ -25,16 +25,10 @@
     </main>
 
     <dialogue :is-shown="isAddTagOpen" @close="closeAddTag">
-      <tag-add @add-tag="addTag" @close-dialogue="closeAddTag" />
+      <tag-add @close-dialogue="closeAddTag" />
     </dialogue>
     <dialogue :is-shown="isEditTagOpen" @close="closeEditTag">
-      <tag-edit
-        :tag="tagToEdit"
-        @add-tag="addTag"
-        @close-dialogue="closeEditTag"
-        @update-tag="updateTag"
-        @remove-tag="removeTag"
-      />
+      <tag-edit :tag="tagToEdit" @close-dialogue="closeEditTag" />
     </dialogue>
   </container>
 </template>
@@ -45,17 +39,15 @@ import Fuse from "fuse.js"
 import type { Tag } from "~/@types"
 
 export default Vue.extend({
-  async asyncData({ $axios, error }) {
-    try {
-      const response = await $axios.get("/tags")
-      const tags = response.data as Tag[]
-      return { tags }
-    } catch (e) {
-      return error(e.response.data)
-    }
+  async beforeCreate() {
+    await this.$accessor.tags.getTags()
   },
 
   computed: {
+    tags(): Tag[] {
+      return this.$accessor.tags.tags
+    },
+
     searchResult(): Tag[] {
       // @ts-ignore
       const fuse = new Fuse<Tag>(this.tags, { keys: ["name"] })
@@ -77,10 +69,6 @@ export default Vue.extend({
     },
 
     // Add tag
-    addTag(tag: Tag) {
-      // @ts-ignore
-      this.tags.unshift(tag)
-    },
     openAddTag() {
       this.closeDialogues()
       this.isAddTagOpen = true
@@ -90,29 +78,16 @@ export default Vue.extend({
     },
 
     // Edit tag
+    editTag(tag: Tag) {
+      this.tagToEdit = tag
+      this.openEditTag()
+    },
     openEditTag() {
       this.closeDialogues()
       this.isEditTagOpen = true
     },
     closeEditTag() {
       this.isEditTagOpen = false
-    },
-    editTag(tag: Tag) {
-      this.tagToEdit = tag
-      this.openEditTag()
-    },
-    updateTag(newTag: Tag) {
-      // @ts-ignore
-      this.tags = this.tags.map(x => {
-        if (x.id === newTag.id) x = newTag
-        return x
-      })
-    },
-
-    // Remote
-    removeTag(tagToRemove: Tag) {
-      // @ts-ignore
-      this.tags = this.tags.filter(x => x.id !== tagToRemove.id)
     }
   }
 })

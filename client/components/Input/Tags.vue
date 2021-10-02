@@ -106,8 +106,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import Fuse from "fuse.js"
-import { FormField, Tag, ExtendVueRefs, AddTag } from "~/@types"
-import getRandomColor from "~/assets/utils/getRandomTagColor"
+import { FormField, Tag, ExtendVueRefs } from "~/@types"
 
 type TagId = string
 interface Refs {
@@ -135,7 +134,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 
   computed: {
     tagsFuse(): Fuse<Tag> {
-      return new Fuse(this.tagsToView, { keys: ["tag"] })
+      return new Fuse(this.tagsToView, { keys: ["name"] })
     },
 
     isErred(): boolean {
@@ -182,15 +181,12 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     async createTag() {
       try {
         this.clearError()
-        const tag: AddTag = { name: this.query, color: getRandomColor() }
         this.isLoadingCreating = true
-        const response = await this.$axios.post("/tags", tag)
-        const createdTag = response.data as Tag
+        const succeeded = await this.$accessor.tags.addTag({ name: this.query })
+        if (!succeeded) return
+        const createdTag = this.$accessor.tags.tags[0]
         this.tags.push(createdTag)
         this.selectTag(createdTag)
-      } catch (e) {
-        this.clearQuery()
-        this.setError(e.response.data.message)
       } finally {
         this.isLoadingCreating = false
       }
@@ -309,14 +305,6 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       +fnt-xs
       +e(optional)
         opacity: 0
-
-  // Map
-  // glass-card.dropdown
-  //   div
-  //     button-main.create
-  //     div.tag
-  //       span.tag__color
-  //       div.tag__name
 
   .dropdown
     +pos-r

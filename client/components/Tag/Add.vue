@@ -38,14 +38,8 @@ export default Vue.extend({
 
   methods: {
     async addTag(options: AddTag) {
-      try {
-        const { data: newTag } = await this.$axios.post("/tags", options)
-        this.$notify.success("Created tag.")
-        this.$emit("add-tag", newTag)
-        this.$emit("close-dialogue")
-      } catch (e) {
-        this.$notify.error(e.response.data.message)
-      }
+      const succeeded = await this.$accessor.tags.addTag(options)
+      if (succeeded) this.$emit("close-dialogue")
     }
   }
 })

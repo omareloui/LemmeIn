@@ -4,10 +4,12 @@ export type TagColor = typeof tagColor[number]
 
 export interface AddTag {
   name: string
-  color: TagColor
+  color?: TagColor
 }
 
-export type UpdateTag = AddTag
+export interface UpdateTag extends Required<AddTag> {
+  id: string
+}
 
 export interface Tag {
   id: string

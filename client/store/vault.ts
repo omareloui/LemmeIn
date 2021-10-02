@@ -57,6 +57,13 @@ export const mutations = mutationTree(state, {
 
   setGotAccounts(state, value = true) {
     state.gotAccounts = value
+  },
+
+  removeTagFromAccounts(state, tagId: string) {
+    state.accounts = state.accounts.map(acc => {
+      if (acc.tags) acc.tags = acc.tags.filter(x => x.id !== tagId)
+      return acc
+    })
   }
 })
 

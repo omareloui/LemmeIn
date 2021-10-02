@@ -62,37 +62,19 @@ export default Vue.extend({
 
   methods: {
     async updateTag(options: UpdateTag) {
-      try {
-        const { data: updatedTag } = await this.$axios.put(
-          `/tags/${this.tag.id}`,
-          options
-        )
-        this.$notify.success("Updated tag.")
-        this.$emit("update-tag", updatedTag)
-        this.$emit("close-dialogue")
-      } catch (e) {
-        this.$notify.error(e.response.data.message)
-      }
+      const succeeded = await this.$accessor.tags.updateTag({
+        ...options,
+        id: this.tag.id
+      })
+      if (succeeded) this.$emit("close-dialogue")
     },
 
     async removeTag() {
-      try {
-        const confirmed = await this.$confirm(
-          `Are you sure you want to delete "${this.tag.name}" tag?`,
-          {
-            description:
-              "That will also remove the tag from all accounts that use it",
-            acceptMessage: "Delete"
-          }
-        )
-        if (!confirmed) return
-        await this.$axios.delete(`/tags/${this.tag.id}`)
-        this.$notify.success("Removed tag.")
-        this.$emit("remove-tag", this.tag)
-        this.$emit("close-dialogue")
-      } catch (e) {
-        this.$notify.error(e.response ? e.response.data.message : e.message)
-      }
+      const succeeded = await this.$accessor.tags.deleteTag({
+        tagId: this.tag.id,
+        tagName: this.tag.name
+      })
+      if (succeeded) this.$emit("close-dialogue")
     }
   }
 })

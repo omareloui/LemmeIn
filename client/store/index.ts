@@ -4,6 +4,7 @@ import { getAccessorType, mutationTree, actionTree } from "typed-vuex"
 import * as notify from "~/store/notify"
 import * as confirm from "~/store/confirm"
 import * as vault from "~/store/vault"
+import * as tags from "~/store/tags"
 import * as theme from "~/store/theme"
 import * as auth from "~/store/auth"
 
@@ -32,6 +33,7 @@ export const accessorType = getAccessorType({
     confirm,
     theme,
     auth,
-    vault
+    vault,
+    tags
   }
 })
