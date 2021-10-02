@@ -10,8 +10,7 @@
     />
 
     <main>
-      <div class="no-accounts" v-if="!hasAccounts">
-        <pattern-dots left="40px" />
+      <div class="no-account" v-if="!hasAccounts">
         <div class="no-account__body">
           <h2 class="no-account__heading">No accounts yet!</h2>
           <span class="no-account__add">

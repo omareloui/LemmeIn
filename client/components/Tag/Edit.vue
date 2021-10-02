@@ -36,7 +36,7 @@ export default Vue.extend({
       color: "",
       formFields: [
         {
-          id: "tag",
+          id: "name",
           type: "text",
           label: "Tag name",
           value: "",
@@ -77,12 +77,17 @@ export default Vue.extend({
 
     async removeTag() {
       try {
+        const confirmed = await this.$confirm(
+          `Are you sure you want to delete "${this.tag.name}" tag?`,
+          { acceptMessage: "Delete" }
+        )
+        if (!confirmed) return
         await this.$axios.delete(`/tags/${this.tag.id}`)
         this.$notify.success("Removed tag.")
         this.$emit("remove-tag", this.tag)
         this.$emit("close-dialogue")
       } catch (e) {
-        this.$notify.error(e.response.data.message)
+        this.$notify.error(e.response ? e.response.data.message : e.message)
       }
     }
   }

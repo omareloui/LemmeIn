@@ -4,5 +4,6 @@
     <nuxt />
     <notify />
     <floating-menu />
+    <confirm />
   </layouts-wrapper>
 </template>

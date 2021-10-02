@@ -183,13 +183,11 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
       this.account = await this.$accessor.vault.getAccount(newAccount.id)
     },
 
-    async deleteAccount() {
-      try {
-        await this.$accessor.vault.deleteAccount(this.account.id)
-        this.$router.push("/vault")
-      } catch (e) {
-        this.$notify.error(e.message)
-      }
+    deleteAccount() {
+      this.$accessor.vault.deleteAccount({
+        accountId: this.account.id,
+        accountName: this.account.app
+      })
     }
   }
 })

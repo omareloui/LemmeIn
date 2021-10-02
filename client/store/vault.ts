@@ -119,11 +119,24 @@ export const actions = actionTree(
       return newAccount
     },
 
-    async deleteAccount({ commit }, accountId: string) {
+    async deleteAccount(
+      { commit },
+      {
+        accountId,
+        accountName,
+        goToVaultAfter = true
+      }: { accountId: string; accountName: string; goToVaultAfter?: boolean }
+    ) {
       try {
+        const confirmed = await this.$confirm(
+          `Are you sure you want to delete "${accountName}" account?`,
+          { acceptMessage: "Delete" }
+        )
+        if (!confirmed) return
         await this.$axios.delete(`/accounts/${accountId}`)
         commit("removeAccount", accountId)
         this.$notify.success("Deleted account successfully")
+        if (goToVaultAfter) this.$router.push("/vault")
       } catch (e) {
         // @ts-ignore
         throw new Error(e.response.data.message)

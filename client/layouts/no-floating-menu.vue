@@ -3,5 +3,6 @@
     <the-navbar />
     <nuxt />
     <notify />
+    <confirm />
   </layouts-wrapper>
 </template>

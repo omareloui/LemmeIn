@@ -2,6 +2,7 @@ import { getAccessorType, mutationTree, actionTree } from "typed-vuex"
 
 // All store modules
 import * as notify from "~/store/notify"
+import * as confirm from "~/store/confirm"
 import * as vault from "~/store/vault"
 import * as theme from "~/store/theme"
 import * as auth from "~/store/auth"
@@ -28,6 +29,7 @@ export const accessorType = getAccessorType({
   actions,
   modules: {
     notify,
+    confirm,
     theme,
     auth,
     vault

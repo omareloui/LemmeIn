@@ -48,6 +48,7 @@ const nuxt: NuxtConfig = {
     { src: "~/plugins/axios" },
     { src: "~/plugins/notify", mode: "client" },
     { src: "~/plugins/copy", mode: "client" },
+    { src: "~/plugins/confirm", mode: "client" },
     { src: "~/plugins/getPasswordStrength" }
   ],
   components: true,

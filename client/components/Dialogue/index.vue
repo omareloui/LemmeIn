@@ -12,6 +12,7 @@
         <div class="dialogue__body">
           <slot></slot>
           <button-glass
+            v-if="!noCloseButton"
             class="close"
             icon="close"
             color="cancel"
@@ -28,7 +29,8 @@ import Vue from "vue"
 
 export default Vue.extend({
   props: {
-    isShown: { type: Boolean, required: true, default: false }
+    isShown: { type: Boolean, required: true, default: false },
+    noCloseButton: { type: Boolean, default: false }
   },
 
   mounted() {
