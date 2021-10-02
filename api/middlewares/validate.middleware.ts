@@ -64,7 +64,6 @@ export function validate(schema: any) {
         try {
           await checkValidation(_q._schema, _q._data);
         } catch (e) {
-          console.log(e.message);
           return validateErrorHelper.badRequest({
             name: "ValidationError",
             message: e.message,
