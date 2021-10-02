@@ -9,14 +9,11 @@ import {
 import configs from "../config/config.ts";
 
 const { env } = configs;
-const currentDate = new Date().toLocaleString();
-const dateForFileName = currentDate
-  .replace(/\//g, "-")
-  .replace(/:/g, "_")
-  .replace(/,/g, "")
-  .replace(/ [AP]M/, (v: string) => v.trim());
+// const currentDate = new Date().toLocaleString();
+// const dateForFileName = currentDate.replace(/\//g, "-").replace(/:/g, "_").replace(/,/g, "")
+//   .replace(/ [AP]M/, (v: string) => v.trim());
 const logFolder = join(".", "logs");
-const logFileLocation = join(logFolder, `${dateForFileName} [${env}].log`);
+const logFileLocation = join(logFolder, `${env}.log`);
 
 // Create log file if it doesn't exist
 await ensureDir(logFolder);
