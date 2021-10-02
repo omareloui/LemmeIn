@@ -32,10 +32,13 @@ const confirm: Plugin = ({ app, store }, inject) => {
 
     function waitTillClose() {
       return new Promise(res => {
-        store.watch(
+        const unwatch = store.watch(
           state => state.confirm.isConfirming,
           newValue => {
-            if (newValue === false) res(true)
+            if (newValue === false) {
+              unwatch()
+              res(true)
+            }
           }
         )
       })
