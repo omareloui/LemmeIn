@@ -79,7 +79,11 @@ export default Vue.extend({
       try {
         const confirmed = await this.$confirm(
           `Are you sure you want to delete "${this.tag.name}" tag?`,
-          { acceptMessage: "Delete" }
+          {
+            description:
+              "That will also remove the tag from all accounts that use it",
+            acceptMessage: "Delete"
+          }
         )
         if (!confirmed) return
         await this.$axios.delete(`/tags/${this.tag.id}`)

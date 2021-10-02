@@ -1,8 +1,15 @@
 import { mutationTree, actionTree, getterTree } from "typed-vuex"
 
+export interface ConfirmOptions {
+  message: string
+  description?: string
+  acceptMessage?: string
+}
+
 export const state = () => ({
   DEFAULT_ACCEPT_MESSAGE: "Accept",
   message: "",
+  description: "",
   acceptMessage: "",
   isConfirming: false,
   lastConfirmResult: false
@@ -23,8 +30,9 @@ export const mutations = mutationTree(state, {
     state.isConfirming = false
   },
 
-  setMessage(state, { message, acceptMessage }) {
+  setMessage(state, { message, description, acceptMessage }: ConfirmOptions) {
     state.message = message
+    state.description = description || ""
     state.acceptMessage = acceptMessage || state.DEFAULT_ACCEPT_MESSAGE
   },
 
@@ -33,7 +41,7 @@ export const mutations = mutationTree(state, {
     state.acceptMessage = state.DEFAULT_ACCEPT_MESSAGE
   },
 
-  setSelected(state, selected) {
+  setSelected(state, selected: boolean) {
     state.lastConfirmResult = selected
   }
 })
@@ -41,8 +49,11 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, mutations },
   {
-    showConfirm({ commit }, { message, acceptMessage }) {
-      commit("setMessage", { message, acceptMessage })
+    showConfirm(
+      { commit },
+      { message, description, acceptMessage }: ConfirmOptions
+    ) {
+      commit("setMessage", { message, description, acceptMessage })
       commit("show")
     },
 

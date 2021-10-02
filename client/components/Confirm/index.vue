@@ -9,6 +9,12 @@
       <div class="confirmation__body">
         {{ $accessor.confirm.message }}
       </div>
+      <div
+        v-if="$accessor.confirm.description"
+        class="confirmation__description"
+      >
+        {{ $accessor.confirm.description }}
+      </div>
       <div class="confirmation__buttons">
         <button-main large color="info" @click="select('accept')">
           {{ $accessor.confirm.acceptMessage }}
@@ -45,10 +51,16 @@ export default Vue.extend({
 
   .confirmation
     +e(body)
-      +fnt-xl
+      +fnt-2xl
+
+    +e(description)
+      +mt(10px)
+      +fnt-sm
+      +clr-txt(main, $opacity: 0.8)
+
     +e(buttons)
       +mt(20px)
-      +grid(1fr, $gap: 10px, $center: true)
+      +grid(1fr, $gap: 20px, $center: true)
       +lt-mobile
         grid-template-columns: 1fr 1fr
 </style>

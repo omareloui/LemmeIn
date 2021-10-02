@@ -1,8 +1,9 @@
 import { Plugin } from "@nuxt/types"
+import type {ConfirmOptions} from "~/store/confirm"
 
 type ConfirmFunction = (
   message: string,
-  options?: { acceptMessage: string }
+  options?: Omit<ConfirmOptions, "message">
 ) => Promise<boolean>
 
 declare module "vue/types/vue" {
