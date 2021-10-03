@@ -1,5 +1,5 @@
  <template>
-  <container has-padding-bottom class="tags-page">
+  <container padding-bottom class="tags-page">
     <template #heading>Tags</template>
     <input-search
       v-model="searchQuery"

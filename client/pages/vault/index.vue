@@ -1,5 +1,5 @@
  <template>
-  <container has-padding-bottom class="accounts-page">
+  <container padding-bottom class="accounts-page">
     <template #heading>The Vault</template>
     <input-search
       v-if="hasAccounts"

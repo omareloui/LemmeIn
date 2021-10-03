@@ -4,7 +4,7 @@
     class="container"
     :class="{
       'container--custom': !!customMaxWidth,
-      'container--has-padding-bottom': hasPaddingBottom
+      'container--has-padding-bottom': paddingBottom
     }"
     :style="{ '--custom-width': customMaxWidth }"
   >
@@ -32,7 +32,7 @@ export default Vue.extend({
     tag: { type: String as PropType<ContainerTags>, default: "div" },
     headingTag: { type: String as PropType<HTMLHeadings>, default: "h1" },
     customMaxWidth: { type: String },
-    hasPaddingBottom: { type: Boolean, default: false },
+    paddingBottom: { type: Boolean, default: false },
     centerHeading: { type: Boolean, default: false }
   }
 })

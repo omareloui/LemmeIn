@@ -1,5 +1,5 @@
 <template>
-  <container has-padding-bottom class="account-page">
+  <container padding-bottom class="account-page">
     <template #heading>{{ account.app }}</template>
     <main>
       <section
