@@ -1,5 +1,5 @@
 {
-  "$schema": "https://deno.land/x/denon/schema.json",
+  "$schema": "https://deno.land/x/denon@2.4.9/schema.json",
   "allow": ["net", "env", "read", "write"],
   "unstable": true,
 
@@ -42,6 +42,20 @@
     "lint": {
       "cmd": "deno lint",
       "desc": "Code linter for JavaScript and TypeScript",
+      "watch": false,
+      "allow": []
+    },
+
+    "reload-deps": {
+      "cmd": "deno cache --reload --lock-write .\\deps.ts",
+      "lock": "lock.json",
+      "watch": false,
+      "allow": []
+    },
+
+    "reload-lock": {
+      "cmd": "deno cache --lock-write .\\deps.ts",
+      "lock": "lock.json",
       "watch": false,
       "allow": []
     }
