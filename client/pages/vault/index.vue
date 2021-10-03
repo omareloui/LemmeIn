@@ -45,10 +45,6 @@ import Fuse from "fuse.js"
 import { Account } from "~/@types"
 
 export default Vue.extend({
-  async beforeCreate() {
-    await this.$accessor.vault.getAccounts()
-  },
-
   computed: {
     hasAccounts(): boolean {
       return this.$accessor.vault.accounts.length > 0

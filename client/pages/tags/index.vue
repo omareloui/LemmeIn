@@ -39,10 +39,6 @@ import Fuse from "fuse.js"
 import type { Tag } from "~/@types"
 
 export default Vue.extend({
-  async beforeCreate() {
-    await this.$accessor.tags.getTags()
-  },
-
   computed: {
     tags(): Tag[] {
       return this.$accessor.tags.tags

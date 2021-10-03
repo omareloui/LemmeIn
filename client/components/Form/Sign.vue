@@ -57,6 +57,7 @@ export default Vue.extend({
         password: values.password
       })
       this.$accessor.auth.setSignData(result)
+      await this.$accessor.resources.load()
       this.$router.push("/")
     }
   }

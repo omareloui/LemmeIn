@@ -2,7 +2,6 @@ import { mutationTree, actionTree } from "typed-vuex"
 import { AddAccount, Account, UpdateAccount } from "~/@types"
 
 export const state = () => ({
-  gotAccounts: false, // TODO: to remove when called within nuxtServerInit
   accounts: [] as Account[]
 })
 
@@ -36,7 +35,6 @@ export const mutations = mutationTree(state, {
     state,
     { passId, decryptedPass }: { passId: string; decryptedPass: string }
   ) {
-    if (!state.gotAccounts) return
     const acc = state.accounts.find(x => x.id === passId)
     if (!acc) throw new Error("Can't find the account to update last used")
     if (acc.password)
@@ -55,10 +53,6 @@ export const mutations = mutationTree(state, {
     state.accounts.forEach(x => delete x.decryptedPassword)
   },
 
-  setGotAccounts(state, value = true) {
-    state.gotAccounts = value
-  },
-
   removeTagFromAccounts(state, tagId: string) {
     state.accounts = state.accounts.map(acc => {
       if (acc.tags) acc.tags = acc.tags.filter(x => x.id !== tagId)
@@ -73,11 +67,10 @@ export const actions = actionTree(
     async updateAccountsCache({ commit }) {
       const { data } = await this.$axios.get("/accounts")
       commit("setAccounts", data as Account[])
-      commit("setGotAccounts")
     },
 
-    async getAccounts({ state, dispatch }) {
-      if (!this.app.$accessor.auth.isSigned || state.gotAccounts) return
+    async getAccounts({ dispatch }) {
+      if (!this.app.$accessor.auth.isSigned) return
       dispatch("updateAccountsCache")
     },
 
