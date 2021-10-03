@@ -8,7 +8,7 @@
       'button-main--custom-color': !!color,
       'button-main--dont-block-on-mobile': dontBlockOnMobile
     }"
-    :style="{ '--color': `var(--clr-${color}` }"
+    :style="color && { '--color': `var(--clr-${color})` }"
     v-bind="{ type, isDisabled, ariaLabel }"
     @click="onClick('single')"
     @dblclick="onClick('dbl')"
