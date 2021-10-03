@@ -1,8 +1,25 @@
 import { mutationTree, actionTree } from "typed-vuex"
 
+interface RegisterOptions {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+}
+
+interface UpdateMeOptions extends Partial<RegisterOptions> {
+  oldPassword?: string
+}
+
+interface SignInOptions {
+  email: string
+  password: string
+}
+
 interface User {
   id: string
-  username: string
+  firstName: string
+  lastName: string
   email: string
   role: string
 }
@@ -62,6 +79,37 @@ export const actions = actionTree(
       commit("setUser", user)
     },
 
+    async register({ dispatch }, options: RegisterOptions) {
+      const { data: result } = await this.$axios.post("/auth/register", options)
+      dispatch("setSignData", result)
+      this.$router.push("/")
+    },
+
+    async signin({ dispatch }, options: SignInOptions) {
+      const { data: result } = await this.$axios.post("/auth/login", options)
+      dispatch("setSignData", result)
+      await this.app.$accessor.resources.load()
+      this.$router.push("/")
+    },
+
+    async updateMe(
+      { dispatch },
+      { oldPassword, email, firstName, lastName, password }: UpdateMeOptions
+    ) {
+      const options: UpdateMeOptions = {}
+      if (firstName) options.firstName = firstName
+      if (lastName) options.lastName = lastName
+      if (email) options.email = email
+      if (password && oldPassword) {
+        options.password = password
+        options.oldPassword = oldPassword
+      }
+      const { data: result } = await this.$axios.put("/me", options)
+      dispatch("setSignData", result)
+      this.$notify.success("Update profile")
+      this.$router.push("/")
+    },
+
     async setMe({ commit, dispatch }) {
       if (!(await dispatch("getToken"))) return
       try {
@@ -77,8 +125,9 @@ export const actions = actionTree(
       }
     },
 
-    signOut({ dispatch, commit }) {
+    async signOut({ dispatch, commit }) {
       dispatch("removeToken")
+      await this.app.$accessor.resources.clear()
       commit("setUser", null)
       commit("updateIsSigned", false)
     }

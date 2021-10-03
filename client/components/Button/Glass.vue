@@ -89,6 +89,7 @@ export default Vue.extend({
       +no-wrap
       +pa(5px)
       +fnt-xs
+      +br-sm
       +capitalize
 
   &:hover

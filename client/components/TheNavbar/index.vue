@@ -106,7 +106,7 @@ export default Vue.extend({
         {
           button: {
             icon: "settings",
-            description: "settings",
+            description: "account settings",
             iconViewBox: "28.8 32"
           },
           onClick: () => this.$router.push("/settings")

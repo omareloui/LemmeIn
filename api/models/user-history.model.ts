@@ -2,7 +2,7 @@ import db from "../db/db.ts";
 import type { UserSchema } from "./user.model.ts";
 
 export interface UserHistorySchema extends UserSchema {
-  id: string;
+  userId: string;
   isDisabled: boolean;
   version: number;
 }

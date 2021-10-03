@@ -4,7 +4,9 @@
       :form-fields="
         isSignin ? signinFields : registerFields.concat(signinFields)
       "
-      :submit-function="isSignin ? signin : register"
+      :submit-function="
+        isSignin ? $accessor.auth.signin : $accessor.auth.register
+      "
     />
   </container>
 </template>
@@ -41,24 +43,6 @@ export default Vue.extend({
   computed: {
     isSignin(): boolean {
       return this.$route.fullPath === "/signin"
-    }
-  },
-
-  methods: {
-    async register(values: { [fieldId: string]: unknown }) {
-      const { data: result } = await this.$axios.post("/auth/register", values)
-      this.$accessor.auth.setSignData(result)
-      this.$router.push("/")
-    },
-
-    async signin(values: { [fieldId: string]: unknown }) {
-      const { data: result } = await this.$axios.post("/auth/login", {
-        email: values.email,
-        password: values.password
-      })
-      this.$accessor.auth.setSignData(result)
-      await this.$accessor.resources.load()
-      this.$router.push("/")
     }
   }
 })

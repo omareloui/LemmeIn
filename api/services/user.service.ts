@@ -1,11 +1,14 @@
-import HashHelper from "../helpers/hash.helper.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
+import { BaseService } from "./base.service.ts";
+import type { Role } from "../config/roles.ts";
+
+import createRegex from "../utils/createRegex.ts";
+
 import { User, UserSchema } from "../models/user.model.ts";
 import { UserHistory } from "../models/user-history.model.ts";
-import createRegex from "../utils/createRegex.ts";
-import type { Role } from "../config/roles.ts";
-import { BaseService } from "./base.service.ts";
+
 import { CollectionHelper } from "../helpers/collection.helper.ts";
+import HashHelper from "../helpers/hash.helper.ts";
+import ErrorHelper from "../helpers/error.helper.ts";
 
 const UserHelper = new CollectionHelper(User);
 const UserHistoryHelper = new CollectionHelper(UserHistory);
@@ -20,7 +23,17 @@ interface CreateOptions {
   role?: Role;
 }
 
-type UpdateOptions = Partial<CreateOptions>;
+interface UpdateOptions {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: Role;
+  password?: string;
+  oldPassword?: string;
+  updatedAt?: Date;
+}
+
+type UpdateMeOptions = Omit<UpdateOptions, "role">;
 
 export interface UserDoc {
   id: string;
@@ -64,7 +77,7 @@ export default class UserService extends BaseService {
     const userId = user.id.toString();
     // Create the user history first entry
     await UserHistoryHelper.createOne({
-      id: userId,
+      userId,
       ...userData,
       isDisabled: false,
       version: 1,
@@ -85,31 +98,65 @@ export default class UserService extends BaseService {
 
   public static async updateOne(id: string, options: UpdateOptions) {
     const user = await UserHelper.findById(id);
-    if (!user) userErrorHelper.notFound();
+    if (!user) return userErrorHelper.notFound();
     const newestUserHistory = await this.getNewestUserHistory(id);
-    const newVersion = newestUserHistory.version + 1;
+    const newVersionNumber = newestUserHistory.version + 1;
+    const updateFields: Omit<UpdateOptions, "oldPassword"> = {};
+    const currentDate = new Date();
 
-    const { firstName, lastName, email, password, role } = options;
-    let hashedPassword;
-    if (password) hashedPassword = await HashHelper.hash(password);
-    const updatedAt = new Date();
-    const newUser = await UserHelper.updateById(id, {
-      firstName,
-      lastName,
-      email,
-      role,
-      password: hashedPassword,
-      updatedAt,
-    });
+    // Set the fields to update
+    // they'll be used in eval
+    // deno-lint-ignore no-unused-vars
+    const { firstName, lastName, email, password, oldPassword, role } = options;
+    if (password && oldPassword) {
+      const isValidOldPassword = await HashHelper.compare(
+        oldPassword,
+        user.password
+      );
+      if (!isValidOldPassword)
+        await userErrorHelper.badRequest({
+          message: "The old password is not valid",
+        });
+      updateFields.password = await HashHelper.hash(password);
+    }
+    function addToUpdateFields(
+      fieldName: keyof Omit<UpdateOptions, "oldPassword">
+    ) {
+      const fieldValue = eval(fieldName);
+      if (fieldValue && fieldValue !== user![fieldName])
+        updateFields[fieldName] = fieldValue;
+    }
+    const fieldsToUpdate = new Set([
+      "firstName",
+      "lastName",
+      "email",
+      "role",
+    ]) as Set<keyof Omit<UpdateOptions, "oldPassword">>;
+    [...fieldsToUpdate].forEach((x) => addToUpdateFields(x));
+
+    // Return if it doesn't need updating
+    const hasToUpdate = Object.keys(updateFields).length > 0;
+    if (!hasToUpdate) return user as UserDoc;
+
+    // Update the user
+    updateFields.updatedAt = currentDate;
+    const newUser = await UserHelper.updateById(id, updateFields);
     if (!newUser) return userErrorHelper.notFound();
 
+    // Create the history record
+    const updateUserClone = { ...newUser };
+    delete (updateUserClone as { id?: string }).id;
     await UserHistoryHelper.createOne({
-      ...newUser,
-      id,
+      ...updateUserClone,
+      userId: id,
       isDisabled: false,
-      version: newVersion,
+      version: newVersionNumber,
     });
     return newUser as UserDoc;
+  }
+
+  public static updateMe(options: UpdateMeOptions, userId: string) {
+    return this.updateOne(userId, options);
   }
 
   public static async removeOne(id: string) {
@@ -121,9 +168,10 @@ export default class UserService extends BaseService {
     // Set the user's history
     const newestUserHistory = await this.getNewestUserHistory(id);
     const newVersion = newestUserHistory.version + 1;
+    delete (user as { id?: string }).id;
     await UserHistoryHelper.createOne({
       ...user,
-      id,
+      userId: id,
       isDisabled: true,
       updatedAt: new Date(),
       version: newVersion,
@@ -132,7 +180,7 @@ export default class UserService extends BaseService {
   }
 
   public static async getUserHistory(userId: string) {
-    const userHistory = await UserHistoryHelper.find({ id: userId });
+    const userHistory = await UserHistoryHelper.find({ userId });
     if (userHistory.length === 0)
       return userErrorHelper.notFound({ message: "Can't find user history" });
     const sortedHistory = userHistory.sort((a, b) => a.version - b.version);

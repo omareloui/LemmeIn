@@ -4,6 +4,7 @@ import { validate } from "../middlewares/validate.middleware.ts";
 import {
   loginValidation,
   registerValidation,
+  updateMeValidation,
   meValidation,
 } from "../validations/auth.validation.ts";
 import { auth } from "../middlewares/auth.middleware.ts";
@@ -18,6 +19,13 @@ router.post(
   AuthController.register
 );
 
-router.get("/me", auth("getMe"), validate(meValidation), AuthController.me);
+router.get("/me", auth("me"), validate(meValidation), AuthController.me);
+
+router.put(
+  "/me",
+  auth("me"),
+  validate(updateMeValidation),
+  AuthController.updateMe
+);
 
 export default router;

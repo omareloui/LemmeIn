@@ -20,6 +20,14 @@ interface RegisterOptions {
   role?: Role;
 }
 
+interface UpdateMeOptions {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+  oldPassword?: string;
+}
+
 interface LoginOptions {
   email: string;
   password: string;
@@ -77,5 +85,20 @@ export default class AuthService extends BaseService {
     const user = await UserService.getOne(userId);
     if (!user) return authErrorHelper.notFound();
     return user;
+  }
+
+  public static async updateMe(
+    options: UpdateMeOptions,
+    userId: string
+  ): Promise<LoggingStructure> {
+    // Create the user
+    const user = await UserService.updateMe(options, userId);
+    if (!user) return authErrorHelper.notFound();
+    const { id, firstName, lastName, email, role, createdAt, updatedAt } = user;
+    const token = await JwtService.create(user.id);
+    return {
+      token,
+      user: { id, firstName, lastName, email, role, createdAt, updatedAt },
+    };
   }
 }

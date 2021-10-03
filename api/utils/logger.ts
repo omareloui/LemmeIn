@@ -19,8 +19,8 @@ const logFileLocation = join(logFolder, `${env}.log`);
 await ensureDir(logFolder);
 
 function normalizeMessage(msg: string) {
-  const isFistMessageAnObject = !!msg.match(/^\{".+?":.+\}$/);
-  if (!isFistMessageAnObject) return msg;
+  const isMsgObject = !!msg.match(/^(\{".+?":.+\})|(\[.+?\])$/);
+  if (!isMsgObject) return msg;
   return JSON.stringify(JSON.parse(msg), null, 2);
 }
 
