@@ -58,9 +58,24 @@ export default Vue.extend({
     }
   },
 
-  data: () => ({
-    searchQuery: ""
-  })
+  data() {
+    return {
+      searchQuery: (this.$route.query.search as string | undefined) || ""
+    }
+  },
+
+  watch: {
+    searchQuery(newValue) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const query: Record<string, any> = { ...this.$route.query }
+      if (newValue) query.search = newValue
+      else delete query.search
+      this.$router.push({
+        path: this.$route.path,
+        query
+      })
+    }
+  }
 })
 </script>
 

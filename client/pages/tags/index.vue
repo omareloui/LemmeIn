@@ -51,17 +51,27 @@ export default Vue.extend({
     }
   },
 
-  data: () => ({
-    searchQuery: "",
-    isAddTagOpen: false,
-    isEditTagOpen: false,
-    tagToEdit: null as Tag | null
-  }),
+  data() {
+    return {
+      searchQuery: (this.$route.query.search as string | undefined) || "",
+      isAddTagOpen: false,
+      isEditTagOpen: false,
+      tagToEdit: null as Tag | null
+    }
+  },
 
   methods: {
     closeDialogues() {
       this.closeAddTag()
       this.closeEditTag()
+    },
+
+    // Search
+    setSearchQuery(query: string) {
+      this.searchQuery = query
+    },
+    clearSearch() {
+      this.setSearchQuery("")
     },
 
     // Add tag
@@ -84,6 +94,19 @@ export default Vue.extend({
     },
     closeEditTag() {
       this.isEditTagOpen = false
+    }
+  },
+
+  watch: {
+    searchQuery(newValue) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const query: Record<string, any> = { ...this.$route.query }
+      if (newValue) query.search = newValue
+      else delete query.search
+      this.$router.push({
+        path: this.$route.path,
+        query
+      })
     }
   }
 })
