@@ -69,10 +69,7 @@ export default class TagService extends BaseService {
     options: Partial<CreateTagOptions>,
     userId: string
   ) {
-    const tagDoc = await Tag.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-    });
+    const tagDoc = await TagHelper.findMineById(id, userId);
     if (!tagDoc) return tagErrorHelper.notFound();
 
     // If the tag's new make sure it's not duplicated
