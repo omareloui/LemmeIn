@@ -65,20 +65,20 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
         )
           return []
 
-        const isObj = !!(typeof propsData.searchElements[0] === "object")
+        const fuseOptions: { keys?: string[] } = {}
 
-        if (!isObj) {
-          const fuse = new Fuse(propsData.searchElements)
-          return fuse.search(query).map(x => x.item)
+        const isObj = !!(typeof propsData.searchElements[0] === "object")
+        if (isObj) {
+          fuseOptions.keys = Array.isArray(propsData.searchKeys)
+            ? propsData.searchKeys
+            : [propsData.searchKeys]
         }
+
+        const fuse = new Fuse(propsData.searchElements, fuseOptions)
 
         if (!propsData.searchKeys || propsData.searchKeys.length === 0)
           throw new Error("You have to provide search key(s)")
 
-        const keys = Array.isArray(propsData.searchKeys)
-          ? propsData.searchKeys
-          : [propsData.searchKeys]
-        const fuse = new Fuse(propsData.searchElements, { keys })
         return fuse.search(query).map(x => x.item)
       }
     },

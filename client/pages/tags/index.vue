@@ -5,6 +5,9 @@
       v-model="searchQuery"
       placeholder="Search tags..."
       class="search-input"
+      search-keys="name"
+      :search-elements="tags"
+      @search-result="searchResult = $event"
       @clear="searchQuery = ''"
     />
 
@@ -35,25 +38,20 @@
 
 <script lang="ts">
 import Vue from "vue"
-import Fuse from "fuse.js"
 import type { Tag } from "~/@types"
 
 export default Vue.extend({
   computed: {
     tags(): Tag[] {
       return this.$accessor.tags.tags
-    },
-
-    searchResult(): Tag[] {
-      // @ts-ignore
-      const fuse = new Fuse<Tag>(this.tags, { keys: ["name"] })
-      return fuse.search(this.searchQuery).map(x => x.item)
     }
   },
 
   data() {
     return {
       searchQuery: (this.$route.query.search as string | undefined) || "",
+      searchResult: [] as Tag[],
+
       isAddTagOpen: false,
       isEditTagOpen: false,
       tagToEdit: null as Tag | null

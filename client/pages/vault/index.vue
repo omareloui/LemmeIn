@@ -6,6 +6,9 @@
       v-model="searchQuery"
       placeholder="Search the vault..."
       class="search-input"
+      :search-elements="accounts"
+      :search-keys="['app', 'accountIdentifier', 'site', 'tags.name']"
+      @search-result="searchResult = $event"
       @clear="searchQuery = ''"
     />
 
@@ -27,9 +30,7 @@
         class="accounts"
       >
         <div
-          v-for="account in searchQuery
-            ? searchResult
-            : $accessor.vault.accounts"
+          v-for="account in searchQuery ? searchResult : accounts"
           :key="account.id"
         >
           <account-preview v-bind="{ account }" />
@@ -41,26 +42,23 @@
 
 <script lang="ts">
 import Vue from "vue"
-import Fuse from "fuse.js"
 import { Account } from "~/@types"
 
 export default Vue.extend({
   computed: {
-    hasAccounts(): boolean {
-      return this.$accessor.vault.accounts.length > 0
+    accounts(): Account[] {
+      return this.$accessor.vault.accounts
     },
 
-    searchResult(): Account[] {
-      const fuse = new Fuse<Account>(this.$accessor.vault.accounts, {
-        keys: ["app", "accountIdentifier", "site", "tags.tag"]
-      })
-      return fuse.search(this.searchQuery).map(x => x.item)
+    hasAccounts(): boolean {
+      return this.$accessor.vault.accounts.length > 0
     }
   },
 
   data() {
     return {
-      searchQuery: (this.$route.query.search as string | undefined) || ""
+      searchQuery: (this.$route.query.search as string | undefined) || "",
+      searchResult: [] as Account[]
     }
   },
 
