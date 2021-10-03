@@ -20,9 +20,9 @@ export const mutations = mutationTree(state, {
     state.accounts.unshift(account)
   },
 
-  updateLastUsedToNow(state, accountId: string) {
+  updateLastUsedCache(state, accountId: string) {
     if (state.accounts.length === 0) return
-    const account = state.accounts.find(x => x?.id === accountId)
+    const account = state.accounts.find(x => x.id === accountId)
     if (!account) throw new Error("Can't find the account to update last used")
     account.lastUsed = new Date()
   },
@@ -164,8 +164,6 @@ export const actions = actionTree(
         // Cache the account
         commit("cacheDecryption", { passId: accountId, decryptedPass })
 
-        // Update the last used in accounts state
-        commit("updateLastUsedToNow", accountId)
         return decryptedPass
       } catch (e) {
         // @ts-ignore
@@ -173,10 +171,17 @@ export const actions = actionTree(
       }
     },
 
+    async updateLastUsed({ commit }, accountId: string) {
+      await this.$axios.put(`/accounts/${accountId}/last-used`)
+      commit("updateLastUsedCache", accountId)
+    },
+
     async copy({ dispatch }, accountId: string) {
       // Get the account
       const pass = await dispatch("decryptPassword", accountId)
       if (!pass) return
+      // Update it's last used
+      await dispatch("updateLastUsed", accountId)
       // Copy the account
       this.$copy(pass, "Copied password!")
     }

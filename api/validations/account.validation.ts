@@ -35,6 +35,10 @@ export const updateAccountValidation = {
   body: yup.object(createAndUpdateAccountBody),
 };
 
+export const updateAccountLastUsedValidation = {
+  params: yup.object({ id: requiredId }),
+};
+
 export const deleteAccountValidation = {
   params: yup.object({
     id: requiredId,

@@ -108,8 +108,14 @@ export default class AccountService extends BaseService {
     if (!account) return accountErrorHelper.notFound();
     const encryptionHelper = new EncryptionHelper();
     const password = encryptionHelper.decrypt(account.password);
-    await AccountHelper.updateMineById(id, { lastUsed: new Date() }, userId);
     return password;
+  }
+
+  public static async updateLastUsed(id: string, userId: string) {
+    const account = await AccountHelper.findMineById(id, userId);
+    if (!account) return accountErrorHelper.notFound();
+    await AccountHelper.updateMineById(id, { lastUsed: new Date() }, userId);
+    return true;
   }
 
   public static async updateOneMine(

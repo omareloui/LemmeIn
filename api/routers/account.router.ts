@@ -8,6 +8,7 @@ import {
   getAccountsValidation,
   getAccountValidation,
   updateAccountValidation,
+  updateAccountLastUsedValidation,
   decryptAccountValidation,
 } from "../validations/account.validation.ts";
 
@@ -46,6 +47,13 @@ router.put(
   validate(updateAccountValidation),
   auth("manageMyAccounts"),
   AccountController.updateOneMine
+);
+
+router.put(
+  "/accounts/:id/last-used",
+  validate(updateAccountLastUsedValidation),
+  auth("manageMyAccounts"),
+  AccountController.updateLastUsed
 );
 
 router.delete(
