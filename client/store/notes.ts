@@ -73,7 +73,7 @@ export const actions = actionTree(
         const newNote = response.data as Note
         this.$notify.success("Updated note")
         commit("updateNoteCache", newNote)
-        return true
+        return newNote
       } catch (e) {
         // @ts-ignore
         this.$notify.error(e.response ? e.response.data.message : e.message)

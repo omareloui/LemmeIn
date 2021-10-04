@@ -70,14 +70,21 @@
         </transition>
 
         <span class="dates__edit">
-          Edited {{ $moment(note.createdAt).fromNow() }}
+          Edited {{ $moment(note.updatedAt).fromNow() }}
         </span>
       </span>
     </div>
 
     <div v-if="isEditing" class="note__edit-buttons">
-      <button-main large cta block @click="save">Save</button-main>
-      <button-main large block color="danger" @click="deleteNote"
+      <button-main large cta block @click="save" :is-loading="isSaving"
+        >Save</button-main
+      >
+      <button-main
+        large
+        block
+        color="danger"
+        :is-loading="isDeleting"
+        @click="deleteNote"
         >Delete Note</button-main
       >
     </div>
@@ -130,6 +137,8 @@ export default (Vue as ExtendVue<{ note: Note; $refs: Refs }>).extend({
       showCreatedAt: false,
 
       isEditing: false,
+      isSaving: false,
+      isDeleting: false,
       editData: {} as { title: string; body: string; tags: string[] }
     }
   },
@@ -152,8 +161,22 @@ export default (Vue as ExtendVue<{ note: Note; $refs: Refs }>).extend({
       this.isEditing = false
     },
 
-    save() {
-      this.closeEditing()
+    async save() {
+      this.isSaving = true
+      const { $accessor } = this
+      if (!this.note.body) this.$notify.error("The note can't be empty")
+      else {
+        const { title, body, tags } = this.editData
+        const newNote = await $accessor.notes.updateNote({
+          id: this.note.id,
+          title,
+          body,
+          tags
+        })
+        if (newNote) this.note = newNote
+        this.closeEditing()
+      }
+      this.isSaving = false
     },
 
     cancel() {
@@ -162,8 +185,10 @@ export default (Vue as ExtendVue<{ note: Note; $refs: Refs }>).extend({
     },
 
     async deleteNote() {
+      this.isDeleting = true
       const deleted = await this.$accessor.notes.deleteNote(this.note.id)
       if (deleted) this.$router.push("/notes")
+      this.isDeleting = false
     },
 
     onKeyup(e: KeyboardEvent) {
