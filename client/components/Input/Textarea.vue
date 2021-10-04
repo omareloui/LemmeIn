@@ -244,7 +244,8 @@ export default Vue.extend({
       +clr(error, border-color)
 
   .error
-    +pos-a(left 10px top 50px)
+    +pos-a(left 10px bottom 0px)
+    transform: translateY(calc(100% + 5px))
     +clr-txt(error)
     +fnt-xs
 

@@ -11,6 +11,7 @@ export const actions = actionTree(
       const { $accessor } = this.app
       if ($accessor.auth.isSigned) {
         await $accessor.vault.getAccounts()
+        await $accessor.notes.getNotes()
         await $accessor.tags.getTags()
       }
     },

@@ -56,7 +56,7 @@ export default class TagService extends BaseService {
     return sortedTags;
   }
 
-  public static getMyAccountAllTags(
+  public static populateTags(
     tagsIds: string[],
     userId: string
   ): Promise<NormalizedDoc<TagSchema>[]> {

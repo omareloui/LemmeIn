@@ -7,8 +7,9 @@ export * from "./Components"
 
 export * from "./Icon"
 
-export * from "./Tag"
 export * from "./Account"
+export * from "./Tag"
+export * from "./Note"
 
 export * from "./FormField"
 export * from "./InputCheckOption"

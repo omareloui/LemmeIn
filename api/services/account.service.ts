@@ -95,7 +95,7 @@ export default class AccountService extends BaseService {
     userId: string
   ): Promise<NormalizedDoc<TagSchema>[]> {
     if (tags && tags.length > 0)
-      return await TagService.getMyAccountAllTags(tags, userId);
+      return await TagService.populateTags(tags, userId);
     return [];
   }
 

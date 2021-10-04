@@ -3,6 +3,7 @@ import { requiredId } from "../utils/checkIfMongoId.ts";
 
 const createAndUpdateValidationBody = {
   body: yup.string().trim().required(`Field "body" is required`),
+  title: yup.string().trim(),
   tags: yup.array().of(yup.string()),
 };
 

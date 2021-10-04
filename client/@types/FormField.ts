@@ -47,6 +47,7 @@ export interface FormField {
     noIcon: boolean
     hasOAuth: boolean
     showPasswordStrength: boolean
+    rows: number
   }>
   style?: "half"
 }
