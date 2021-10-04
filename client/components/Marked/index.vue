@@ -38,10 +38,16 @@ export default Vue.extend({
   +no-scroll
 
   *
-    +fnt(marked)
+    +fnt(body)
+
+  p, code, pre
+    +fnt-lg
+
+  h1, h2, h3, h4, h5, h6
+    +fnt(heading)
 
   * + *
-    +mb(5px)
+    +mt(5px)
 
   code,
   pre

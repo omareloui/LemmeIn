@@ -81,16 +81,13 @@ export const actions = actionTree(
       }
     },
 
-    async deleteNote(
-      { commit },
-      { noteId, noteName }: { noteId: string; noteName: string }
-    ) {
+    async deleteNote({ commit }, noteId: string) {
       try {
         const confirmed = await this.$confirm(
-          `Are you sure you want to delete "${noteName}" note?`,
+          `Are you sure you want to delete this note?`,
           { acceptMessage: "Delete" }
         )
-        if (!confirmed) return true
+        if (!confirmed) return false
         await this.$axios.delete(`/notes/${noteId}`)
         commit("removeNote", noteId)
         this.$notify.success("Removed note.")

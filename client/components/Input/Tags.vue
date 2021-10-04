@@ -123,14 +123,16 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     default: { type: Array as PropType<TagId[]> }
   },
 
-  data: () => ({
-    formFields: [] as FormField[],
-    tags: [] as Tag[],
-    isFocus: false,
-    isLoadingCreating: false,
-    query: "",
-    errorMessage: ""
-  }),
+  data() {
+    return {
+      formFields: [] as FormField[],
+      tags: this.$accessor.tags.tags,
+      isFocus: false,
+      isLoadingCreating: false,
+      query: "",
+      errorMessage: ""
+    }
+  },
 
   computed: {
     tagsFuse(): Fuse<Tag> {
@@ -172,8 +174,8 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
   },
 
   async created() {
-    const { data } = await this.$axios.get("/tags")
-    this.tags = data
+    // const { data } = await this.$axios.get("/tags")
+    // this.tags = data
     if (this.default) this.$emit("input", this.default)
   },
 

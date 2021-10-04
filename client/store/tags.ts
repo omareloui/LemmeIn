@@ -85,7 +85,7 @@ export const actions = actionTree(
             acceptMessage: "Delete"
           }
         )
-        if (!confirmed) return true
+        if (!confirmed) return false
         await this.$axios.delete(`/tags/${tagId}`)
         commit("removeTag", tagId)
         this.app.$accessor.vault.removeTagFromAccounts(tagId)

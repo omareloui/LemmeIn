@@ -136,3 +136,13 @@
   opacity: 0;
   transform: translateY(-20px);
 }
+
+// Fade transition
+.note-dates-enter-active,
+.note-dates-leave-active {
+  @include t.tran(opacity, $duration: 150ms);
+}
+.note-dates-enter,
+.note-dates-leave-to {
+  opacity: 0;
+}

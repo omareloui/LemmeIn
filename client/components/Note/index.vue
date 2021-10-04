@@ -13,7 +13,7 @@
   >
     <div>
       <div v-if="note.title" class="note__title">{{ note.title }}</div>
-      <div class="note__body">{{ note.body.slice(0, 500) }}</div>
+      <marked :content="note.body.slice(0, 550)" class="note__body" />
       <splitter class="note__splitter" v-if="hasTags" />
       <div class="note__tags" v-if="hasTags">
         <chip-tag
@@ -69,11 +69,12 @@ export default Vue.extend({
     +fnt(heading)
     +fnt-2xl
     +mb(15px)
+
   +e(body)
-    +fnt-lg
     +clr-txt(main, $opacity: 0.8)
     +h(max 200px)
     +pb(10px)
+    +tran(color)
     +pos-r
     overflow: hidden
     &:after
