@@ -91,7 +91,7 @@ export default Vue.extend({
     +center-text
 
   +e(heading-tag-name)
-    word-break: break-word
+    +break-word
 
   +e(remove)
     +mt(40px)

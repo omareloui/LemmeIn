@@ -216,10 +216,12 @@ export default (Vue as ExtendVue<{ note: Note; $refs: Refs }>).extend({
     +fnt-bold
     +fnt(heading)
     +w(max 100%)
+    +break-word
 
   +e(body)
     +fnt-lg
     +mt(20px)
+    +break-word
 
   +e(splitter)
     +my(10px)

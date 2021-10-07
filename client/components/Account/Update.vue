@@ -140,5 +140,5 @@ export default Vue.extend({
     +mb(5px)
 
   +e(heading-tag-name)
-    word-break: break-word
+    +break-word
 </style>
