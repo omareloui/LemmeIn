@@ -1,25 +1,25 @@
 import type { Application } from "../deps.ts";
+
 import defaultRouter from "./default.router.ts";
 // import userRouter from "./user.router.ts";
 import authRouter from "./auth.router.ts";
 import tagRouter from "./tag.router.ts";
 import noteRouter from "./note.router.ts";
 import accountRouter from "./account.router.ts";
+import analyzeAccountsRouter from "./analyze-accounts.router.ts";
 
 const init = (app: Application) => {
-  app.use(authRouter.routes());
-  // app.use(userRouter.routes());
-  app.use(tagRouter.routes());
-  app.use(noteRouter.routes());
-  app.use(accountRouter.routes());
-  app.use(defaultRouter.routes());
-
-  app.use(authRouter.allowedMethods());
-  // app.use(userRouter.allowedMethods());
-  app.use(tagRouter.allowedMethods());
-  app.use(noteRouter.allowedMethods());
-  app.use(accountRouter.allowedMethods());
-  app.use(defaultRouter.allowedMethods());
+  [
+    authRouter,
+    tagRouter,
+    noteRouter,
+    accountRouter,
+    analyzeAccountsRouter,
+    defaultRouter,
+  ].forEach((router) => {
+    app.use(router.routes());
+    app.use(router.allowedMethods());
+  });
 };
 
 export default { init };

@@ -22,7 +22,7 @@ import TagService from "./tag.service.ts";
 const AccountHelper = new CollectionHelper(Account);
 const accountErrorHelper = new ErrorHelper("account");
 
-const ENCRYPTED_PASSWORD_REG_EXP = /[\da-z]\.[\da-z]/;
+const ENCRYPTED_PASSWORD_REG_EXP = /[\da-f]{32}\.[\da-f]/;
 
 interface CreateAccountOptions {
   app: string;

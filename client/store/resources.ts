@@ -13,6 +13,7 @@ export const actions = actionTree(
         await $accessor.vault.getAccounts()
         await $accessor.notes.getNotes()
         await $accessor.tags.getTags()
+        await $accessor.analyze.init()
       }
     },
 

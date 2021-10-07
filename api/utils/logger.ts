@@ -74,7 +74,7 @@ await setup({
 
   loggers: {
     development: { level: "DEBUG", handlers: ["console", "file"] },
-    tests: { level: "WARNING", handlers: ["console"] },
+    tests: { level: "DEBUG", handlers: ["console"] },
     production: {
       level: "INFO",
       handlers: ["productionConsole", "productionFile"],

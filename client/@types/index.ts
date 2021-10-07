@@ -8,6 +8,7 @@ export * from "./Components"
 export * from "./Icon"
 
 export * from "./Account"
+export * from "./Analyze"
 export * from "./Tag"
 export * from "./Note"
 
