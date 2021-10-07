@@ -1,12 +1,15 @@
-import { ValidationTester, ValidData } from "./validate.test.helper.ts";
-import type { ErrorValidationDataForCreationAndUpdate } from "./validate.test.helper.ts";
+import {
+  ValidationTester,
+  ValidData,
+  ErrorValidationDataForCreationAndUpdate,
+} from "./validate.test.helper.ts";
 
 import {
   createTagValidation,
   deleteTagValidation,
   getTagsValidation,
   updateTagValidation,
-} from "../tag.validation.ts";
+} from "../index.ts";
 
 const validationTester = new ValidationTester("tag");
 

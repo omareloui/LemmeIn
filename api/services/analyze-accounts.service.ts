@@ -1,12 +1,7 @@
 import { Optional } from "../@types/utils.ts";
-
-import EncryptionHelper from "../helpers/encryption.helper.ts";
-import { CollectionHelper } from "../helpers/collection.helper.ts";
-
-import { NormalizedDoc } from "../utils/normalizeDocuments.ts";
-import getDateBeforeSeconds from "../utils/getDateBeforeSeconds.ts";
-
-import { Account, AccountSchema } from "../models/account.model.ts";
+import { NormalizedDoc, getDateBeforeSeconds } from "../utils/index.ts";
+import { EncryptionHelper, CollectionHelper } from "../helpers/index.ts";
+import { Account, AccountSchema } from "../models/index.ts";
 
 const AccountHelper = new CollectionHelper(Account);
 
@@ -31,7 +26,7 @@ type AnalyzesResult = {
 
 const ENCRYPTED_PASSWORD_REG_EXP = /[\da-f]{32}\.[\da-f]/;
 
-export default class AnalyzePasswordsService {
+export class AnalyzeAccountsService {
   public static async analyzeMine(userId: string): Promise<AnalyzesResult> {
     const accounts = await AccountHelper.findAllMine(userId);
     const analyzing: BuildAnalyzesOptions = {

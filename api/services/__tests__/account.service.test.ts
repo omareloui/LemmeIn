@@ -1,11 +1,9 @@
+import { mongoIdRegExp, generateRandomText } from "../../utils/index.ts";
 import { ServiceTester } from "./service.test.helper.ts";
-import { CollectionHelper } from "../../helpers/collection.helper.ts";
-import AccountService from "../account.service.ts";
-import TagService from "../tag.service.ts";
-import { Account } from "../../models/account.model.ts";
+import { CollectionHelper } from "../../helpers/index.ts";
 
-import { mongoIdRegExp } from "../../utils/mongoIdRegExp.ts";
-import generateRandomText from "../../utils/generateRandomText.ts";
+import { Account } from "../../models/index.ts";
+import { AccountService, TagService } from "../index.ts";
 
 const AccountHelper = new CollectionHelper(Account);
 const serviceTester = new ServiceTester("account", AccountService);

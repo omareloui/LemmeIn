@@ -1,5 +1,5 @@
-import { Tester } from "../../helpers/test.helper.ts";
-import getDateAfterSeconds from "../getDateAfterSeconds.ts";
+import { Tester } from "../../helpers/index.ts";
+import { getDateAfterSeconds } from "../index.ts";
 
 const tester = new Tester("utils/getDateAfterSeconds:");
 

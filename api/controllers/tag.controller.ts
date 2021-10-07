@@ -1,7 +1,7 @@
 import type { RouterContext } from "../deps.ts";
-import TagService from "../services/tag.service.ts";
+import { TagService } from "../services/index.ts";
 
-export default class TagController {
+export class TagController {
   public static async create({ request, response, state }: RouterContext) {
     const body = request.body();
     const { name, color } = await body.value;

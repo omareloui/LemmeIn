@@ -1,8 +1,10 @@
 // deno-lint-ignore-file
 
-import config from "../config/config.ts";
 import { helpers, RouterContext } from "../deps.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
+
+import { config } from "../config/index.ts";
+import { ErrorHelper } from "../helpers/index.ts";
+
 const validateErrorHelper = new ErrorHelper("validate");
 
 function checkInvalidParams(fields: any, payload: any): void {

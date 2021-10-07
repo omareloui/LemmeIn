@@ -1,7 +1,7 @@
-import { UserHistory } from "../../models/user-history.model.ts";
-
-import UserService from "../user.service.ts";
 import { ServiceTester } from "./service.test.helper.ts";
+
+import { UserService } from "../index.ts";
+import { UserHistory } from "../../models/index.ts";
 
 const serviceTester = new ServiceTester("user", UserService);
 const serviceDuplicatedEmailTest = new ServiceTester("user", UserService);

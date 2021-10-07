@@ -1,5 +1,5 @@
 import { yup } from "../deps.ts";
-import { requiredId } from "../utils/checkIfMongoId.ts";
+import { requiredId } from "../utils/index.ts";
 
 const createAndUpdateValidationBody = {
   body: yup.string().trim(),

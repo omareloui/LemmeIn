@@ -6,9 +6,9 @@ import {
   LogRecord,
   join,
 } from "../deps.ts";
-import configs from "../config/config.ts";
+import { config } from "../config/index.ts";
 
-const { env } = configs;
+const { env } = config;
 // const currentDate = new Date().toLocaleString();
 // const dateForFileName = currentDate.replace(/\//g, "-").replace(/:/g, "_").replace(/,/g, "")
 //   .replace(/ [AP]M/, (v: string) => v.trim());
@@ -74,7 +74,7 @@ await setup({
 
   loggers: {
     development: { level: "DEBUG", handlers: ["console", "file"] },
-    tests: { level: "DEBUG", handlers: ["console"] },
+    tests: { level: "WARNING", handlers: ["console"] },
     production: {
       level: "INFO",
       handlers: ["productionConsole", "productionFile"],

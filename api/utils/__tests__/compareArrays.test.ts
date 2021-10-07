@@ -1,5 +1,5 @@
-import { Tester } from "../../helpers/test.helper.ts";
-import compareArrays from "../compareArrays.ts";
+import { Tester } from "../../helpers/index.ts";
+import { compareArrays } from "../index.ts";
 
 const tester = new Tester("utils/compareArrays:");
 

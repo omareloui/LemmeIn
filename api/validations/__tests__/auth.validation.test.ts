@@ -1,11 +1,10 @@
-import { ValidationTester, ValidData } from "./validate.test.helper.ts";
-import type { ErrorValidationData } from "./validate.test.helper.ts";
-
 import {
-  loginValidation,
-  registerValidation,
-  meValidation,
-} from "../auth.validation.ts";
+  ValidationTester,
+  ValidData,
+  ErrorValidationData,
+} from "./validate.test.helper.ts";
+
+import { loginValidation, registerValidation, meValidation } from "../index.ts";
 
 const validationTester = new ValidationTester("auth");
 

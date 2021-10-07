@@ -1,7 +1,7 @@
 import type { RouterContext } from "../deps.ts";
-import AuthService from "../services/auth.service.ts";
+import { AuthService } from "../services/index.ts";
 
-class AuthController {
+export class AuthController {
   public static async login({
     request,
     response,
@@ -31,5 +31,3 @@ class AuthController {
     );
   }
 }
-
-export default AuthController;

@@ -1,5 +1,5 @@
-import { Tester } from "../../helpers/test.helper.ts";
-import { normalizeDocument } from "../normalizeDocuments.ts";
+import { Tester } from "../../helpers/index.ts";
+import { normalizeDocument } from "../index.ts";
 
 const tester = new Tester("utils/normalizeDocuments:");
 

@@ -1,11 +1,8 @@
-import { ObjectId } from "../deps.ts";
-import type { Collection, FindOptions, Document } from "../deps.ts";
-import {
-  normalizeDocument,
-  normalizeDocuments,
-} from "../utils/normalizeDocuments.ts";
+import { ObjectId, Collection, FindOptions, Document } from "../deps.ts";
 
-import config from "../config/config.ts";
+import { config } from "../config/index.ts";
+
+import { normalizeDocument, normalizeDocuments } from "../utils/index.ts";
 
 const { env } = config;
 

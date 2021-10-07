@@ -1,7 +1,7 @@
 import { Application } from "../deps.ts";
-import { log } from "../utils/logger.ts";
+import { log } from "../utils/index.ts";
 
-export default function (app: Application) {
+export function loggerMiddleware(app: Application) {
   app.use(async ({ response, request }, next) => {
     await next();
     const responseTime = response.headers.get("X-Response-Time");

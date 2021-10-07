@@ -14,7 +14,7 @@ if (env === "production") {
   )}@${envConfig.DB_HOST}/${envConfig.DB_NAME}?authMechanism=SCRAM-SHA-1`;
 }
 
-const config: {
+export const config: {
   env: string;
   appName: string;
   jwtExpiration: number;
@@ -47,5 +47,3 @@ const config: {
   clientUrl: `${envConfig.CLIENT_PROTOCOL}://${envConfig.CLIENT_HOST}:${envConfig.CLIENT_PORT}`,
   encryptionSecret: envConfig.ENCRYPTION_SECRET,
 };
-
-export default config;

@@ -1,10 +1,9 @@
-import { roleRights } from "../config/roles.ts";
 import { Context } from "../deps.ts";
-import JwtHelper from "../helpers/jwt.helper.ts";
-import UserService from "../services/user.service.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
-import { Rights } from "../config/roles.ts";
-import type { UserDoc } from "../services/user.service.ts";
+
+import { roleRights, Rights } from "../config/index.ts";
+import { JwtHelper, ErrorHelper } from "../helpers/index.ts";
+
+import { UserService, UserDoc } from "../services/index.ts";
 
 const authErrorHelper = new ErrorHelper("auth");
 

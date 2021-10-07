@@ -1,11 +1,10 @@
-import config from "../config/config.ts";
-import JwtHelper from "../helpers/jwt.helper.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
-import getDateAfterSeconds from "../utils/getDateAfterSeconds.ts";
+import { config } from "../config/index.ts";
+import { JwtHelper, ErrorHelper } from "../helpers/index.ts";
+import { getDateAfterSeconds } from "../utils/index.ts";
 
 const tokenErrorHelper = new ErrorHelper("token");
 
-class TokenService {
+export class JwtService {
   public static async create(userId?: string) {
     if (!userId)
       return tokenErrorHelper.notFound({ message: "User id is invalid" });
@@ -17,5 +16,3 @@ class TokenService {
     };
   }
 }
-
-export default TokenService;

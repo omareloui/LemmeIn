@@ -1,11 +1,11 @@
 import { ObjectId } from "../../deps.ts";
 import { ServiceTester } from "./service.test.helper.ts";
-import { CollectionHelper } from "../../helpers/collection.helper.ts";
-import NoteService from "../note.service.ts";
-import TagService from "../tag.service.ts";
-import { Note } from "../../models/note.model.ts";
 
-import generateRandomText from "../../utils/generateRandomText.ts";
+import { generateRandomText } from "../../utils/index.ts";
+import { CollectionHelper } from "../../helpers/index.ts";
+
+import { NoteService, TagService } from "../index.ts";
+import { Note } from "../../models/index.ts";
 
 const NoteHelper = new CollectionHelper(Note);
 const serviceTester = new ServiceTester("note", NoteService);

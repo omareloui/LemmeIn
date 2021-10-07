@@ -1,5 +1,4 @@
-import { Tester } from "../test.helper.ts";
-import HashHelper from "../hash.helper.ts";
+import { Tester, HashHelper } from "../index.ts";
 
 const tester = new Tester("helpers/hash:");
 

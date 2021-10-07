@@ -1,23 +1,19 @@
-import { ObjectId } from "../deps.ts";
-import { mongoIdRegExp } from "../utils/mongoIdRegExp.ts";
-import compareArrays from "../utils/compareArrays.ts";
+import { ObjectId, Document } from "../deps.ts";
 
-import EncryptionHelper from "../helpers/encryption.helper.ts";
-import { CollectionHelper } from "../helpers/collection.helper.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
-import { BaseService } from "./base.service.ts";
+import { mongoIdRegExp, compareArrays, NormalizedDoc } from "../utils/index.ts";
+import {
+  EncryptionHelper,
+  CollectionHelper,
+  ErrorHelper,
+} from "../helpers/index.ts";
 
 import {
   Account,
   AccountSchema,
   VirtualAccountSchema,
-} from "../models/account.model.ts";
-
-import type { Document } from "../deps.ts";
-import type { NormalizedDoc } from "../utils/normalizeDocuments.ts";
-import type { TagSchema } from "../models/tag.model.ts";
-
-import TagService from "./tag.service.ts";
+  TagSchema,
+} from "../models/index.ts";
+import { BaseService, TagService } from "./index.ts";
 
 const AccountHelper = new CollectionHelper(Account);
 const accountErrorHelper = new ErrorHelper("account");
@@ -42,7 +38,7 @@ type InsertionData = Partial<
   }
 >;
 
-export default class AccountService extends BaseService {
+export class AccountService extends BaseService {
   public static async createMine(
     data: CreateAccountOptions,
     userId: string

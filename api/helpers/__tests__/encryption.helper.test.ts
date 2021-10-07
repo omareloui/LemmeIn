@@ -1,5 +1,4 @@
-import { Tester } from "../test.helper.ts";
-import EncryptionHelper from "../encryption.helper.ts";
+import { Tester, EncryptionHelper } from "../index.ts";
 
 const tester = new Tester("helpers/encryption:");
 const HEX_REGEX = /^[\da-fA-F]+$/;

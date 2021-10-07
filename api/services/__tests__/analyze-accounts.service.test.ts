@@ -1,9 +1,7 @@
-import { Account } from "../../models/account.model.ts";
-
 import { ServiceTester } from "./service.test.helper.ts";
 
-import AnalyzeAccountsService from "../analyze-accounts.service.ts";
-import AccountService from "../account.service.ts";
+import { Account } from "../../models/index.ts";
+import { AnalyzeAccountsService, AccountService } from "../index.ts";
 
 // Make sure the accounts model is empty
 await Account.drop();

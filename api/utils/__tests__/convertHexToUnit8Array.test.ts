@@ -1,5 +1,5 @@
-import { Tester } from "../../helpers/test.helper.ts";
-import convertHexToUnit8Array from "../convertHexToUnit8Array.ts";
+import { Tester } from "../../helpers/index.ts";
+import { convertHexToUnit8Array } from "../index.ts";
 
 const tester = new Tester("utils/convertHexToUnit8Array:");
 

@@ -1,10 +1,10 @@
-import AnalyzeAccountsController from "../controllers/analyze-accounts.controller.ts";
-
 import { Router } from "../deps.ts";
-import { auth } from "../middlewares/auth.middleware.ts";
-import { validate } from "../middlewares/validate.middleware.ts";
 
-import { analyzeMine } from "../validations/analyze-accounts.validation.ts";
+import { AnalyzeAccountsController } from "../controllers/index.ts";
+
+import { auth, validate } from "../middlewares/index.ts";
+
+import { analyzeMine } from "../validations/index.ts";
 
 const router: Router = new Router();
 

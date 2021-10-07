@@ -1,13 +1,15 @@
-import AuthController from "../controllers/auth.controller.ts";
 import { Router } from "../deps.ts";
-import { validate } from "../middlewares/validate.middleware.ts";
+
+import { AuthController } from "../controllers/index.ts";
+
+import { auth, validate } from "../middlewares/index.ts";
+
 import {
   loginValidation,
   registerValidation,
   updateMeValidation,
   meValidation,
-} from "../validations/auth.validation.ts";
-import { auth } from "../middlewares/auth.middleware.ts";
+} from "../validations/index.ts";
 
 const router: Router = new Router();
 

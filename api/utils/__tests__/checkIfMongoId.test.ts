@@ -1,6 +1,6 @@
-import { Tester } from "../../helpers/test.helper.ts";
+import { Tester } from "../../helpers/index.ts";
 import { yup } from "../../deps.ts";
-import { requiredId } from "../checkIfMongoId.ts";
+import { requiredId } from "../index.ts";
 
 const tester = new Tester("utils/checkIfMongoId:");
 

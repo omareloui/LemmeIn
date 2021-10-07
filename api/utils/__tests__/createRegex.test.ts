@@ -1,5 +1,5 @@
-import { Tester } from "../../helpers/test.helper.ts";
-import createRegex from "../createRegex.ts";
+import { Tester } from "../../helpers/index.ts";
+import { createRegex } from "../index.ts";
 
 const tester = new Tester("utils/creteRegex:");
 

@@ -1,5 +1,5 @@
 import { create, getNumericDate, Header, verify } from "../deps.ts";
-import ErrorHelper from "./error.helper.ts";
+import { ErrorHelper } from "./index.ts";
 
 const jwtSecret = await crypto.subtle.generateKey(
   { name: "HMAC", hash: "SHA-512" },
@@ -9,7 +9,7 @@ const jwtSecret = await crypto.subtle.generateKey(
 
 const header: Header = { alg: "HS512", typ: "JWT" };
 
-class JwtHelper {
+export class JwtHelper {
   public static create(
     expiresInSeconds: number,
     payload?: Record<string, unknown>
@@ -55,5 +55,3 @@ class JwtHelper {
     }
   }
 }
-
-export default JwtHelper;

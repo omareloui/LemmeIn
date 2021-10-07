@@ -4,7 +4,7 @@ interface RegexOptions {
   exactMatch?: boolean;
 }
 
-export default function createRegex(
+export function createRegex(
   text: string,
   { i = false, g = false, exactMatch = false }: RegexOptions = {}
 ): RegExp {

@@ -1,13 +1,15 @@
-import TagController from "../controllers/tag.controller.ts";
 import { Router } from "../deps.ts";
-import { auth } from "../middlewares/auth.middleware.ts";
-import { validate } from "../middlewares/validate.middleware.ts";
+
+import { TagController } from "../controllers/index.ts";
+
+import { auth, validate } from "../middlewares/index.ts";
+
 import {
   createTagValidation,
   deleteTagValidation,
   getTagsValidation,
   updateTagValidation,
-} from "../validations/tag.validation.ts";
+} from "../validations/index.ts";
 
 const router: Router = new Router();
 

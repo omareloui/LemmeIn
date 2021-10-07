@@ -1,7 +1,7 @@
 import type { RouterContext } from "../deps.ts";
-import NoteService from "../services/note.service.ts";
+import { NoteService } from "../services/index.ts";
 
-export default class NoteController {
+export class NoteController {
   public static async create({ request, response, state }: RouterContext) {
     const body = request.body();
     const options = await body.value;

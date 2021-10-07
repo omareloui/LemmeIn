@@ -1,4 +1,4 @@
-import capitalize from "../utils/capitalize.ts";
+import { capitalize } from "../utils/index.ts";
 
 type StatusText =
   | "Ok"
@@ -28,7 +28,7 @@ interface Error {
   message: string;
 }
 
-export default class APIError {
+export class ErrorHelper {
   static status = {
     ok: 200,
     notModified: 304,

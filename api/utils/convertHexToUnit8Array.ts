@@ -1,4 +1,4 @@
-export default function convertHexToUnit8Array(hex: string): Uint8Array {
+export function convertHexToUnit8Array(hex: string): Uint8Array {
   // Making sure it's a valid hex first (hex strings must be divisible by 2)
   if (hex.length === 0 || hex.length % 2 !== 0 || !hex.match(/^[\da-fA-F]+$/))
     throw new Error(`The string "${hex}" is not valid hex.`);

@@ -1,4 +1,4 @@
-export default function generateRandomText(length = 16) {
+export function generateRandomText(length = 16) {
   let string = "";
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

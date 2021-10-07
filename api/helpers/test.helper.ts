@@ -5,12 +5,11 @@ import {
   assertThrows,
   assertThrowsAsync,
 } from "../deps.ts";
-import type { Role } from "../config/roles.ts";
 
-import AuthService from "../services/auth.service.ts";
-import UserService from "../services/user.service.ts";
+import { Role } from "../config/index.ts";
+import { generateRandomText } from "../utils/index.ts";
 
-import generateRandomText from "../utils/generateRandomText.ts";
+import { AuthService, UserService } from "../services/index.ts";
 
 type TestFunction = () => void | Promise<void>;
 

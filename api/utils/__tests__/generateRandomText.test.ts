@@ -1,5 +1,5 @@
-import { Tester } from "../../helpers/test.helper.ts";
-import generateRandomText from "../generateRandomText.ts";
+import { Tester } from "../../helpers/index.ts";
+import { generateRandomText } from "../index.ts";
 
 const tester = new Tester("utils/generateRandomText:");
 

@@ -1,14 +1,13 @@
-import { Note, NoteSchema, VirtualNoteSchema } from "../models/note.model.ts";
-import compareArrays from "../utils/compareArrays.ts";
+import { Note, NoteSchema, VirtualNoteSchema } from "../models/index.ts";
+import { compareArrays, NormalizedDoc } from "../utils/index.ts";
 
-import { CollectionHelper } from "../helpers/collection.helper.ts";
-import EncryptionHelper from "../helpers/encryption.helper.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
+import {
+  CollectionHelper,
+  EncryptionHelper,
+  ErrorHelper,
+} from "../helpers/index.ts";
 
-import type { NormalizedDoc } from "../utils/normalizeDocuments.ts";
-import TagService from "./tag.service.ts";
-
-import { BaseService } from "./base.service.ts";
+import { BaseService, TagService } from "./index.ts";
 
 const NoteHelper = new CollectionHelper(Note);
 const NoteEncryptionHelper = new EncryptionHelper();
@@ -24,7 +23,7 @@ interface UpdateNoteOptions extends Partial<CreateNoteOptions> {
   updatedAt?: Date;
 }
 
-export default class NoteService extends BaseService {
+export class NoteService extends BaseService {
   public static async createMine(
     { body, tags, title }: CreateNoteOptions,
     userId: string

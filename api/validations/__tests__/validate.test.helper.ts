@@ -1,7 +1,7 @@
-import { Tester } from "../../helpers/test.helper.ts";
+import { Tester } from "../../helpers/index.ts";
 
 import { RouterContext, testing, RouteParams } from "../../deps.ts";
-import { validate } from "../../middlewares/validate.middleware.ts";
+import { validate } from "../../middlewares/index.ts";
 
 export interface ErrorValidationData {
   description: string;

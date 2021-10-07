@@ -1,6 +1,6 @@
 import { compareHash, genSalt, hash } from "../deps.ts";
 
-class HashHelper {
+export class HashHelper {
   public static async hash(str: string): Promise<string> {
     const salt = await genSalt(14);
     return await hash(str, salt);
@@ -10,5 +10,3 @@ class HashHelper {
     return await compareHash(plain, hash);
   }
 }
-
-export default HashHelper;

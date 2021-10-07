@@ -1,5 +1,5 @@
-import { ValidationTester } from "./validate.test.helper.ts";
-import type {
+import {
+  ValidationTester,
   ValidData,
   ErrorValidationDataForCreationAndUpdate,
 } from "./validate.test.helper.ts";
@@ -10,7 +10,7 @@ import {
   createAccountValidation,
   updateAccountValidation,
   deleteAccountValidation,
-} from "../account.validation.ts";
+} from "../index.ts";
 
 const validationTester = new ValidationTester("account");
 

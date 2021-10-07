@@ -1,5 +1,5 @@
-import { Tester } from "../../helpers/test.helper.ts";
-import sleep from "../sleep.ts";
+import { Tester } from "../../helpers/index.ts";
+import { sleep } from "../index.ts";
 
 const tester = new Tester("utils/sleep:");
 

@@ -1,8 +1,9 @@
-import configs from "../config/config.ts";
 import { MongoClient } from "../deps.ts";
-import { log } from "../utils/logger.ts";
 
-const { dbName, mongoUrl } = configs;
+import { config } from "../config/index.ts";
+import { log } from "../utils/index.ts";
+
+const { dbName, mongoUrl } = config;
 
 class Database {
   public client: MongoClient;

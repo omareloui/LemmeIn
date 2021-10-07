@@ -1,5 +1,5 @@
 import { yup } from "../deps.ts";
-import { requiredId } from "../utils/checkIfMongoId.ts";
+import { requiredId } from "../utils/index.ts";
 
 const createAndUpdateAccountBody = {
   app: yup.string().min(3).max(256).trim().required(`Field "app" is required`),

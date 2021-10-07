@@ -1,8 +1,7 @@
-import { yup } from "../../deps.ts";
+import { yup, RouterContext } from "../../deps.ts";
 import { MiddlewareTester } from "./middleware.test.helper.ts";
-import { validate } from "../validate.middleware.ts";
 
-import type { RouterContext } from "../../deps.ts";
+import { validate } from "../index.ts";
 
 const middlewareTester = new MiddlewareTester("validate");
 

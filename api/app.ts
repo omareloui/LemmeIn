@@ -1,12 +1,14 @@
 import { Application, oakCors } from "./deps.ts";
-import { errorHandler } from "./middlewares/error-handler.middleware.ts";
-import loggerMiddleware from "./middlewares/logger.middleware.ts";
-import securityMiddleware from "./middlewares/security.middleware.ts";
-import { log } from "./utils/logger.ts";
-import configs from "./config/config.ts";
+import {
+  errorHandler,
+  loggerMiddleware,
+  securityMiddleware,
+} from "./middlewares/index.ts";
+import { log } from "./utils/index.ts";
+import { config } from "./config/index.ts";
 import router from "./routers/index.ts";
 
-const { url, port, clientUrl } = configs;
+const { url, port, clientUrl } = config;
 
 const app = new Application();
 

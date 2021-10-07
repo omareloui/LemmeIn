@@ -1,7 +1,7 @@
 import type { RouterContext } from "../deps.ts";
-import UserService from "../services/user.service.ts";
+import { UserService } from "../services/index.ts";
 
-class UserController {
+export class UserController {
   public static async create({
     request,
     response,
@@ -55,5 +55,3 @@ class UserController {
     response.status = 200;
   }
 }
-
-export default UserController;

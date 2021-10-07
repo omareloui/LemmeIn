@@ -1,6 +1,5 @@
 import { ServiceTester } from "./service.test.helper.ts";
-import TagService from "../tag.service.ts";
-import AccountService from "../account.service.ts";
+import { TagService, AccountService } from "../index.ts";
 
 const serviceTester = new ServiceTester("tag", TagService);
 const serviceTesterDuplication = new ServiceTester("tag", TagService);

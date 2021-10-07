@@ -1,7 +1,9 @@
 import { Router } from "../deps.ts";
-import AccountController from "../controllers/account.controller.ts";
-import { auth } from "../middlewares/auth.middleware.ts";
-import { validate } from "../middlewares/validate.middleware.ts";
+
+import { AccountController } from "../controllers/index.ts";
+
+import { auth, validate } from "../middlewares/index.ts";
+
 import {
   createAccountValidation,
   deleteAccountValidation,
@@ -10,7 +12,7 @@ import {
   updateAccountValidation,
   updateAccountLastUsedValidation,
   decryptAccountValidation,
-} from "../validations/account.validation.ts";
+} from "../validations/index.ts";
 
 const router = new Router();
 

@@ -1,14 +1,11 @@
-import { Tag, TagSchema, VirtualTagSchema } from "../models/tag.model.ts";
 import { ObjectId } from "../deps.ts";
-import { CollectionHelper } from "../helpers/collection.helper.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
 
-import type { NormalizedDoc } from "../utils/normalizeDocuments.ts";
-import createRegex from "../utils/createRegex.ts";
+import { CollectionHelper, ErrorHelper } from "../helpers/index.ts";
+import { createRegex, NormalizedDoc } from "../utils/index.ts";
 
-import { BaseService } from "./base.service.ts";
-import AccountService from "./account.service.ts";
-import NoteService from "./note.service.ts";
+import { Tag, TagSchema, VirtualTagSchema } from "../models/index.ts";
+
+import { BaseService, AccountService, NoteService } from "./index.ts";
 
 const TagHelper = new CollectionHelper(Tag);
 const tagErrorHelper = new ErrorHelper("tag");
@@ -18,7 +15,7 @@ export interface CreateTagOptions {
   color: string;
 }
 
-export default class TagService extends BaseService {
+export class TagService extends BaseService {
   public static async createMine(
     { name, color }: CreateTagOptions,
     userId: string

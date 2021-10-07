@@ -1,7 +1,7 @@
 import { RouterContext } from "../deps.ts";
-import AccountService from "../services/account.service.ts";
+import { AccountService } from "../services/index.ts";
 
-export default class AccountController {
+export class AccountController {
   public static async create({ request, response, state }: RouterContext) {
     const body = request.body();
     const data = await body.value;

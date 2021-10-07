@@ -1,6 +1,6 @@
-import { Tester } from "../../helpers/test.helper.ts";
+import { Tester } from "../../helpers/index.ts";
 
-import { BaseService } from "../base.service.ts";
+import { BaseService } from "../index.ts";
 
 export class ServiceTester<
   ServiceType extends typeof BaseService

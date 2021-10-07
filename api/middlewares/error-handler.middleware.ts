@@ -1,9 +1,10 @@
-import configs from "../config/config.ts";
 import { Context } from "../deps.ts";
-import { log } from "../utils/logger.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
 
-const { env } = configs;
+import { config } from "../config/index.ts";
+import { log } from "../utils/index.ts";
+import { ErrorHelper } from "../helpers/index.ts";
+
+const { env } = config;
 
 export async function errorHandler(
   { response }: Context,

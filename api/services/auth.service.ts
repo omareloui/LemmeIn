@@ -1,14 +1,9 @@
-import HashHelper from "../helpers/hash.helper.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
+import { Role } from "../config/index.ts";
 
-import JwtService from "./jwt.service.ts";
+import { HashHelper, ErrorHelper, CollectionHelper } from "../helpers/index.ts";
 
-import { User } from "../models/user.model.ts";
-import { BaseService } from "./base.service.ts";
-import UserService from "./user.service.ts";
-import type { UserDoc } from "./user.service.ts";
-import type { Role } from "../config/roles.ts";
-import { CollectionHelper } from "../helpers/collection.helper.ts";
+import { User } from "../models/index.ts";
+import { BaseService, JwtService, UserService, UserDoc } from "./index.ts";
 
 const UserHelper = new CollectionHelper(User);
 
@@ -43,7 +38,7 @@ export interface LoggingStructure {
 
 const authErrorHelper = new ErrorHelper("auth");
 
-export default class AuthService extends BaseService {
+export class AuthService extends BaseService {
   public static async login({
     email: enteredEmail,
     password,

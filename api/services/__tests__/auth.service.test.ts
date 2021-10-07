@@ -1,7 +1,7 @@
-import AuthService from "../auth.service.ts";
-
 import { ServiceTester } from "./service.test.helper.ts";
-import generateRandomText from "../../utils/generateRandomText.ts";
+import { generateRandomText } from "../../utils/index.ts";
+
+import { AuthService } from "../index.ts";
 
 const serviceTester = new ServiceTester("auth", AuthService);
 

@@ -1,7 +1,5 @@
-import { Tester } from "../test.helper.ts";
-import sleep from "../../utils/sleep.ts";
-
-import JwtHelper from "../jwt.helper.ts";
+import { Tester, JwtHelper } from "../index.ts";
+import { sleep } from "../../utils/index.ts";
 
 const tester = new Tester("helpers/jwt:");
 

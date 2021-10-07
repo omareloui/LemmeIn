@@ -1,14 +1,10 @@
-import { BaseService } from "./base.service.ts";
-import type { Role } from "../config/roles.ts";
+import { Role } from "../config/index.ts";
 
-import createRegex from "../utils/createRegex.ts";
+import { createRegex } from "../utils/index.ts";
+import { CollectionHelper, HashHelper, ErrorHelper } from "../helpers/index.ts";
 
-import { User, UserSchema } from "../models/user.model.ts";
-import { UserHistory } from "../models/user-history.model.ts";
-
-import { CollectionHelper } from "../helpers/collection.helper.ts";
-import HashHelper from "../helpers/hash.helper.ts";
-import ErrorHelper from "../helpers/error.helper.ts";
+import { User, UserSchema, UserHistory } from "../models/index.ts";
+import { BaseService } from "./index.ts";
 
 const UserHelper = new CollectionHelper(User);
 const UserHistoryHelper = new CollectionHelper(UserHistory);
@@ -45,7 +41,7 @@ export interface UserDoc {
   updatedAt: Date;
 }
 
-export default class UserService extends BaseService {
+export class UserService extends BaseService {
   public static async create(options: CreateOptions) {
     const { firstName, lastName, email, password, role } = options;
 

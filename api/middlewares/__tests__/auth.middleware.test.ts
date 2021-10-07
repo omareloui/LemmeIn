@@ -1,8 +1,9 @@
 import { MiddlewareTester } from "./middleware.test.helper.ts";
-import { auth } from "../auth.middleware.ts";
+
+import { auth } from "../index.ts";
 
 import type { RouterContext } from "../../deps.ts";
-import type { Rights } from "../../config/roles.ts";
+import type { Rights } from "../../config/index.ts";
 
 const middlewareTester = new MiddlewareTester("auth");
 

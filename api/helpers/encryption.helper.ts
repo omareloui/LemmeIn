@@ -1,12 +1,14 @@
 import { Aes256Cfb8 } from "../deps.ts";
-import config from "../config/config.ts";
-import generateRandomText from "../utils/generateRandomText.ts";
-import convertToHex from "../utils/convertUnit8ArrayToHex.ts";
-import convertToUnit8Array from "../utils/convertHexToUnit8Array.ts";
+import { config } from "../config/index.ts";
+import {
+  generateRandomText,
+  convertUnit8ArrayToHex as convertToHex,
+  convertHexToUnit8Array as convertToUnit8Array,
+} from "../utils/index.ts";
 
 const { encryptionSecret } = config;
 
-export default class EncryptionHelper {
+export class EncryptionHelper {
   algorithm: typeof Aes256Cfb8;
   te: TextEncoder;
   td: TextDecoder;

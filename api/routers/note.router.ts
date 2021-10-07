@@ -1,13 +1,15 @@
-import NoteController from "../controllers/note.controller.ts";
 import { Router } from "../deps.ts";
-import { auth } from "../middlewares/auth.middleware.ts";
-import { validate } from "../middlewares/validate.middleware.ts";
+
+import { NoteController } from "../controllers/index.ts";
+
+import { auth, validate } from "../middlewares/index.ts";
+
 import {
   getNotesValidation,
   createNoteValidation,
   deleteNoteValidation,
   updateNoteValidation,
-} from "../validations/note.validation.ts";
+} from "../validations/index.ts";
 
 const router: Router = new Router();
 
