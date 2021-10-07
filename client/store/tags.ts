@@ -48,7 +48,7 @@ export const actions = actionTree(
         const tag = response.data as Tag
         this.$notify.success("Created tag.")
         commit("unshiftToTags", tag)
-        return true
+        return tag
       } catch (e) {
         // @ts-ignore
         this.$notify.error(e.response ? e.response.data.message : e.message)

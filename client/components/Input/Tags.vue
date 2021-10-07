@@ -184,11 +184,9 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
       try {
         this.clearError()
         this.isLoadingCreating = true
-        const succeeded = await this.$accessor.tags.addTag({ name: this.query })
-        if (!succeeded) return
-        const createdTag = this.$accessor.tags.tags[0]
-        this.tags.push(createdTag)
-        this.selectTag(createdTag)
+        const tag = await this.$accessor.tags.addTag({ name: this.query })
+        if (!tag) return
+        this.selectTag(tag)
       } finally {
         this.isLoadingCreating = false
       }
