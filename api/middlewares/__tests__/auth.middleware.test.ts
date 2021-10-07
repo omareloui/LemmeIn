@@ -29,7 +29,7 @@ const validTests: ValidTests[] = [
   {
     description: "should pass admin context on user right",
     context: adminContext,
-    right: "getMe",
+    right: "me",
   },
   {
     description: "should pass admin context on admin right",
@@ -39,7 +39,7 @@ const validTests: ValidTests[] = [
   {
     description: "should pass user context on user right",
     context: userContext,
-    right: "getMe",
+    right: "me",
   },
 ];
 
@@ -47,7 +47,7 @@ const errorTests: ErrorTest[] = [
   {
     description: "should throw error on user right with not signed context",
     context: notSignedContext,
-    right: "getMe",
+    right: "me",
     errorIncludes: "Invalid token",
   },
   {
