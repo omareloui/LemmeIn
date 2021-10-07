@@ -19,8 +19,13 @@ body {
   @include ff.fnt(body);
   @include fs.fnt-base;
   scroll-padding-top: var(--header-height);
-  > * {
-    @include t.tran(color background fill);
+
+  * {
+    @include t.tran(color background);
+  }
+
+  i > svg {
+    @include t.tran(fill);
   }
 }
 

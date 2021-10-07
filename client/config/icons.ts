@@ -61,6 +61,8 @@ const icons = [
 
   // Work stuff
   { name: "linked-in", color: "#0077b5", regex: /linked.?in/ },
+  { name: "upwork", color: "#14a800", regex: /up.?work/ },
+  { name: "freelancer", color: "#29b2fe", regex: /freelancer/ },
 
   // Entertainment
   { name: "spotify", color: "#1db954", regex: /spotify/ },
