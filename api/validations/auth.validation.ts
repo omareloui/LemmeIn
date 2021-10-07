@@ -12,19 +12,20 @@ const name = ({ isRequired = true, isLastName = false } = {}) => {
       `You can't have special character in the ${nameValue} name field.`
     );
 
-  if (isRequired) nameValidation.required(`${nameValue} name is required`);
+  if (isRequired)
+    return nameValidation.required(`${nameValue} name is required`);
   return nameValidation;
 };
 
 const email = ({ isRequired = true } = {}) => {
   const emailValidation = yup.string().email().trim();
-  if (isRequired) emailValidation.required(`email is required`);
+  if (isRequired) return emailValidation.required(`email is required`);
   return emailValidation;
 };
 
 const password = ({ isRequired = true, passwordName = "password" } = {}) => {
   const passValidation = yup.string().min(8).max(255);
-  if (isRequired) passValidation.required(`${passwordName} is required`);
+  if (isRequired) return passValidation.required(`${passwordName} is required`);
   return passValidation;
 };
 
