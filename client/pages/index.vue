@@ -8,7 +8,12 @@
 import Vue from "vue"
 
 export default Vue.extend({
-  layout: "no-floating-menu"
+  layout: "no-floating-menu",
+
+  // @ts-ignore
+  middleware({ $accessor, redirect }) {
+    if ($accessor.auth.isSigned) redirect("/home")
+  }
 })
 </script>
 

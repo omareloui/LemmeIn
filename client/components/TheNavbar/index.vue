@@ -3,7 +3,7 @@
     <container no-heading>
       <div class="home header--left">
         <glass-card class="glass-nav" no-back-shape tint="background-main">
-          <link-base to="/">
+          <link-base :to="isSigned ? '/home' : '/'">
             <icon
               name="logo"
               size="100%"

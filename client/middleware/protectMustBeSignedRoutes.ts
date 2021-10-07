@@ -6,7 +6,9 @@ const protectMustBeSignedRoutes: Middleware = ({
   app,
   $notify
 }) => {
-  const isProtectedRoute = !!route.fullPath.match(/^\/(vault|tags|settings)/)
+  const isProtectedRoute = !!route.fullPath.match(
+    /^\/(vault|tags|settings|home)/
+  )
   const { isSigned } = app.$accessor.auth
 
   if (isProtectedRoute && !isSigned) {

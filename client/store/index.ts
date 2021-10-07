@@ -19,11 +19,13 @@ export const mutations = mutationTree(state, {})
 export const actions = actionTree(
   { state, mutations },
   {
-    async nuxtServerInit() {
+    async nuxtServerInit(_store, { req, redirect }) {
       const { $accessor } = this.app
       $accessor.theme.load()
       await $accessor.auth.setMe()
       await $accessor.resources.load()
+      // Redirect to home if is signed in and going to /
+      if (req.url === "/" && $accessor.auth.isSigned) redirect("/home")
     }
   }
 )
