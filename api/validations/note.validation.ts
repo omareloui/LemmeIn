@@ -2,9 +2,9 @@ import { yup } from "../deps.ts";
 import { requiredId } from "../utils/checkIfMongoId.ts";
 
 const createAndUpdateValidationBody = {
-  body: yup.string().trim().required(`Field "body" is required`),
+  body: yup.string().trim(),
   title: yup.string().trim(),
-  tags: yup.array().of(yup.string()),
+  tags: yup.array().of(requiredId),
 };
 
 export const createNoteValidation = {
