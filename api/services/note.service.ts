@@ -131,6 +131,16 @@ export default class NoteService extends BaseService {
     return newNote as VirtualNoteSchema;
   }
 
+  public static async removeTagFromNotes(tagId: string, userId: string) {
+    const notes = await NoteHelper.find({ user: userId, tags: tagId });
+    for (const note of notes) {
+      if (!note.tags || note.tags.length === 0) continue;
+      const newTags = (note.tags as string[]).filter((tag) => tag !== tagId);
+      await NoteHelper.updateMineById(note.id, { tags: newTags }, userId);
+    }
+    return true;
+  }
+
   public static async removeOneMine(
     id: string,
     userId: string

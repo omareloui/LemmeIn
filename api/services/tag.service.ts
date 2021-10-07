@@ -8,6 +8,7 @@ import createRegex from "../utils/createRegex.ts";
 
 import { BaseService } from "./base.service.ts";
 import AccountService from "./account.service.ts";
+import NoteService from "./note.service.ts";
 
 const TagHelper = new CollectionHelper(Tag);
 const tagErrorHelper = new ErrorHelper("tag");
@@ -94,6 +95,7 @@ export default class TagService extends BaseService {
 
   public static async removeOneMine(id: string, userId: string) {
     await AccountService.removeTagFromAccounts(id, userId);
+    await NoteService.removeTagFromNotes(id, userId);
     const tag = await TagHelper.findMineById(id, userId);
     if (!tag) return tagErrorHelper.notFound();
     await TagHelper.deleteMineById(id, userId);

@@ -78,18 +78,18 @@ export default Vue.extend({
         },
         {
           button: {
+            icon: "note",
+            description: "secure notes"
+          },
+          onClick: () => this.$router.push("/notes")
+        },
+        {
+          button: {
             icon: "tags",
             description: "tags",
             iconViewBox: "28.3 32"
           },
           onClick: () => this.$router.push("/tags")
-        },
-        {
-          button: {
-            icon: "note",
-            description: "secure notes"
-          },
-          onClick: () => this.$router.push("/notes")
         },
         {
           button: {

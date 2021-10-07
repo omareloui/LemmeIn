@@ -81,7 +81,7 @@ export const actions = actionTree(
           `Are you sure you want to delete "${tagName}" tag?`,
           {
             description:
-              "That will also remove the tag from all accounts that use it",
+              "That will also remove the tag from all accounts and notes",
             acceptMessage: "Delete"
           }
         )
@@ -89,6 +89,7 @@ export const actions = actionTree(
         await this.$axios.delete(`/tags/${tagId}`)
         commit("removeTag", tagId)
         this.app.$accessor.vault.removeTagFromAccounts(tagId)
+        this.app.$accessor.notes.removeTagFromNotes(tagId)
         this.$notify.success("Removed tag.")
         return true
       } catch (e) {

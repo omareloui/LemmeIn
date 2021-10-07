@@ -28,6 +28,13 @@ export const mutations = mutationTree(state, {
 
   removeNote(state, noteId: string) {
     state.notes = state.notes.filter(x => x.id !== noteId)
+  },
+
+  removeTagFromNotes(state, tagId: string) {
+    state.notes = state.notes.map(note => {
+      if (note.tags) note.tags = note.tags.filter(x => x.id !== tagId)
+      return note
+    })
   }
 })
 
