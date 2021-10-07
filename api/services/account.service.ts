@@ -225,7 +225,7 @@ export default class AccountService extends BaseService {
       userId
     );
     if (!newAccount) return accountErrorHelper.badRequest({ action: "update" });
-    return newAccount;
+    return this.populate(newAccount, userId);
   }
 
   public static async removeTagFromAccounts(tagId: string, userId: string) {
