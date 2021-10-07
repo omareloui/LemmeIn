@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { PasswordStrength } from "~/@types"
+import { PasswordScore } from "~/@types"
 
 const PROGRESS_STYLES = ["line", "dot"] as const
 type ProgressStyle = typeof PROGRESS_STYLES[number]
@@ -59,18 +59,14 @@ export default Vue.extend({
   },
 
   computed: {
-    strength(): PasswordStrength {
+    strength(): PasswordScore {
       return this.getPasswordStrength()
     }
   },
 
   methods: {
     getPasswordStrength() {
-      return this.$getPasswordStrength(
-        this.decryptedPassword,
-        this.lastUpdated as Date,
-        this.isDuplicated
-      )
+      return this.$getPasswordStrength(this.decryptedPassword)
     }
   }
 })

@@ -59,8 +59,10 @@ export interface PasswordScore {
   maxScore: number
   percentage: number
   suggestions: string[]
+  diversity: PasswordDiversity[]
   value: PasswordStrengthValues
   color: PasswordStrengthColors
+  length: number
 }
 
 export interface PasswordStrength extends PasswordScore {
