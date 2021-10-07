@@ -1,6 +1,7 @@
 <template>
   <container tag="main">
     <template #heading>Lemme in</template>
+    <icons-preview />
   </container>
 </template>
 
