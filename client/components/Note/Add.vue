@@ -34,7 +34,8 @@ export default Vue.extend({
         props: {
           minLength: 2,
           rows: 10,
-          focusOnMount: true
+          focusOnMount: true,
+          notRequired: true
         }
       },
       {

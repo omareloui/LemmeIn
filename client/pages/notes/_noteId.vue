@@ -3,8 +3,13 @@
     padding-bottom
     no-heading
     class="note"
-    :class="{ 'note--no-heading': !note.title, 'note--is-editing': isEditing }"
+    :class="{
+      'note--no-heading': !note.title,
+      'note--no-body': !note.body,
+      'note--is-editing': isEditing
+    }"
   >
+    <!-- Edit button -->
     <transition name="fade">
       <button-base
         v-if="!isEditing"
@@ -18,12 +23,10 @@
       </button-base>
     </transition>
 
-    <h1 class="note__title" v-if="!isEditing">
+    <!-- Title -->
+    <h1 v-if="!isEditing && note.title" class="note__title">
       {{ note.title }}
     </h1>
-
-    <marked class="note__body" :content="note.body" v-if="!isEditing" />
-
     <input-minimal-text
       v-if="isEditing"
       ref="headingInput"
@@ -31,6 +34,12 @@
       class="note__title"
       placeholder="Title"
       v-model="editData.title"
+    />
+
+    <marked
+      v-if="!isEditing && note.body"
+      class="note__body"
+      :content="note.body"
     />
     <input-minimal-text
       v-if="isEditing"
@@ -128,7 +137,7 @@ export default (Vue as ExtendVue<{ note: Note; $refs: Refs }>).extend({
 
   computed: {
     hasTags(): boolean {
-      return this.note.tags && this.note.tags.length > 0
+      return !!this.note.tags && this.note.tags.length > 0
     }
   },
 
@@ -146,8 +155,8 @@ export default (Vue as ExtendVue<{ note: Note; $refs: Refs }>).extend({
   methods: {
     setEditData() {
       this.editData = {
-        title: this.note.title,
-        body: this.note.body,
+        title: this.note.title || "",
+        body: this.note.body || "",
         tags: this.note.tags ? this.note.tags.map(x => x.id) : []
       }
     },
@@ -164,16 +173,15 @@ export default (Vue as ExtendVue<{ note: Note; $refs: Refs }>).extend({
     async save() {
       this.isSaving = true
       const { $accessor } = this
-      if (!this.note.body) this.$notify.error("The note can't be empty")
-      else {
-        const { title, body, tags } = this.editData
-        const newNote = await $accessor.notes.updateNote({
-          id: this.note.id,
-          title,
-          body,
-          tags
-        })
-        if (newNote) this.note = newNote
+      const { title, body, tags } = this.editData
+      const newNote = await $accessor.notes.updateNote({
+        id: this.note.id,
+        title,
+        body,
+        tags
+      })
+      if (newNote) {
+        this.note = newNote
         this.closeEditing()
       }
       this.isSaving = false

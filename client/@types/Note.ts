@@ -1,7 +1,7 @@
 import { Tag } from "."
 
 export interface AddNote {
-  body: string
+  body?: string
   title?: string
   tags?: string[]
 }
@@ -12,8 +12,10 @@ export interface UpdateNote extends AddNote {
 
 export interface Note {
   id: string
-  title: string
-  body: string
-  tags: Tag[]
+  title?: string
+  body?: string
+  tags?: Tag[]
   user: string
+  createdAt: Date
+  updatedAt: Date
 }

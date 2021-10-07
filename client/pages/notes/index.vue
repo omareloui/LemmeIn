@@ -1,6 +1,6 @@
  <template>
   <container padding-bottom class="notes-page">
-    <template #heading>Notes</template>
+    <template #heading>Secure Notes</template>
 
     <input-search
       v-model="searchQuery"

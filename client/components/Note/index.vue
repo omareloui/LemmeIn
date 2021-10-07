@@ -12,8 +12,14 @@
     @keyup:enter="goToNote"
   >
     <div>
-      <div v-if="note.title" class="note__title">{{ note.title }}</div>
-      <marked :content="note.body.slice(0, 550)" class="note__body" />
+      <div class="note__content">
+        <div v-if="note.title" class="note__title">{{ note.title }}</div>
+        <marked
+          v-if="note.body"
+          :content="note.body.slice(0, 550)"
+          class="note__body"
+        />
+      </div>
       <splitter class="note__splitter" v-if="hasTags" />
       <div class="note__tags" v-if="hasTags">
         <chip-tag
@@ -40,7 +46,7 @@ export default Vue.extend({
 
   computed: {
     hasTags(): boolean {
-      return this.note.tags && this.note.tags.length > 0
+      return !!this.note.tags && this.note.tags.length > 0
     }
   },
 
@@ -58,25 +64,15 @@ export default Vue.extend({
 .note
   > div
     +br-md
-    +pt(20px)
     +clickable
     overflow: hidden
 
-    *:not(.note__splitter)
+    > *:not(.note__splitter)
       +px(20px)
 
-  +e(title)
-    +fnt(heading)
-    +fnt-2xl
-    +mb(15px)
-
-  +e(body)
-    +clr-txt(main, $opacity: 0.8)
-    +h(max 200px)
-    +pb(10px)
-    +tran(color)
+  +e(content)
     +pos-r
-    overflow: hidden
+    +py(10px)
     &:after
       --clr: hsl(var(--clr-hs-background-secondary) var(--clr-l-background-secondary) / var(--clr-o-50))
       content: ""
@@ -91,6 +87,17 @@ export default Vue.extend({
     &:hover:after
       +h(100%)
       background-image: linear-gradient(transparent 0, var(--clr) 70%)
+
+  +e(title)
+    +fnt(heading)
+    +fnt-2xl
+    +fnt-bold
+
+  +e(body)
+    +clr-txt(main, $opacity: 0.8)
+    +h(max 200px)
+    +tran(color)
+    overflow: hidden
 
   +e(tags)
     +flex($gap: 10px 15px, $center-v: true)

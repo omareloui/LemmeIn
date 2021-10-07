@@ -87,7 +87,7 @@ export default Vue.extend({
         {
           button: {
             icon: "note",
-            description: "notes"
+            description: "secure notes"
           },
           onClick: () => this.$router.push("/notes")
         },

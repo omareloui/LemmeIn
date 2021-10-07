@@ -53,6 +53,8 @@ export const actions = actionTree(
 
     async addNote({ commit }, options: AddNote) {
       try {
+        if (!options.body && !options.title)
+          throw new Error(`"note" and "title" can't be both empty`)
         const response = await this.$axios.post("/notes", options)
         const note = response.data as Note
         this.$notify.success("Created note")
