@@ -11,7 +11,7 @@ import {
   updateTagValidation,
 } from "../validations/index.ts";
 
-const router: Router = new Router();
+const router = new Router();
 
 router.get(
   "/tags",

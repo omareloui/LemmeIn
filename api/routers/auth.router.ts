@@ -11,7 +11,7 @@ import {
   meValidation,
 } from "../validations/index.ts";
 
-const router: Router = new Router();
+const router = new Router();
 
 router.post("/auth/login", validate(loginValidation), AuthController.login);
 
