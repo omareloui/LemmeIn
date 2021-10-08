@@ -9,7 +9,9 @@ export const state = () => ({
   safe: { counter: 0, accounts: [] as AccountsType },
   okay: { counter: 0, accounts: [] as AccountsType },
   weak: { counter: 0, accounts: [] as AccountsType },
-  compromised: { counter: 0, accounts: [] as AccountsType }
+  compromised: { counter: 0, accounts: [] as AccountsType },
+  totalAccounts: 0,
+  score: 0
 })
 
 export type AnalyzeState = ReturnType<typeof state>

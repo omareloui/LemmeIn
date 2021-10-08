@@ -1,6 +1,6 @@
 import {
   DuplicatedPasswords,
-  Analyze as AnalyzesResult,
+  Analyze as AnalyzeType,
   BuildAnalyzesOptions,
   Account,
 } from "../@types/index.ts";
@@ -9,7 +9,7 @@ import { EncryptionHelper } from "../helpers/index.ts";
 import { AccountService } from "./index.ts";
 
 export class AnalyzeAccountsService {
-  public static analyze(accounts: Account[]): AnalyzesResult {
+  public static analyze(accounts: Account[]): AnalyzeType {
     const analyzing: BuildAnalyzesOptions = {
       duplicated: [],
       outdated: [],
@@ -17,9 +17,12 @@ export class AnalyzeAccountsService {
       weak: [],
       okay: [],
       safe: [],
+      totalAccounts: accounts.length,
+      nonOAuthAccounts: 0,
     };
 
     const accountsToWorkOn = accounts.filter((x) => x.decryptedPassword);
+    analyzing.nonOAuthAccounts = accountsToWorkOn.length;
 
     const duplications = this.setDuplicatedPasswords(accountsToWorkOn);
 
@@ -38,7 +41,7 @@ export class AnalyzeAccountsService {
     return this.buildResult(analyzing);
   }
 
-  public static async analyzeMine(userId: string): Promise<AnalyzesResult> {
+  public static async analyzeMine(userId: string): Promise<AnalyzeType> {
     const accounts = await AccountService.getAllMine(userId);
     const encryptionHelper = new EncryptionHelper();
 
@@ -148,38 +151,55 @@ export class AnalyzeAccountsService {
   }
 
   private static buildResult({
+    nonOAuthAccounts,
+    totalAccounts,
     duplicated,
     outdated,
     compromised,
     weak,
     okay,
     safe,
-  }: BuildAnalyzesOptions): AnalyzesResult {
+  }: BuildAnalyzesOptions): AnalyzeType {
+    let totalScore = 0;
+
+    // Each account could be only one of these
+    totalScore += safe.length;
+    totalScore += okay.length * 0.75;
+    totalScore += weak.length * 0.5;
+    totalScore += compromised.length * 0;
+
+    // But there are sub categories the account could have it with any other
+    // strength value
+    totalScore -= outdated.length * 0.5;
+    totalScore -= duplicated.length * 0.5;
+
     return {
       duplicated: {
-        counter: duplicated.length || 0,
+        counter: duplicated.length,
         accounts: duplicated,
       },
       outdated: {
-        counter: outdated.length || 0,
+        counter: outdated.length,
         accounts: outdated,
       },
       compromised: {
-        counter: compromised.length || 0,
+        counter: compromised.length,
         accounts: compromised,
       },
       weak: {
-        counter: weak.length || 0,
+        counter: weak.length,
         accounts: weak,
       },
       okay: {
-        counter: okay.length || 0,
+        counter: okay.length,
         accounts: okay,
       },
       safe: {
-        counter: safe.length || 0,
+        counter: safe.length,
         accounts: safe,
       },
+      score: Math.floor((totalScore / nonOAuthAccounts) * 100),
+      totalAccounts,
     };
   }
 }

@@ -13,4 +13,7 @@ export type AnalyzeKeys = PasswordStrengthValues | "outdated" | "duplicated"
 
 export type Analyze = {
   [key in AnalyzeKeys]: AnalyzeValue
+} & {
+  totalAccounts: number
+  score: number
 }

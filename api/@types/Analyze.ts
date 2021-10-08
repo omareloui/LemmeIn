@@ -16,10 +16,16 @@ export type PasswordAnalyzesStrengths =
   | "safe";
 export type AnalyzeKeys = PasswordAnalyzesStrengths | "outdated" | "duplicated";
 
-export type Analyze = {
-  [key in AnalyzeKeys]: AnalyzeValue;
+export type BuildAnalyzesOptions = {
+  [key in AnalyzeKeys]: Account[];
+} & {
+  totalAccounts: number;
+  nonOAuthAccounts: number;
 };
 
-export type BuildAnalyzesOptions = {
-  [key in keyof Analyze]: Account[];
+export type Analyze = {
+  [key in AnalyzeKeys]: AnalyzeValue;
+} & {
+  totalAccounts: number;
+  score: number;
 };
