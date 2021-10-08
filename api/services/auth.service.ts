@@ -6,13 +6,17 @@ import {
   User as UserType,
 } from "../@types/index.ts";
 
-import { HashHelper, ErrorHelper, CollectionHelper } from "../helpers/index.ts";
+import {
+  HashHelper,
+  ErrorHelper,
+  CollectionHelper,
+  JwtHelper,
+} from "../helpers/index.ts";
 
 import { User } from "../models/index.ts";
-import { BaseService, JwtService, UserService } from "./index.ts";
+import { BaseService, UserService } from "./index.ts";
 
 const UserHelper = new CollectionHelper(User);
-
 const authErrorHelper = new ErrorHelper("auth");
 
 export class AuthService extends BaseService {
@@ -31,7 +35,7 @@ export class AuthService extends BaseService {
       });
     // Get the token
     const id = user.id.toString();
-    const token = await JwtService.create(id);
+    const token = await JwtHelper.createAccessToken(id);
     const { firstName, lastName, email, role, createdAt, updatedAt } = user;
     return {
       token,
@@ -46,7 +50,7 @@ export class AuthService extends BaseService {
     const user = await UserService.create(options);
     if (!user) return authErrorHelper.notFound();
     const { id, firstName, lastName, email, role, createdAt, updatedAt } = user;
-    const token = await JwtService.create(user.id);
+    const token = await JwtHelper.createAccessToken(id.toString());
     return {
       token,
       user: { id, firstName, lastName, email, role, createdAt, updatedAt },
@@ -67,7 +71,7 @@ export class AuthService extends BaseService {
     const user = await UserService.updateMe(options, userId);
     if (!user) return authErrorHelper.notFound();
     const { id, firstName, lastName, email, role, createdAt, updatedAt } = user;
-    const token = await JwtService.create(user.id);
+    const token = await JwtHelper.createAccessToken(user.id.toString());
     return {
       token,
       user: { id, firstName, lastName, email, role, createdAt, updatedAt },

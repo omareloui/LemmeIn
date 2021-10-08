@@ -1,5 +1,9 @@
 import { create, getNumericDate, Header, verify } from "../deps.ts";
 import { ErrorHelper } from "./index.ts";
+import { getDateAfterSeconds } from "../utils/index.ts";
+
+import { config } from "../config/index.ts";
+const { jwtExpiration } = config;
 
 const jwtSecret = await crypto.subtle.generateKey(
   { name: "HMAC", hash: "SHA-512" },
@@ -24,6 +28,14 @@ export class JwtHelper {
       },
       jwtSecret
     );
+  }
+
+  public static async createAccessToken(userId: string) {
+    const token = await this.create(jwtExpiration, { id: userId });
+    return {
+      token,
+      expires: getDateAfterSeconds(jwtExpiration),
+    };
   }
 
   public static async verify(token: string) {
