@@ -1,34 +1,31 @@
 import { Optional } from "../@types/utils.ts";
-import { NormalizedDoc, getDateBeforeSeconds } from "../utils/index.ts";
-import { EncryptionHelper, CollectionHelper } from "../helpers/index.ts";
-import { Account, AccountSchema } from "../models/index.ts";
+import { getDateBeforeSeconds } from "../utils/index.ts";
+import { EncryptionHelper } from "../helpers/index.ts";
+import { DecryptedAccountSchema } from "../models/index.ts";
+import { AccountService } from "./index.ts";
 
-const AccountHelper = new CollectionHelper(Account);
-
-type AccountType = NormalizedDoc<AccountSchema>;
 type DuplicatedPasswords = {
   [plainPassword: string]: { passwordsId: string[] };
 };
 
 interface AnalyzeValue {
   counter: number;
-  accounts: Omit<AccountType, "password">[];
+  accounts: DecryptedAccountSchema[];
 }
 
 type PasswordAnalyzesStrengths = "compromised" | "weak" | "okay" | "safe";
 type AnalyzeKeys = PasswordAnalyzesStrengths | "outdated" | "duplicated";
 
-type BuildAnalyzesOptions = { [key in keyof AnalyzesResult]: AccountType[] };
+type BuildAnalyzesOptions = {
+  [key in keyof AnalyzesResult]: DecryptedAccountSchema[];
+};
 
-type AnalyzesResult = {
+export type AnalyzesResult = {
   [key in AnalyzeKeys]: AnalyzeValue;
 };
 
-const ENCRYPTED_PASSWORD_REG_EXP = /[\da-f]{32}\.[\da-f]/;
-
 export class AnalyzeAccountsService {
-  public static async analyzeMine(userId: string): Promise<AnalyzesResult> {
-    const accounts = await AccountHelper.findAllMine(userId);
+  public static analyze(accounts: DecryptedAccountSchema[]): AnalyzesResult {
     const analyzing: BuildAnalyzesOptions = {
       duplicated: [],
       outdated: [],
@@ -38,34 +35,37 @@ export class AnalyzeAccountsService {
       safe: [],
     };
 
-    const encryptedAccounts = accounts.filter((x) =>
-      x.password.match(ENCRYPTED_PASSWORD_REG_EXP)
+    const accountsToWorkOn = accounts.filter((x) => x.decryptedPassword);
+
+    const duplications = this.setDuplicatedPasswords(accountsToWorkOn);
+
+    analyzing.duplicated = accountsToWorkOn.filter((x) =>
+      this.checkIfDuplicated(duplications, x.decryptedPassword!)
     );
+    analyzing.outdated = accountsToWorkOn.filter(
+      this.checkIfOutdated.bind(this)
+    );
+    analyzing.compromised = accountsToWorkOn.filter(
+      this.checkIfCompromised.bind(this)
+    );
+    analyzing.weak = accountsToWorkOn.filter(this.checkIfWeak.bind(this));
+    analyzing.okay = accountsToWorkOn.filter(this.checkIfOkay.bind(this));
+    analyzing.safe = accountsToWorkOn.filter(this.checkIfSafe.bind(this));
+    return this.buildResult(analyzing);
+  }
 
-    if (encryptedAccounts.length === 0) return this.buildResult(analyzing);
-
+  public static async analyzeMine(userId: string): Promise<AnalyzesResult> {
+    const accounts = await AccountService.getAllMine(userId);
     const encryptionHelper = new EncryptionHelper();
+
     const decryptedAccounts = await Promise.all(
-      encryptedAccounts.map((x) => {
-        x.password = encryptionHelper.decrypt(x.password);
+      (accounts as DecryptedAccountSchema[]).map((x) => {
+        if (x.encryptedPassword)
+          x.decryptedPassword = encryptionHelper.decrypt(x.encryptedPassword);
         return x;
       })
     );
-
-    const duplications = this.setDuplicatedPasswords(accounts);
-    analyzing.duplicated = decryptedAccounts.filter((x) =>
-      this.checkIfDuplicated(duplications, x.password)
-    );
-    analyzing.outdated = decryptedAccounts.filter(
-      this.checkIfOutdated.bind(this)
-    );
-    analyzing.compromised = decryptedAccounts.filter(
-      this.checkIfCompromised.bind(this)
-    );
-    analyzing.weak = decryptedAccounts.filter(this.checkIfWeak.bind(this));
-    analyzing.okay = decryptedAccounts.filter(this.checkIfOkay.bind(this));
-    analyzing.safe = decryptedAccounts.filter(this.checkIfSafe.bind(this));
-    return this.buildResult(analyzing);
+    return this.analyze(decryptedAccounts);
   }
 
   private static oldestValidPasswordDateInSeconds = 60 * 60 * 24 * 30 * 3; // 3 months
@@ -74,20 +74,25 @@ export class AnalyzeAccountsService {
     return getDateBeforeSeconds(this.oldestValidPasswordDateInSeconds);
   }
 
-  private static checkIfOutdated(account: AccountType) {
+  private static checkIfOutdated(account: DecryptedAccountSchema) {
     return Number(account.lastPasswordUpdate) <= Number(this.getOutdatedDate());
   }
 
-  private static setDuplicatedPasswords(accounts: AccountType[]) {
-    return accounts.reduce((prev, cur) => {
-      const currentPasswordsIds = prev[cur.password]?.passwordsId;
-      prev[cur.password] = {
+  private static setDuplicatedPasswords(accounts: DecryptedAccountSchema[]) {
+    const setDuplicatedPasswords = (
+      prev: DuplicatedPasswords,
+      cur: DecryptedAccountSchema
+    ) => {
+      if (!cur.decryptedPassword) return prev;
+      const currentPasswordsIds = prev[cur.decryptedPassword]?.passwordsId;
+      prev[cur.decryptedPassword] = {
         passwordsId: currentPasswordsIds
           ? [...currentPasswordsIds, cur.id.toString()]
           : [cur.id.toString()],
       };
       return prev;
-    }, {} as DuplicatedPasswords);
+    };
+    return accounts.reduce(setDuplicatedPasswords, {});
   }
 
   private static checkIfDuplicated(
@@ -140,20 +145,22 @@ export class AnalyzeAccountsService {
     return { score, maxScore, percentage, suggestions, value };
   }
 
-  private static checkIfCompromised(account: AccountType) {
-    return this.calculateScore(account.password).value === "compromised";
+  private static checkIfCompromised(account: DecryptedAccountSchema) {
+    return (
+      this.calculateScore(account.decryptedPassword!).value === "compromised"
+    );
   }
 
-  private static checkIfWeak(account: AccountType) {
-    return this.calculateScore(account.password).value === "weak";
+  private static checkIfWeak(account: DecryptedAccountSchema) {
+    return this.calculateScore(account.decryptedPassword!).value === "weak";
   }
 
-  private static checkIfOkay(account: AccountType) {
-    return this.calculateScore(account.password).value === "okay";
+  private static checkIfOkay(account: DecryptedAccountSchema) {
+    return this.calculateScore(account.decryptedPassword!).value === "okay";
   }
 
-  private static checkIfSafe(account: AccountType) {
-    return this.calculateScore(account.password).value === "safe";
+  private static checkIfSafe(account: DecryptedAccountSchema) {
+    return this.calculateScore(account.decryptedPassword!).value === "safe";
   }
 
   private static buildResult({
@@ -167,35 +174,35 @@ export class AnalyzeAccountsService {
     return {
       duplicated: {
         counter: duplicated.length || 0,
-        accounts: duplicated.map(this.removePassword),
+        accounts: duplicated,
       },
       outdated: {
         counter: outdated.length || 0,
-        accounts: outdated.map(this.removePassword),
+        accounts: outdated,
       },
       compromised: {
         counter: compromised.length || 0,
-        accounts: compromised.map(this.removePassword),
+        accounts: compromised,
       },
       weak: {
         counter: weak.length || 0,
-        accounts: weak.map(this.removePassword),
+        accounts: weak,
       },
       okay: {
         counter: okay.length || 0,
-        accounts: okay.map(this.removePassword),
+        accounts: okay,
       },
       safe: {
         counter: safe.length || 0,
-        accounts: safe.map(this.removePassword),
+        accounts: safe,
       },
     };
   }
 
   private static removePassword(
-    account: AccountType
-  ): Omit<AccountType, "password"> {
-    const acc: Optional<AccountType, "password"> = { ...account };
+    account: DecryptedAccountSchema
+  ): Omit<DecryptedAccountSchema, "password"> {
+    const acc: Optional<DecryptedAccountSchema, "password"> = { ...account };
     delete acc.password;
     return acc;
   }

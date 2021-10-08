@@ -261,6 +261,7 @@ export class AccountService extends BaseService {
     const result = { ...doc } as VirtualPasswordSchema;
     // Set password
     if (!isOAuth) {
+      result.encryptedPassword = result.password;
       delete (result as { password?: string }).password;
     } else {
       result.password = await this.getOneMine(result.password, userId);

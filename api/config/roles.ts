@@ -6,6 +6,7 @@ const userRights = [
   "manageMyAccounts",
   "manageMyTags",
   "manageMyNotes",
+  "manageMyResources",
 ] as const;
 const adminRights = [...userRights, "getUsers", "manageUsers"] as const;
 

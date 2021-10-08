@@ -20,6 +20,15 @@ export const mutations = mutationTree(state, {
     ;(Object.keys(data) as AnalyzeKeys[]).forEach(key => {
       state[key] = data[key]
     })
+  },
+
+  clearData(state) {
+    state.duplicated = { counter: 0, accounts: [] as AccountsType }
+    state.outdated = { counter: 0, accounts: [] as AccountsType }
+    state.safe = { counter: 0, accounts: [] as AccountsType }
+    state.okay = { counter: 0, accounts: [] as AccountsType }
+    state.weak = { counter: 0, accounts: [] as AccountsType }
+    state.compromised = { counter: 0, accounts: [] as AccountsType }
   }
 })
 

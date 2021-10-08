@@ -11,6 +11,7 @@ export * from "./Account"
 export * from "./Analyze"
 export * from "./Tag"
 export * from "./Note"
+export * from "./Resources"
 
 export * from "./FormField"
 export * from "./InputCheckOption"

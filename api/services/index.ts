@@ -6,3 +6,4 @@ export * from "./jwt.service.ts";
 export * from "./note.service.ts";
 export * from "./tag.service.ts";
 export * from "./user.service.ts";
+export * from "./resources.service.ts";
