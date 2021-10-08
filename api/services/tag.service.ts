@@ -1,19 +1,15 @@
 import { ObjectId } from "../deps.ts";
+import { Doc, Tag as TagType, CreateTagOptions } from "../@types/index.ts";
 
 import { CollectionHelper, ErrorHelper } from "../helpers/index.ts";
-import { createRegex, NormalizedDoc } from "../utils/index.ts";
+import { createRegex } from "../utils/index.ts";
 
-import { Tag, TagSchema, VirtualTagSchema } from "../models/index.ts";
+import { Tag, TagSchema } from "../models/index.ts";
 
 import { BaseService, AccountService, NoteService } from "./index.ts";
 
 const TagHelper = new CollectionHelper(Tag);
 const tagErrorHelper = new ErrorHelper("tag");
-
-export interface CreateTagOptions {
-  name: string;
-  color: string;
-}
 
 export class TagService extends BaseService {
   public static async createMine(
@@ -47,7 +43,7 @@ export class TagService extends BaseService {
 
   public static async getAllMine(userId: string) {
     const tags = await TagHelper.findAllMine(userId);
-    const normalizedTags: VirtualTagSchema[] = await Promise.all(
+    const normalizedTags: TagType[] = await Promise.all(
       tags.map((x) => this.populate(x, userId))
     );
     const sortedTags = this.sort(normalizedTags);
@@ -57,7 +53,7 @@ export class TagService extends BaseService {
   public static populateTags(
     tagsIds: string[],
     userId: string
-  ): Promise<NormalizedDoc<TagSchema>[]> {
+  ): Promise<Doc<TagSchema>[]> {
     const ids = tagsIds.map((x) => new ObjectId(x));
     return TagHelper.find({ _id: { $in: ids }, user: userId });
   }
@@ -87,7 +83,7 @@ export class TagService extends BaseService {
       { name: options.name, color: options.color, updatedAt: new Date() },
       userId
     );
-    return newTag as NormalizedDoc<TagSchema>;
+    return newTag as Doc<TagSchema>;
   }
 
   public static async removeOneMine(id: string, userId: string) {
@@ -99,15 +95,15 @@ export class TagService extends BaseService {
     return true;
   }
 
-  private static sort(docs: VirtualTagSchema[]): VirtualTagSchema[] {
+  private static sort(docs: TagType[]): TagType[] {
     return docs.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
   }
 
   private static async populate(
-    doc: NormalizedDoc<TagSchema>,
+    doc: Doc<TagSchema>,
     userId: string
-  ): Promise<VirtualTagSchema> {
-    const tag = doc as VirtualTagSchema;
+  ): Promise<TagType> {
+    const tag = doc as TagType;
     const accounts = await AccountService.getMineWithTag(
       doc.id.toString(),
       userId

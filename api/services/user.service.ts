@@ -1,4 +1,9 @@
-import { Role } from "../config/index.ts";
+import {
+  User as UserType,
+  UpdateUserOptions,
+  CreateUserOptions,
+  UpdateMeOptions,
+} from "../@types/index.ts";
 
 import { createRegex } from "../utils/index.ts";
 import { CollectionHelper, HashHelper, ErrorHelper } from "../helpers/index.ts";
@@ -11,38 +16,8 @@ const UserHistoryHelper = new CollectionHelper(UserHistory);
 
 const userErrorHelper = new ErrorHelper("user");
 
-interface CreateOptions {
-  firstName: string;
-  lastName: string;
-  password: string;
-  email: string;
-  role?: Role;
-}
-
-interface UpdateOptions {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  role?: Role;
-  password?: string;
-  oldPassword?: string;
-  updatedAt?: Date;
-}
-
-type UpdateMeOptions = Omit<UpdateOptions, "role">;
-
-export interface UserDoc {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: Role;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export class UserService extends BaseService {
-  public static async create(options: CreateOptions) {
+  public static async create(options: CreateUserOptions) {
     const { firstName, lastName, email, password, role } = options;
 
     // Making sure the email is unique
@@ -78,26 +53,26 @@ export class UserService extends BaseService {
       isDisabled: false,
       version: 1,
     });
-    return user as UserDoc;
+    return user as UserType;
   }
 
-  public static getAll(): Promise<UserDoc[]> {
-    return UserHelper.find() as Promise<UserDoc[]>;
+  public static getAll(): Promise<UserType[]> {
+    return UserHelper.find() as Promise<UserType[]>;
   }
 
-  public static async getOne(id: string): Promise<UserDoc> {
+  public static async getOne(id: string): Promise<UserType> {
     const user = await UserHelper.findById(id);
     if (!user) return userErrorHelper.notFound();
     delete (user as { password?: string }).password;
-    return user as UserDoc;
+    return user as UserType;
   }
 
-  public static async updateOne(id: string, options: UpdateOptions) {
+  public static async updateOne(id: string, options: UpdateUserOptions) {
     const user = await UserHelper.findById(id);
     if (!user) return userErrorHelper.notFound();
     const newestUserHistory = await this.getNewestUserHistory(id);
     const newVersionNumber = newestUserHistory.version + 1;
-    const updateFields: Omit<UpdateOptions, "oldPassword"> = {};
+    const updateFields: Omit<UpdateUserOptions, "oldPassword"> = {};
     const currentDate = new Date();
 
     // Set the fields to update
@@ -116,7 +91,7 @@ export class UserService extends BaseService {
       updateFields.password = await HashHelper.hash(password);
     }
     function addToUpdateFields(
-      fieldName: keyof Omit<UpdateOptions, "oldPassword">
+      fieldName: keyof Omit<UpdateUserOptions, "oldPassword">
     ) {
       const fieldValue = eval(fieldName);
       if (fieldValue && fieldValue !== user![fieldName])
@@ -127,12 +102,12 @@ export class UserService extends BaseService {
       "lastName",
       "email",
       "role",
-    ]) as Set<keyof Omit<UpdateOptions, "oldPassword">>;
+    ]) as Set<keyof Omit<UpdateUserOptions, "oldPassword">>;
     [...fieldsToUpdate].forEach((x) => addToUpdateFields(x));
 
     // Return if it doesn't need updating
     const hasToUpdate = Object.keys(updateFields).length > 0;
-    if (!hasToUpdate) return user as UserDoc;
+    if (!hasToUpdate) return user as UserType;
 
     // Update the user
     updateFields.updatedAt = currentDate;
@@ -148,7 +123,7 @@ export class UserService extends BaseService {
       isDisabled: false,
       version: newVersionNumber,
     });
-    return newUser as UserDoc;
+    return newUser as UserType;
   }
 
   public static updateMe(options: UpdateMeOptions, userId: string) {

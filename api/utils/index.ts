@@ -9,5 +9,4 @@ export * from "./getDateAfterSeconds.ts";
 export * from "./getDateBeforeSeconds.ts";
 export * from "./logger.ts";
 export * from "./mongoIdRegExp.ts";
-export * from "./normalizeDocuments.ts";
 export * from "./sleep.ts";

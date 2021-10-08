@@ -1,40 +1,17 @@
-import { Role } from "../config/index.ts";
+import {
+  LoginOptions,
+  RegisterOptions,
+  UpdateMeOptions,
+  LoggingStructure,
+  User as UserType,
+} from "../@types/index.ts";
 
 import { HashHelper, ErrorHelper, CollectionHelper } from "../helpers/index.ts";
 
 import { User } from "../models/index.ts";
-import { BaseService, JwtService, UserService, UserDoc } from "./index.ts";
+import { BaseService, JwtService, UserService } from "./index.ts";
 
 const UserHelper = new CollectionHelper(User);
-
-interface RegisterOptions {
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-  role?: Role;
-}
-
-interface UpdateMeOptions {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  password?: string;
-  oldPassword?: string;
-}
-
-interface LoginOptions {
-  email: string;
-  password: string;
-}
-
-export interface LoggingStructure {
-  user: UserDoc;
-  token: {
-    expires: Date;
-    token: string;
-  };
-}
 
 const authErrorHelper = new ErrorHelper("auth");
 
@@ -76,7 +53,7 @@ export class AuthService extends BaseService {
     };
   }
 
-  public static async me(userId: string): Promise<UserDoc> {
+  public static async me(userId: string): Promise<UserType> {
     const user = await UserService.getOne(userId);
     if (!user) return authErrorHelper.notFound();
     return user;

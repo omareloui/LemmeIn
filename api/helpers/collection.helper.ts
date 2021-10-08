@@ -1,18 +1,22 @@
-import { ObjectId, Collection, FindOptions, Document } from "../deps.ts";
+import { ObjectId, Collection, FindOptions } from "../deps.ts";
+
+import {
+  ID,
+  Doc,
+  CollectionDocument,
+  FindOneReturn,
+  FindReturn,
+  UpdateReturn,
+  CollectionFindOptions,
+  CollectionUpdateOptions,
+  CreateReturn,
+  DropReturn,
+  DeleteReturn,
+} from "../@types/index.ts";
 
 import { config } from "../config/index.ts";
 
-import { normalizeDocument, normalizeDocuments } from "../utils/index.ts";
-
 const { env } = config;
-
-type ID = Document | string;
-type CollectionDocument = { _id: ID };
-type CollectionFindOptions<T> = Partial<
-  // deno-lint-ignore no-explicit-any
-  Record<keyof T, string | RegExp | ID | { $in: Array<any> }>
->;
-type CollectionUpdateOptions<T> = Partial<Omit<T, "_id">>;
 
 export class CollectionHelper<T extends CollectionDocument> {
   private findOptions: FindOptions;
@@ -21,39 +25,42 @@ export class CollectionHelper<T extends CollectionDocument> {
     this.findOptions = { noCursorTimeout: env === "production" ? false : true };
   }
 
-  async find(options?: CollectionFindOptions<T>) {
+  async find(options?: CollectionFindOptions<T>): FindReturn<T> {
     const docs = await this.collection
       .find(options, this.findOptions)
       .toArray();
-    return normalizeDocuments(docs);
+    return docs.map(this.replaceUnderScoreIdWithId);
   }
 
-  async findOne(options: CollectionFindOptions<T>) {
+  async findOne(options: CollectionFindOptions<T>): FindOneReturn<T> {
     const doc = await this.collection.findOne(options, this.findOptions);
-    return normalizeDocument(doc);
+    return doc && this.replaceUnderScoreIdWithId(doc);
   }
 
-  findById(id: ID) {
+  findById(id: ID): FindOneReturn<T> {
     // @ts-ignore for some reason it casts an unnecessary error
     return this.findOne({ _id: new ObjectId(id) });
   }
 
-  findMineById(id: ID, userId: string) {
+  findMineById(id: ID, userId: string): FindOneReturn<T> {
     // @ts-ignore 'cause it might not have a user property
     return this.findOne({ _id: new ObjectId(id), user: userId });
   }
 
-  findAllMine(userId: string) {
+  findAllMine(userId: string): FindReturn<T> {
     // @ts-ignore 'cause it might not have a user property
     return this.find({ user: userId });
   }
 
-  async createOne(data: Partial<T>) {
+  async createOne(data: Partial<T>): CreateReturn<T> {
     const createdCollectionId = await this.collection.insertOne(data);
     return (await this.findById(createdCollectionId))!;
   }
 
-  async updateById(id: ID, newOptions: CollectionUpdateOptions<T>) {
+  async updateById(
+    id: ID,
+    newOptions: CollectionUpdateOptions<T>
+  ): UpdateReturn<T> {
     await this.collection.updateOne(
       { _id: new ObjectId(id) },
       { $set: newOptions }
@@ -65,7 +72,7 @@ export class CollectionHelper<T extends CollectionDocument> {
     id: ID,
     newOptions: CollectionUpdateOptions<T>,
     userId: string
-  ) {
+  ): UpdateReturn<T> {
     await this.collection.updateOne(
       { _id: new ObjectId(id), user: userId },
       { $set: newOptions }
@@ -73,15 +80,23 @@ export class CollectionHelper<T extends CollectionDocument> {
     return this.findById(id);
   }
 
-  async deleteById(id: ID) {
+  async deleteById(id: ID): DeleteReturn {
     await this.collection.deleteOne({ _id: new ObjectId(id) });
   }
 
-  async deleteMineById(id: ID, userId: string) {
+  async deleteMineById(id: ID, userId: string): DeleteReturn {
     await this.collection.deleteOne({ _id: new ObjectId(id), user: userId });
   }
 
-  async drop() {
+  async drop(): DropReturn {
     await this.collection.drop();
+  }
+
+  private replaceUnderScoreIdWithId<T extends CollectionDocument>(
+    doc: T
+  ): Doc<T> {
+    const y = { id: doc._id, ...doc };
+    delete (y as { _id?: string })._id;
+    return y;
   }
 }

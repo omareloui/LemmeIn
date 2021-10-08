@@ -1,5 +1,11 @@
-import { Note, NoteSchema, VirtualNoteSchema } from "../models/index.ts";
-import { compareArrays, NormalizedDoc } from "../utils/index.ts";
+import {
+  Doc,
+  Note as NoteType,
+  UpdateNoteOptions,
+  CreateNoteOptions,
+} from "../@types/index.ts";
+import { Note, NoteSchema } from "../models/index.ts";
+import { compareArrays } from "../utils/index.ts";
 
 import {
   CollectionHelper,
@@ -13,21 +19,11 @@ const NoteHelper = new CollectionHelper(Note);
 const NoteEncryptionHelper = new EncryptionHelper();
 const noteErrorHelper = new ErrorHelper("note");
 
-export interface CreateNoteOptions {
-  body?: string;
-  title?: string;
-  tags?: string[];
-}
-
-interface UpdateNoteOptions extends Partial<CreateNoteOptions> {
-  updatedAt?: Date;
-}
-
 export class NoteService extends BaseService {
   public static async createMine(
     { body, tags, title }: CreateNoteOptions,
     userId: string
-  ): Promise<VirtualNoteSchema> {
+  ): Promise<NoteType> {
     const currentDate = new Date();
     if (!title && !body)
       noteErrorHelper.badRequest({
@@ -48,21 +44,21 @@ export class NoteService extends BaseService {
     if (!note) return noteErrorHelper.notFound();
     await this.populateTags(note, userId);
     await this.decryptNote(note);
-    return note as VirtualNoteSchema;
+    return note as NoteType;
   }
 
   public static async getOneMine(
     id: string,
     userId: string
-  ): Promise<VirtualNoteSchema> {
+  ): Promise<NoteType> {
     const note = await NoteHelper.findMineById(id, userId);
     if (!note) return noteErrorHelper.notFound();
     await this.populateTags(note, userId);
     await this.decryptNote(note);
-    return note as VirtualNoteSchema;
+    return note as NoteType;
   }
 
-  public static async getAllMine(userId: string): Promise<VirtualNoteSchema[]> {
+  public static async getAllMine(userId: string): Promise<NoteType[]> {
     const notes = await NoteHelper.findAllMine(userId);
     const sortedNotes = this.sort(notes);
     await Promise.all(
@@ -78,7 +74,7 @@ export class NoteService extends BaseService {
     id: string,
     { body, tags, title }: Omit<UpdateNoteOptions, "updatedAt">,
     userId: string
-  ): Promise<VirtualNoteSchema> {
+  ): Promise<NoteType> {
     const noteDoc = await this.getOneMine(id, userId);
     if (!noteDoc) return noteErrorHelper.notFound();
     const fieldsToUpdate: UpdateNoteOptions = {};
@@ -120,14 +116,14 @@ export class NoteService extends BaseService {
 
     // See if should update or not
     const shouldUpdate = Object.keys(fieldsToUpdate).length > 0;
-    if (!shouldUpdate) return noteDoc as VirtualNoteSchema;
+    if (!shouldUpdate) return noteDoc as NoteType;
 
     fieldsToUpdate.updatedAt = new Date();
 
     const newNote = await NoteHelper.updateMineById(id, fieldsToUpdate, userId);
     await this.populateTags(newNote!, userId);
     await this.decryptNote(newNote!);
-    return newNote as VirtualNoteSchema;
+    return newNote as NoteType;
   }
 
   public static async removeTagFromNotes(tagId: string, userId: string) {
@@ -150,29 +146,28 @@ export class NoteService extends BaseService {
     return true;
   }
 
-  private static sort(
-    docs: VirtualNoteSchema[] | NormalizedDoc<NoteSchema>[]
-  ): VirtualNoteSchema[] {
+  private static sort(docs: NoteType[] | Doc<NoteSchema>[]): NoteType[] {
     return docs.sort(
       (a, b) => Number(b.createdAt) - Number(a.createdAt)
-    ) as VirtualNoteSchema[];
+    ) as NoteType[];
   }
 
   private static async decryptNote(
-    doc: VirtualNoteSchema | NormalizedDoc<NoteSchema>
+    doc: NoteType | Doc<NoteSchema>
   ): Promise<void> {
     if (doc.body) doc.body = await NoteEncryptionHelper.decrypt(doc.body);
     if (doc.title) doc.title = await NoteEncryptionHelper.decrypt(doc.title);
   }
 
   private static async populateTags(
-    doc: NoteSchema | NormalizedDoc<NoteSchema>,
+    doc: NoteSchema | Doc<NoteSchema>,
     userId: string
-  ): Promise<VirtualNoteSchema> {
-    doc.tags = await TagService.populateTags(
+  ): Promise<NoteType> {
+    const note = doc as NoteType;
+    note.tags = await TagService.populateTags(
       (doc.tags as string[]) || [],
       userId
     );
-    return doc as VirtualNoteSchema;
+    return note;
   }
 }

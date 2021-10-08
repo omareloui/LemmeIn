@@ -6,7 +6,7 @@ import {
   assertThrowsAsync,
 } from "../deps.ts";
 
-import { Role } from "../config/index.ts";
+import { Role } from "../@types/index.ts";
 import { generateRandomText } from "../utils/index.ts";
 
 import { AuthService, UserService } from "../services/index.ts";

@@ -9,9 +9,4 @@ export interface TagSchema {
   updatedAt: Date;
 }
 
-export interface VirtualTagSchema extends Omit<TagSchema, "_id"> {
-  id: string;
-  accountsCount: number;
-}
-
 export const Tag = db.getDatabase.collection<TagSchema>("tags");

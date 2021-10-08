@@ -3,7 +3,7 @@ import { MiddlewareTester } from "./middleware.test.helper.ts";
 import { auth } from "../index.ts";
 
 import type { RouterContext } from "../../deps.ts";
-import type { Rights } from "../../config/index.ts";
+import type { Right } from "../../@types/index.ts";
 
 const middlewareTester = new MiddlewareTester("auth");
 
@@ -19,7 +19,7 @@ const next = middlewareTester.mockNext();
 interface ValidTests {
   description: string;
   context: RouterContext;
-  right: Rights[number];
+  right: Right;
 }
 
 interface ErrorTest extends ValidTests {

@@ -1,13 +1,14 @@
 import { Context } from "../deps.ts";
 
-import { roleRights, Rights } from "../config/index.ts";
+import { User, Rights } from "../@types/index.ts";
+import { roleRights } from "../config/index.ts";
 import { JwtHelper, ErrorHelper } from "../helpers/index.ts";
 
-import { UserService, UserDoc } from "../services/index.ts";
+import { UserService } from "../services/index.ts";
 
 const authErrorHelper = new ErrorHelper("auth");
 
-function checkRights(requiredRights: Rights, user: UserDoc) {
+function checkRights(requiredRights: Rights, user: User) {
   if (requiredRights.length) {
     const userRights = roleRights.get(user.role);
     const hasRequiredRights = requiredRights.every((requiredRight) =>

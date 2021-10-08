@@ -1,24 +1,12 @@
-import {
-  VirtualAccountSchema,
-  VirtualNoteSchema,
-  VirtualTagSchema,
-  DecryptedAccountSchema,
-} from "../models/index.ts";
+import { Account, Resources } from "../@types/index.ts";
+
 import {
   TagService,
   AccountService,
   NoteService,
   AnalyzeAccountsService,
-  AnalyzesResult,
 } from "./index.ts";
 import { EncryptionHelper } from "../helpers/index.ts";
-
-interface Resources {
-  tags: VirtualTagSchema[];
-  accounts: VirtualAccountSchema[];
-  analyzes: AnalyzesResult;
-  notes: VirtualNoteSchema[];
-}
 
 export class ResourcesService {
   public static async getMine(userId: string): Promise<Resources> {
@@ -29,7 +17,7 @@ export class ResourcesService {
     const encryptionHelper = new EncryptionHelper();
 
     const decryptedAccounts = await Promise.all(
-      (accounts as DecryptedAccountSchema[]).map((x) => {
+      (accounts as Account[]).map((x) => {
         if (x.encryptedPassword)
           x.decryptedPassword = encryptionHelper.decrypt(x.encryptedPassword);
         return x;

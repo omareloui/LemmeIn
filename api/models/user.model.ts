@@ -1,5 +1,5 @@
 import db from "../db/db.ts";
-import type { Role } from "../config/roles.ts";
+import type { Role } from "../@types/index.ts";
 
 export interface UserSchema {
   _id: string;

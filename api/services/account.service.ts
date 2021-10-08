@@ -1,18 +1,20 @@
 import { ObjectId, Document } from "../deps.ts";
+import type {
+  Doc,
+  Account as AccountType,
+  CreateAccountOptions,
+  UpdateAccountOptions,
+  InsertionData,
+} from "../@types/index.ts";
 
-import { mongoIdRegExp, compareArrays, NormalizedDoc } from "../utils/index.ts";
+import { mongoIdRegExp, compareArrays } from "../utils/index.ts";
 import {
   EncryptionHelper,
   CollectionHelper,
   ErrorHelper,
 } from "../helpers/index.ts";
 
-import {
-  Account,
-  AccountSchema,
-  VirtualAccountSchema,
-  TagSchema,
-} from "../models/index.ts";
+import { Account, AccountSchema, TagSchema } from "../models/index.ts";
 import { BaseService, TagService } from "./index.ts";
 
 const AccountHelper = new CollectionHelper(Account);
@@ -20,29 +22,11 @@ const accountErrorHelper = new ErrorHelper("account");
 
 const ENCRYPTED_PASSWORD_REG_EXP = /[\da-f]{32}\.[\da-f]/;
 
-interface CreateAccountOptions {
-  app: string;
-  password: string;
-  accountIdentifier?: string;
-  note?: string;
-  site?: string;
-  tags?: string[];
-  isOAuth?: boolean;
-}
-
-type UpdateAccountOptions = Partial<CreateAccountOptions>;
-
-type InsertionData = Partial<
-  Omit<AccountSchema, "_id"> & {
-    isOAuth: boolean;
-  }
->;
-
 export class AccountService extends BaseService {
   public static async createMine(
     data: CreateAccountOptions,
     userId: string
-  ): Promise<VirtualAccountSchema> {
+  ): Promise<AccountType> {
     const currentDate = new Date();
     const insertionData: InsertionData = {
       ...data,
@@ -62,9 +46,7 @@ export class AccountService extends BaseService {
     return this.populate(account, userId);
   }
 
-  public static async getAllMine(
-    userId: string
-  ): Promise<VirtualAccountSchema[]> {
+  public static async getAllMine(userId: string): Promise<AccountType[]> {
     const accounts = await AccountHelper.findAllMine(userId);
     return await this.populateAndSort(accounts, userId);
   }
@@ -72,7 +54,7 @@ export class AccountService extends BaseService {
   public static async getMineWithTag(
     tagId: string,
     userId: string
-  ): Promise<VirtualAccountSchema[]> {
+  ): Promise<AccountType[]> {
     const accounts = await AccountHelper.find({ user: userId, tags: tagId });
     return this.populateAndSort(accounts, userId);
   }
@@ -80,7 +62,7 @@ export class AccountService extends BaseService {
   public static async getOneMine(
     id: string,
     userId: string
-  ): Promise<VirtualAccountSchema> {
+  ): Promise<AccountType> {
     const account = await AccountHelper.findMineById(id, userId);
     if (!account) return accountErrorHelper.notFound();
     return this.populate(account, userId);
@@ -89,7 +71,7 @@ export class AccountService extends BaseService {
   private static async getMyAccountTags(
     tags: string[],
     userId: string
-  ): Promise<NormalizedDoc<TagSchema>[]> {
+  ): Promise<Doc<TagSchema>[]> {
     if (tags && tags.length > 0)
       return await TagService.populateTags(tags, userId);
     return [];
@@ -175,7 +157,7 @@ export class AccountService extends BaseService {
             password,
             userId
           );
-          let currPass: VirtualAccountSchema | undefined =
+          let currPass: AccountType | undefined =
             optimizedPasswordToUpdateTo.password;
           while (currPass) {
             if (currPass.id.toString() === id)
@@ -253,9 +235,9 @@ export class AccountService extends BaseService {
   }
 
   private static async populate(
-    doc: NormalizedDoc<AccountSchema>,
+    doc: Doc<AccountSchema>,
     userId: string
-  ): Promise<VirtualAccountSchema> {
+  ): Promise<AccountType> {
     const isOAuth = this.checkIfPasswordOAuth(doc.password);
     // @ts-ignore accept the password type as virtual password
     const result = { ...doc } as VirtualPasswordSchema;
@@ -272,9 +254,9 @@ export class AccountService extends BaseService {
   }
 
   private static async populateAndSort(
-    docs: NormalizedDoc<AccountSchema>[],
+    docs: Doc<AccountSchema>[],
     userId: string
-  ): Promise<VirtualAccountSchema[]> {
+  ): Promise<AccountType[]> {
     const populated = await Promise.all(
       docs.map((x) => this.populate(x, userId))
     );
@@ -285,7 +267,7 @@ export class AccountService extends BaseService {
     return !!password.toString().match(mongoIdRegExp);
   }
 
-  private static sort(docs: VirtualAccountSchema[]): VirtualAccountSchema[] {
+  private static sort(docs: AccountType[]): AccountType[] {
     return docs.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
   }
 }
