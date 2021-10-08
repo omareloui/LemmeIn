@@ -42,7 +42,7 @@
       @input="onInput"
       primary-key="app"
       defaultButtonText="Select a password"
-      :options="$accessor.vault.passwords"
+      :options="$accessor.vault.accounts"
       is-searchable
     />
 
