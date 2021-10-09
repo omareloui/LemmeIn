@@ -48,7 +48,7 @@ function calculateScore(password: string): PasswordScore {
   // Set the color
   let color: PasswordStrengthColors
   if (value === "safe") color = "--clr-safe"
-  else if (value === "okay" || value === "weak") color = "--clr-warn"
+  else if (value === "okay") color = "--clr-warn"
   else color = "--clr-danger"
 
   return {
