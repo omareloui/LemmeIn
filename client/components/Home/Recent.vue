@@ -5,7 +5,7 @@
       <link-base class="title__link" to="/vault">Go to vault</link-base>
     </div>
 
-    <slider :item-width="85">
+    <slider :item-width="85" :gap="10">
       <swiper-slide v-for="acc in accounts" :key="acc.id" class="account">
         <glass-card
           class="account__card"
@@ -50,6 +50,7 @@ export default Vue.extend({
       return accounts
         .map(x => ({ ...x, icon: getIcon(x) }))
         .sort((a, b) => Number(b.lastUsed) - Number(a.lastUsed))
+        .slice(0, 15)
     }
   }
 })
@@ -61,10 +62,11 @@ export default Vue.extend({
 .recent-accounts
 
   .title
-    +flex($space-between: true, $wrap: false)
+    +flex($space-between: true, $wrap: false, $gap: 5px)
     +w(100%)
     +e(heading)
       align-self: baseline
+      +fnt-4xl
     +e(link)
       +underline
       +italic

@@ -5,7 +5,6 @@
       class="swiper"
       v-bind="{ options }"
       v-if="optionsReady"
-      @transition-start="updateFadingData"
       @transition-end="updateFadingData"
       :class="{
         'swiper--not-start': !isSlideStart,
