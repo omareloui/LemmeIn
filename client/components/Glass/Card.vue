@@ -10,9 +10,7 @@
       '--back-shape-width': !noBackShape
         ? backShapeWidth || backShapeSize
         : undefined,
-      '--back-shape-background': !noBackShape
-        ? `var(--clr-${backShapeColor || tint})`
-        : undefined,
+      '--back-shape-background': backC,
       '--background': `hsl(var(--clr-hs-${tint}) var(--clr-l-${tint}) / var(--clr-o-${
         opacity * 100
       }))`,
@@ -86,10 +84,19 @@ export default Vue.extend({
       validator: (v: BackShapePositions) => BACK_SHAPE_POSITIONS.includes(v),
       default: "center"
     },
-    backShapeColor: { type: String }
+    backShapeColor: { type: String },
+
+    isBackShapeHexColor: { type: Boolean, default: false }
   },
 
   computed: {
+    backC(): string | undefined {
+      const color = this.backShapeColor || this.tint
+      if (this.noBackShape) return undefined
+      if (this.isBackShapeHexColor) return color
+      return `var(--clr-${color})`
+    },
+
     classes(): string {
       let classes = ""
       if (this.circle) classes += " glass--circle"

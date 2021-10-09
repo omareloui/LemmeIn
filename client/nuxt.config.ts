@@ -49,6 +49,7 @@ const nuxt: NuxtConfig = {
   ],
   plugins: [
     { src: "~/plugins/axios" },
+    { src: "~/plugins/swiper" },
     { src: "~/plugins/notify", mode: "client" },
     { src: "~/plugins/copy", mode: "client" },
     { src: "~/plugins/confirm", mode: "client" },

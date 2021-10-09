@@ -42,7 +42,7 @@ export default Vue.extend({
     width: { type: String },
     height: { type: String },
     viewBox: { type: String, default: "32 32" },
-    fill: { default: "text-main" },
+    fill: { type: [String, Array], default: "text-main" },
     stroke: { type: String },
     clickable: { type: Boolean, default: false },
     focusable: { type: Boolean, default: false },
