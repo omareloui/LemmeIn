@@ -51,7 +51,7 @@
           focusable
           size="35px"
           aria-label="copy password"
-          @click="$copy(account.decryptedPassword)"
+          @click="copy"
         />
         <password-strength
           class="strength"
@@ -157,6 +157,10 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
       const accId = this.account.accountIdentifier
       if (!accId) this.$notify.error("No account identifier")
       else this.$copy(accId)
+    },
+
+    copy() {
+      this.$accessor.vault.copy(this.account.id)
     },
 
     loadIcon() {

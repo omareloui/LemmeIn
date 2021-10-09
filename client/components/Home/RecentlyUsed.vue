@@ -6,7 +6,7 @@
     </div>
 
     <slider :item-width="85" :gap="10">
-      <swiper-slide v-for="acc in accounts" :key="acc.id" class="account">
+      <swiper-slide v-for="acc in accs" :key="acc.id" class="account">
         <glass-card
           class="account__card"
           :blur="10"
@@ -39,18 +39,18 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, { PropType } from "vue"
 import { Account, Icon } from "~/@types"
 import getIcon from "~/assets/utils/getIcon"
 
 export default Vue.extend({
+  props: {
+    accounts: { type: Array as PropType<Account[]>, required: true }
+  },
+
   computed: {
-    accounts(): (Account & { icon: Icon })[] {
-      const { accounts } = this.$accessor.vault
-      return accounts
-        .map(x => ({ ...x, icon: getIcon(x) }))
-        .sort((a, b) => Number(b.lastUsed) - Number(a.lastUsed))
-        .slice(0, 15)
+    accs(): (Account & { icon: Icon })[] {
+      return this.accounts.map(x => ({ ...x, icon: getIcon(x) }))
     }
   }
 })

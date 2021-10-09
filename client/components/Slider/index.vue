@@ -48,7 +48,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 
     swiperWidth: 0,
     optionsReady: false,
-    isSlideStart: true,
+    isSlideStart: false,
     isSlideEnd: false
   }),
 
@@ -68,10 +68,12 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
   },
 
   methods: {
-    init() {
+    async init() {
       this.options.spaceBetween = this.gap
       this.handleItemsToPreview()
       this.optionsReady = true
+      await this.$nextTick
+      this.updateFadingData()
     },
 
     updateFadingData() {

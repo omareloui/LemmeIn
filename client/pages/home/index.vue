@@ -28,8 +28,8 @@
       >
     </section>
 
-    <section class="recently-used">
-      <home-recently-used />
+    <section class="recently-used" v-if="recentlyUsed.length">
+      <home-recently-used :accounts="recentlyUsed" />
     </section>
 
     <section class="newly-added">
@@ -41,10 +41,23 @@
 
 <script lang="ts">
 import Vue from "vue"
+import { Account } from "~/@types"
 
 type Strength = "compromised" | "weak" | "okay" | "safe"
 
 export default Vue.extend({
+  computed: {
+    recentlyUsed(): Account[] {
+      return this.$accessor.vault.accounts
+        .filter(x => x.lastUsed)
+        .sort(
+          (a, b) =>
+            Number(new Date(b.lastUsed || 0)) -
+            Number(new Date(a.lastUsed || 0))
+        )
+        .slice(0, 15)
+    }
+  },
   methods: {
     getStrengthColor(s: Strength, accountsCounter: number) {
       if (["compromised", "weak", "okay"].includes(s) && accountsCounter === 0)
