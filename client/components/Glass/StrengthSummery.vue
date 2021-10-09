@@ -10,7 +10,7 @@
     :blur="23"
   >
     <div>
-      <span class="strength__number">{{ number }}</span>
+      <number v-bind="{ number }" class="strength__number" />
       <h3 class="strength__title">{{ title }}</h3>
     </div>
   </glass-card>

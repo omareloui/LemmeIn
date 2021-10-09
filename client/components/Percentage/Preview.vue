@@ -6,12 +6,18 @@
         '--stroke-width': strokeWidth,
         '--stroke-clr': `var(--clr-${color})`,
         '--size': size,
-        '--percentage': pct
+        '--percentage': updateNumber.current
       }"
     >
-      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">
-        {{ pct }}%
-      </text>
+      <number
+        tag="text"
+        :number="percentage"
+        x="50%"
+        y="50%"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        suffix="%"
+      />
       <circle cx="16" cy="16" r="15.9155"></circle>
       <circle cx="16" cy="16" r="15.9155" class="bar"></circle>
     </svg>
@@ -20,7 +26,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import sleep from "~/assets/utils/sleep"
+import initUpdateNumber from "~/assets/utils/updateNumber"
 
 export default Vue.extend({
   props: {
@@ -32,7 +38,7 @@ export default Vue.extend({
   },
 
   data: () => ({
-    pct: 0
+    updateNumber: { current: 0 } as ReturnType<typeof initUpdateNumber>
   }),
 
   computed: {
@@ -41,17 +47,9 @@ export default Vue.extend({
     }
   },
 
-  mounted() {
-    this.updateShownPercentage()
-  },
-
-  methods: {
-    async updateShownPercentage() {
-      if (this.pct >= this.percentage) return
-      this.pct++
-      await sleep(20)
-      this.updateShownPercentage()
-    }
+  async mounted() {
+    this.updateNumber = initUpdateNumber(this.percentage)
+    await this.updateNumber.update()
   }
 })
 </script>

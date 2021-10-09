@@ -16,8 +16,9 @@
           :percentage="$accessor.analyze.score"
           size="150px"
         />
+
         <div class="accounts-summery__total-accounts">
-          {{ $accessor.analyze.totalAccounts }} accounts
+          <number :number="$accessor.analyze.totalAccounts" /> accounts
         </div>
       </div>
     </glass-card>
