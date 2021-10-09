@@ -13,7 +13,7 @@
           shape="dot"
           dot-size="10px"
           hide-score-text
-          :decrypted-password="decryptedPassword"
+          :decrypted-password="account.decryptedPassword"
         />
 
         <icon
@@ -94,20 +94,19 @@ export default Vue.extend({
     includeStrength: { type: Boolean, default: false }
   },
 
-  created() {
-    if (this.includeStrength && this.notOAuth) this.decryptPassword()
-  },
-
   data() {
     return {
-      icon: getIcon(this.account),
-      decryptedPassword: ""
+      icon: getIcon(this.account)
     }
   },
 
   computed: {
     showStrength(): boolean {
-      return this.includeStrength && this.notOAuth && !!this.decryptedPassword
+      return (
+        this.includeStrength &&
+        this.notOAuth &&
+        !!this.account.decryptedPassword
+      )
     },
 
     notOAuth(): boolean {
@@ -120,11 +119,6 @@ export default Vue.extend({
       if (!this.account.accountIdentifier)
         this.$notify.error("No account identifier")
       else this.$copy(this.account.accountIdentifier)
-    },
-    async decryptPassword() {
-      this.decryptedPassword = await this.$accessor.vault.decryptPassword(
-        this.account.id
-      )
     },
 
     copy() {

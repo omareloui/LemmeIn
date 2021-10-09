@@ -28,8 +28,12 @@
       >
     </section>
 
-    <section class="recent">
-      <home-recent />
+    <section class="recently-used">
+      <home-recently-used />
+    </section>
+
+    <section class="newly-added">
+      <home-newly-added />
     </section>
   </container>
 </template>
@@ -80,4 +84,8 @@ export default Vue.extend({
     +underline
     +italic
     +fnt-lg
+
+.recently-used,
+.newly-added
+  +mt(20px)
 </style>
