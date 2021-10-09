@@ -17,6 +17,11 @@ $tags-colors: (
   majorelle-blue: hsl(244, 86%, 61%)
 );
 
+$other: (
+  teal: #adf6e9,
+  mauve: #b5b8fa
+);
+
 $shared: (
   button-cta: map.get($core, primary),
   link: hsl(201, 100%, 67%),
@@ -28,6 +33,7 @@ $shared: (
 );
 
 $shared: map.merge($core, $shared);
+$shared: map.merge($other, $shared);
 $shared: map.merge($shared, $tags-colors);
 
 $light: (

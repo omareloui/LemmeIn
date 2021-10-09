@@ -18,7 +18,7 @@ body {
   @include c.clr-txt;
   @include ff.fnt(body);
   @include fs.fnt-base;
-  scroll-padding-top: var(--header-height);
+  overflow-x: hidden;
 
   * {
     @include t.tran(color background);

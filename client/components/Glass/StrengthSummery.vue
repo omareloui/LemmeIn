@@ -6,7 +6,7 @@
     :back-shape-color="color"
     back-shape-height="30%"
     back-shape-width="85%"
-    tint="background-main"
+    tint="background-secondary"
     :blur="23"
   >
     <div>
@@ -33,8 +33,8 @@ export default Vue.extend({
 
 .strength
   +pos-r
+  +w(100%)
   > div
-    +w(150px)
     +py(20px)
     +center-text
     +br-lg

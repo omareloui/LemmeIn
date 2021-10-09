@@ -1,5 +1,9 @@
 <template>
-  <container padding-bottom no-heading>
+  <container padding-bottom no-heading class="home">
+    <section class="accounts-health">
+      <glass-accounts-summery />
+    </section>
+
     <section class="strength-summery">
       <glass-strength-summery
         v-for="strength in ['safe', 'okay', 'weak', 'compromised']"
@@ -9,14 +13,11 @@
         :color="getStrengthColor(strength, $accessor.analyze[strength].counter)"
       />
       <glass-strength-summery
-        title="outdated"
-        :number="$accessor.analyze.outdated.counter"
-        :color="$accessor.analyze.outdated.counter === 0 ? 'safe' : 'danger'"
-      />
-      <glass-strength-summery
-        title="duplicated"
-        :number="$accessor.analyze.duplicated.counter"
-        :color="$accessor.analyze.duplicated.counter === 0 ? 'safe' : 'danger'"
+        v-for="prop in ['outdated', 'duplicated']"
+        :key="prop"
+        :title="prop"
+        :number="$accessor.analyze[prop].counter"
+        :color="$accessor.analyze[prop].counter === 0 ? 'safe' : 'danger'"
       />
     </section>
   </container>
@@ -44,9 +45,12 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
+.accounts-health
+  +mb(20px)
+
 .strength-summery
-  +grid(1fr, $gap: 10px, $center: true)
-  +w(max 350px)
+  +grid(1fr, $gap: 20px, $center: true)
+  +w(max 500px)
   +mx(auto)
 
   +lt-narrow
