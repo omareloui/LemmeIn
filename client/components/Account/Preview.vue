@@ -31,6 +31,7 @@
           <div v-if="account.accountIdentifier" class="account-identifier">
             {{ account.accountIdentifier }}
             <icon
+              v-if="!noCopyAccountIdentifier"
               name="copy"
               clickable
               @click="copyAccId"
@@ -91,6 +92,7 @@ export default Vue.extend({
     tagsToShow: { type: Number, default: 5 },
     noDate: { type: Boolean, default: false },
     noTags: { type: Boolean, default: false },
+    noCopyAccountIdentifier: { type: Boolean, default: false },
     includeStrength: { type: Boolean, default: false }
   },
 

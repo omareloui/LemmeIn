@@ -12,6 +12,7 @@
         no-tags
         no-date
         include-strength
+        no-copy-account-identifier
       />
     </div>
   </div>
