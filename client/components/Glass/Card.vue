@@ -53,7 +53,7 @@ export default Vue.extend({
     blur: { type: Number, default: 4 },
     opacity: {
       type: Number as PropType<OpacityOptions>,
-      validator: (v: OpacityOptions) => OPACITY_OPTIONS.indexOf(v) > -1,
+      validator: (v: OpacityOptions) => OPACITY_OPTIONS.includes(v),
       default: 0.2
     },
 
@@ -75,7 +75,7 @@ export default Vue.extend({
     noBackShape: { type: Boolean, default: false },
     backShape: {
       type: String as PropType<BackShapeOptions>,
-      validator: (v: BackShapeOptions) => BACK_SHAPE_OPTIONS.indexOf(v) > -1,
+      validator: (v: BackShapeOptions) => BACK_SHAPE_OPTIONS.includes(v),
       default: "square"
     },
     backShapeSize: { type: String, default: "60%" },
@@ -83,8 +83,7 @@ export default Vue.extend({
     backShapeHeight: { type: String },
     backShapePosition: {
       type: String as PropType<BackShapePositions>,
-      validator: (v: BackShapePositions) =>
-        BACK_SHAPE_POSITIONS.indexOf(v) > -1,
+      validator: (v: BackShapePositions) => BACK_SHAPE_POSITIONS.includes(v),
       default: "center"
     },
     backShapeColor: { type: String }

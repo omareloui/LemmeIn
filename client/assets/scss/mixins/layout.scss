@@ -39,6 +39,14 @@
   }
 }
 
+@mixin columns($cols) {
+  grid-template-columns: $cols;
+}
+
+@mixin rows($rows) {
+  grid-template-rows: $rows;
+}
+
 @mixin auto-fit($minmax, $gap: null, $center: true) {
   @include grid($auto-fit: $minmax, $gap: $gap, $center: $center);
 }
