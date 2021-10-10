@@ -89,7 +89,12 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
     focusOnMount: { type: Boolean, default: false },
     noIcon: { type: Boolean, default: false },
     hasOAuth: { type: Boolean, default: false },
-    showPasswordStrength: { type: Boolean, default: false }
+    showPasswordStrength: { type: Boolean, default: false },
+    isOAuthDefault: { type: Boolean, default: false }
+  },
+
+  created() {
+    if (this.isOAuthDefault) this.isOAuth = true
   },
 
   data: () => ({

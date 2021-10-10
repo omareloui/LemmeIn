@@ -15,13 +15,19 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { FormStructure, AddAccountReceivedData, UpdateAccount } from "~/@types"
+import {
+  FormStructure,
+  AddAccountReceivedData,
+  UpdateAccount,
+  Account
+} from "~/@types"
 
 export default Vue.extend({
   props: {
     id: { type: String, required: true },
     app: { type: String, required: true },
-    decryptedPassword: { type: String, required: true },
+    password: { type: Object as PropType<Account> },
+    decryptedPassword: { type: String },
     accountIdentifier: { type: String },
     note: { type: String },
     site: { type: String },
@@ -38,8 +44,15 @@ export default Vue.extend({
 
   methods: {
     setFormFields() {
-      const { app, decryptedPassword, accountIdentifier, note, site, tags } =
-        this
+      const {
+        app,
+        decryptedPassword,
+        accountIdentifier,
+        note,
+        site,
+        tags,
+        password
+      } = this
 
       this.formFields = [
         {
@@ -52,12 +65,13 @@ export default Vue.extend({
         {
           id: "password",
           type: "password",
-          value: decryptedPassword,
+          value: decryptedPassword || password.id,
           props: {
             noIcon: true,
             minLength: 3,
             hasOAuth: true,
-            showPasswordStrength: true
+            showPasswordStrength: true,
+            isOAuthDefault: !!password
           }
         },
         "gap",
