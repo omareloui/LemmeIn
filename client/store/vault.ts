@@ -1,4 +1,6 @@
-import { mutationTree, actionTree } from "typed-vuex"
+import { mutationTree, actionTree, getterTree } from "typed-vuex"
+import { take } from "lodash"
+
 import { AddAccount, Account, UpdateAccount } from "~/@types"
 
 export const state = () => ({
@@ -6,6 +8,30 @@ export const state = () => ({
 })
 
 export type AccountsState = ReturnType<typeof state>
+
+export const getters = getterTree(state, {
+  recentlyUsed(state) {
+    return take(
+      state.accounts
+        .filter(x => x.lastUsed)
+        .sort(
+          (a, b) =>
+            Number(new Date(b.lastUsed || 0)) -
+            Number(new Date(a.lastUsed || 0))
+        ),
+      15
+    )
+  },
+
+  newlyAdded(state) {
+    return take(
+      state.accounts
+        .map(x => x)
+        .sort((a, b) => Number(b.createdAt) - Number(a.createdAt)),
+      15
+    )
+  }
+})
 
 export const mutations = mutationTree(state, {
   setAccounts(state, accounts) {

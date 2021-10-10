@@ -4,7 +4,7 @@
       <h3 class="title__heading">Newly added</h3>
       <link-base class="title__link" to="/vault">Go to vault</link-base>
     </div>
-    <div class="accounts">
+    <transition-group name="list" tag="div" class="accounts">
       <account-preview
         v-for="acc in accounts"
         :key="acc.id"
@@ -14,22 +14,17 @@
         include-strength
         no-copy-account-identifier
       />
-    </div>
+    </transition-group>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, { PropType } from "vue"
 import { Account } from "~/@types"
 
 export default Vue.extend({
-  computed: {
-    accounts(): Account[] {
-      return this.$accessor.vault.accounts
-        .map(x => x)
-        .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
-        .slice(0, 15)
-    }
+  props: {
+    accounts: { type: Array as PropType<Account[]>, required: true }
   }
 })
 </script>

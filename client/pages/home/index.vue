@@ -32,8 +32,8 @@
       <home-recently-used :accounts="recentlyUsed" />
     </section>
 
-    <section class="newly-added">
-      <home-newly-added />
+    <section class="newly-added" v-if="newlyAdded.length">
+      <home-newly-added :accounts="newlyAdded" />
     </section>
   </container>
 </template>
@@ -48,14 +48,10 @@ type Strength = "compromised" | "weak" | "okay" | "safe"
 export default Vue.extend({
   computed: {
     recentlyUsed(): Account[] {
-      return this.$accessor.vault.accounts
-        .filter(x => x.lastUsed)
-        .sort(
-          (a, b) =>
-            Number(new Date(b.lastUsed || 0)) -
-            Number(new Date(a.lastUsed || 0))
-        )
-        .slice(0, 15)
+      return this.$accessor.vault.recentlyUsed
+    },
+    newlyAdded(): Account[] {
+      return this.$accessor.vault.newlyAdded
     }
   },
   methods: {
