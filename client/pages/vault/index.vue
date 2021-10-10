@@ -25,7 +25,7 @@
 
       <transition-group
         v-if="hasAccounts"
-        name="account"
+        name="list"
         tag="div"
         class="accounts"
       >

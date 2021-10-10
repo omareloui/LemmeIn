@@ -6,7 +6,7 @@
       v-model="searchQuery"
       placeholder="Search notes..."
       class="search-input"
-      search-keys="name"
+      :search-keys="['body', 'title']"
       :search-elements="notes"
       @search-result="searchResult = $event"
       @clear="searchQuery = ''"
@@ -17,7 +17,7 @@
     >
 
     <main>
-      <transition-group name="note" class="notes" note="div">
+      <transition-group name="list" class="notes" note="div">
         <note
           v-for="note in searchQuery ? searchResult : notes"
           :key="note.id"

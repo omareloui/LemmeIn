@@ -27,7 +27,12 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import Fuse from "fuse.js"
+import { debounce } from "lodash"
 import { ExtendVueRefs } from "~/@types"
+
+type SearchFunc = (
+  query: string
+) => Array<string | number | Record<string, string>>
 
 interface Refs {
   input: Vue & { clear: () => void; focus: () => void }
@@ -49,41 +54,37 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     focusOnMount: { type: Boolean, default: false },
 
     searchFunction: {
-      type: Function as PropType<
-        (query: string) => Array<string | number | Record<string, string>>
-      >,
+      type: Function as PropType<SearchFunc>,
       default(query: string) {
-        const propsData = this.$options.propsData as {
+        const { searchKeys, searchElements } = this.$options.propsData as {
           searchKeys: string | string[]
           searchElements: Array<string | number | Record<string, string>>
         }
-        if (
-          !query ||
-          !propsData ||
-          !propsData.searchElements ||
-          propsData.searchElements.length === 0
-        )
-          return []
+        if (!query || !searchElements || searchElements.length === 0) return []
 
         const fuseOptions: { keys?: string[] } = {}
 
-        const isObj = !!(typeof propsData.searchElements[0] === "object")
+        const isObj = !!(typeof searchElements[0] === "object")
         if (isObj) {
-          fuseOptions.keys = Array.isArray(propsData.searchKeys)
-            ? propsData.searchKeys
-            : [propsData.searchKeys]
+          fuseOptions.keys = Array.isArray(searchKeys)
+            ? searchKeys
+            : [searchKeys]
         }
 
-        const fuse = new Fuse(propsData.searchElements, fuseOptions)
+        const fuse = new Fuse(searchElements, fuseOptions)
 
-        if (!propsData.searchKeys || propsData.searchKeys.length === 0)
+        if (!searchKeys || searchKeys.length === 0)
           throw new Error("You have to provide search key(s)")
 
         return fuse.search(query).map(x => x.item)
       }
     },
     searchKeys: { type: [String, Array] },
-    searchElements: { type: Array }
+    searchElements: { type: Array },
+
+    debouncingDuration: { type: Number, default: 300 },
+
+    listenForSlash: { type: Boolean, default: false }
   },
 
   computed: {
@@ -93,24 +94,28 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
   },
 
   mounted() {
-    // window.addEventListener("keyup", this.onKeyUp)
+    if (this.listenForSlash) window.addEventListener("keyup", this.onKeyUp)
   },
   beforeDestroy() {
-    // window.removeEventListener("keyup", this.onKeyUp)
+    if (this.listenForSlash) window.removeEventListener("keyup", this.onKeyUp)
   },
+
+  data: () => ({
+    debouncedSearch: null as null | ((query: string) => void)
+  }),
 
   methods: {
     onInput(value: string) {
       this.$emit("input", value)
-      this.search(value)
+      this.debouncedSearch ||= debounce(this.search, this.debouncingDuration, {
+        leading: true
+      })
+      this.debouncedSearch(value)
     },
 
     search(query: string) {
       try {
-        this.$emit(
-          "search-result",
-          (this.searchFunction as (query: string) => unknown[])(query)
-        )
+        this.$emit("search-result", (this.searchFunction as SearchFunc)(query))
       } catch (e) {
         this.$notify.error("No search key provided.")
       }

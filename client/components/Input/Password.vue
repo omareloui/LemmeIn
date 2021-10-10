@@ -6,53 +6,57 @@
       'input-password--has-error': isErred
     }"
   >
-    <input-text
-      v-if="!isOAuth"
-      ref="input"
-      class="input-password__text"
-      v-bind="{
-        identifier,
-        value,
-        placeholder,
-        hint,
-        label,
-        minLength,
-        maxLength,
-        notRequired,
-        pattern,
-        noAutocomplete,
-        focusOnMount,
-        invalidPatternMessage
-      }"
-      :name="name || identifier"
-      :type="!isShown ? 'password' : 'text'"
-      @input="onInput"
-      @right-icon-click="isShown = !isShown"
-      :left-icon="noIcon ? undefined : 'key'"
-      :right-icon="isShown ? 'eye-closed' : 'eye'"
-      is-right-icon-clickable
-    />
+    <transition name="fade" mode="out-in">
+      <input-text
+        v-if="!isOAuth"
+        ref="input"
+        class="input-password__text"
+        v-bind="{
+          identifier,
+          value,
+          placeholder,
+          hint,
+          label,
+          minLength,
+          maxLength,
+          notRequired,
+          pattern,
+          noAutocomplete,
+          focusOnMount,
+          invalidPatternMessage
+        }"
+        :name="name || identifier"
+        :type="!isShown ? 'password' : 'text'"
+        @input="onInput"
+        @right-icon-click="isShown = !isShown"
+        :left-icon="noIcon ? undefined : 'key'"
+        :right-icon="isShown ? 'eye-closed' : 'eye'"
+        is-right-icon-clickable
+      />
 
-    <input-select
-      v-if="isOAuth && hasOtherPasswords"
-      ref="input"
-      class="input-password__select"
-      label="OAuth password"
-      v-bind="{ identifier, value }"
-      @input="onInput"
-      primary-key="app"
-      defaultButtonText="Select a password"
-      :options="$accessor.vault.accounts"
-      is-searchable
-    />
+      <input-select
+        v-if="isOAuth && hasOtherPasswords"
+        ref="input"
+        class="input-password__select"
+        label="OAuth password"
+        v-bind="{ identifier, value }"
+        @input="onInput"
+        primary-key="app"
+        defaultButtonText="Select a password"
+        :options="$accessor.vault.accounts"
+        is-searchable
+      />
+    </transition>
 
-    <password-strength
-      v-if="showPasswordStrength && !isOAuth"
-      class="input-password__strength"
-      line-height="10px"
-      hide-score-text
-      :decrypted-password="value"
-    />
+    <transition name="fade">
+      <password-strength
+        v-if="showPasswordStrength && !isOAuth"
+        class="input-password__strength"
+        line-height="10px"
+        hide-score-text
+        :decrypted-password="value"
+      />
+    </transition>
 
     <button-base
       v-if="hasOAuth && hasOtherPasswords"

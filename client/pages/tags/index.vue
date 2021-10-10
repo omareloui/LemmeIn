@@ -16,7 +16,7 @@
     >
 
     <main>
-      <transition-group name="tag" class="tags" tag="div">
+      <transition-group name="list" class="tags" tag="div">
         <tag
           v-for="tag in searchQuery ? searchResult : tags"
           :key="tag.id"
