@@ -1,14 +1,14 @@
 <template>
-  <div class="update-account">
-    <h2 class="update-account__heading">
+  <div class="edit-account">
+    <h2 class="edit-account__heading">
       Update
-      <span class="update-password__heading-tag-name">“{{ app }}”</span>
+      <span class="edit-password__heading-tag-name">“{{ app }}”</span>
       Account
     </h2>
     <form-generator
       :form-fields="formFields"
       submit-button-text="Update Account"
-      :submit-function="updateAccount"
+      :submit-function="editAccount"
     />
   </div>
 </template>
@@ -97,7 +97,7 @@ export default Vue.extend({
       ]
     },
 
-    async updateAccount({
+    async editAccount({
       app,
       password,
       accountIdentifier,
@@ -116,8 +116,8 @@ export default Vue.extend({
         tags
       }
       try {
-        const newAccount = await this.$accessor.vault.updateAccount(options)
-        this.$emit("update-account", newAccount)
+        const newAccount = await this.$accessor.vault.editAccount(options)
+        this.$emit("edit-account", newAccount)
         this.$emit("close-dialogue")
       } catch (e) {
         this.$notify.error(e.response ? e.response.data.message : e.message)
@@ -130,7 +130,7 @@ export default Vue.extend({
 <style lang="sass" scoped>
 @use "~/assets/scss/mixins" as *
 
-.update-account
+.edit-account
   +pa(55px 30px)
 
   +e(heading)

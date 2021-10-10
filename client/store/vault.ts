@@ -132,7 +132,7 @@ export const actions = actionTree(
       commit("unshiftToAccounts", account)
     },
 
-    async updateAccount({ commit }, options: UpdateAccount) {
+    async editAccount({ commit }, options: UpdateAccount) {
       const { id } = options
       delete (options as { id?: string }).id
       const response = await this.$axios.put(`/accounts/${id}`, options)

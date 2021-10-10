@@ -63,8 +63,8 @@
 
       <section v-if="!notOAuth" class="oauth">
         <h3>Connected with</h3>
-        <password-preview
-          :password="account.password"
+        <account-preview
+          :account="account.password"
           no-date
           no-tags
           include-strength
@@ -107,10 +107,10 @@
       </div>
     </dialogue>
     <dialogue :is-shown="isUpdateAccountShown" @close="closeUpdateAccount">
-      <account-update
+      <account-edit
         v-bind="account"
         :tags="account.tags.map(x => x.id)"
-        @update-account="updateAccountData"
+        @edit-account="updateAccountData"
         @close-dialogue="closeUpdateAccount"
       />
     </dialogue>
