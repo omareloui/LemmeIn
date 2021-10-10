@@ -36,7 +36,7 @@ function calculateScore(password: string): PasswordScore {
   const maxScore = 10
 
   // Set percentage
-  const percentage = Math.floor(((score || 1) / (maxScore || 1)) * 100)
+  const percentage = Math.floor((score / maxScore) * 100)
 
   // Set the value
   let value: PasswordStrengthValues
