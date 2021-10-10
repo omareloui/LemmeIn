@@ -98,10 +98,6 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
     isErred: false
   }),
 
-  async beforeCreate() {
-    await this.$accessor.vault.getAccounts()
-  },
-
   computed: {
     // Needed for form generator
     errorMessage(): string {
