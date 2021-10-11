@@ -120,7 +120,7 @@ export class AnalyzeAccountsService {
     const maxScore = 10;
 
     // Set percentage
-    const percentage = Math.floor(((score || 1) / (maxScore || 1)) * 100);
+    const percentage = Math.floor((score / maxScore) * 100);
 
     // Set the value
     let value: "safe" | "okay" | "weak" | "compromised";
