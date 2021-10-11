@@ -100,7 +100,8 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
   data: () => ({
     isShown: false,
     isOAuth: false,
-    isErred: false
+    isErred: false,
+    tempPassword: ""
   }),
 
   computed: {
@@ -146,9 +147,15 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
       this.updateIsErred()
     },
 
-    toggleOAuth() {
+    storeAndRestorePassword() {
+      const temp = this.tempPassword
+      this.tempPassword = this.value
+      this.onInput(temp)
+    },
+
+    async toggleOAuth() {
+      this.storeAndRestorePassword()
       this.isOAuth = !this.isOAuth
-      this.clearInput()
       this.clearError()
     }
   }
