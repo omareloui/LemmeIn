@@ -50,13 +50,13 @@ export const mutations = mutationTree(state, {
     state.totalAccounts++
   },
 
-  setAsOutdated(state, account) {
+  setAsOutdated(state, account: Account) {
     const { outdated } = state
     outdated.accounts.push(account)
     outdated.counter++
   },
 
-  setAsDuplicated(state, account) {
+  setAsDuplicated(state, account: Account) {
     const { duplicated } = state
     duplicated.accounts.push(account)
     duplicated.counter++
@@ -64,6 +64,39 @@ export const mutations = mutationTree(state, {
 
   setScore(state, score: number) {
     if (score >= 0 && score <= 100) state.score = score
+  },
+
+  removeFromAll(
+    state,
+    {
+      account,
+      strength
+    }: { account: Account; strength: PasswordStrengthValues }
+  ) {
+    // Remove from its strength
+    const wantedState = state[strength]
+    const passwordIndexToRemove = wantedState.accounts.findIndex(
+      x => x.id === account.id
+    )
+    if (passwordIndexToRemove > -1) {
+      wantedState.accounts.splice(passwordIndexToRemove, 1)
+      wantedState.counter--
+    }
+
+    // Remove from total counter
+    state.totalAccounts--
+
+    // Remove from duplicates
+    state.duplicated.accounts = state.duplicated.accounts.filter(
+      x => x.id !== account.id
+    )
+    state.duplicated.counter = state.duplicated.accounts.length
+
+    // Remove from outdated
+    state.outdated.accounts = state.outdated.accounts.filter(
+      x => x.id !== account.id
+    )
+    state.outdated.counter = state.outdated.accounts.length
   }
 })
 
@@ -105,8 +138,8 @@ export const actions = actionTree(
     analyzeAccount({ state, commit, dispatch }, account: Account) {
       if (!account.decryptedPassword) return
       // Set its strength
-      const score = this.$getPasswordStrength(account.decryptedPassword)
-      commit("setAccountStrength", { account, strength: score.value })
+      const strength = this.$getPasswordStrength(account.decryptedPassword)
+      commit("setAccountStrength", { account, strength: strength.value })
 
       // Set if it's outdated
       const maxOldDate = getDatePrevMonths(state.MAX_OUTDATED_MONTHS)
@@ -122,6 +155,13 @@ export const actions = actionTree(
       if (duplicatedWith) commit("setAsDuplicated", account)
 
       // Recalculate the score
+      dispatch("recalculateScore")
+    },
+
+    removeAccount({ commit, dispatch }, account: Account) {
+      if (!account.decryptedPassword) return
+      const strength = this.$getPasswordStrength(account.decryptedPassword)
+      commit("removeFromAll", { account, strength: strength.value })
       dispatch("recalculateScore")
     }
   }

@@ -105,7 +105,7 @@ export const actions = actionTree(
         // Check first from cache
         let acc = state.accounts.find(x => x.id === accountId)
 
-        // Get the password if not in cache
+        // Get the account if not in cache
         if (!acc) {
           const { data: account } = await this.$axios.get(
             `/accounts/${accountId}`
@@ -150,7 +150,7 @@ export const actions = actionTree(
     },
 
     async deleteAccount(
-      { commit },
+      { commit, dispatch },
       {
         accountId,
         accountName,
@@ -164,6 +164,10 @@ export const actions = actionTree(
         )
         if (!confirmed) return
         await this.$axios.delete(`/accounts/${accountId}`)
+
+        const account = await dispatch("getAccount", accountId)
+        await this.app.$accessor.analyze.removeAccount(account)
+
         commit("removeAccount", accountId)
         this.$notify.success("Deleted account successfully")
         if (goToVaultAfter) this.$router.push("/vault")
