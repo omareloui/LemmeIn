@@ -127,7 +127,11 @@ export const actions = actionTree(
 
     async addAccount({ commit }, options: AddAccount) {
       const response = await this.$axios.post("/accounts", options)
-      const account = response.data as Account
+      const account = {
+        ...response.data,
+        decryptedPassword: !options.isOAuth ? options.password : undefined
+      } as Account
+      await this.app.$accessor.analyze.analyzeAccount(account)
       this.$notify.success("Created account.")
       commit("unshiftToAccounts", account)
     },
@@ -136,12 +140,12 @@ export const actions = actionTree(
       const { id } = options
       delete (options as { id?: string }).id
       const response = await this.$axios.put(`/accounts/${id}`, options)
-      const newAccount = response.data as Account
-      this.$notify.success("Updated account.")
-      commit("updateAccountCache", {
-        ...newAccount,
+      const newAccount = {
+        ...response.data,
         decryptedPassword: !options.isOAuth ? options.password : undefined
-      })
+      } as Account
+      this.$notify.success("Updated account.")
+      commit("updateAccountCache", newAccount)
       return newAccount
     },
 

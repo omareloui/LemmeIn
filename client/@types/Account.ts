@@ -10,6 +10,7 @@ export interface Account {
   note?: string
   tags?: Tag[]
   lastUsed: Date | null
+  lastPasswordUpdate: Date
   createdAt: Date
   updatedAt: Date
 
