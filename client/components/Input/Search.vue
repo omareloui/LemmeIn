@@ -96,6 +96,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
   mounted() {
     if (this.listenForSlash) window.addEventListener("keyup", this.onKeyUp)
     this.debouncedSearch ||= debounce(this.search, this.debouncingDuration)
+    if (this.value) this.onInput(this.value)
   },
   beforeDestroy() {
     if (this.listenForSlash) window.removeEventListener("keyup", this.onKeyUp)
