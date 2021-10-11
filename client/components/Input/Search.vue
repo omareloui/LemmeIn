@@ -82,7 +82,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
     searchKeys: { type: [String, Array] },
     searchElements: { type: Array },
 
-    debouncingDuration: { type: Number, default: 300 },
+    debouncingDuration: { type: Number, default: 200 },
 
     listenForSlash: { type: Boolean, default: false }
   },
