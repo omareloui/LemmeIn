@@ -95,6 +95,7 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 
   mounted() {
     if (this.listenForSlash) window.addEventListener("keyup", this.onKeyUp)
+    this.debouncedSearch ||= debounce(this.search, this.debouncingDuration)
   },
   beforeDestroy() {
     if (this.listenForSlash) window.removeEventListener("keyup", this.onKeyUp)
@@ -106,15 +107,16 @@ export default (Vue as ExtendVueRefs<Refs>).extend({
 
   methods: {
     onInput(value: string) {
+      if (this.debouncedSearch) this.debouncedSearch(value)
+    },
+
+    updateInput(value: string) {
       this.$emit("input", value)
-      this.debouncedSearch ||= debounce(this.search, this.debouncingDuration, {
-        leading: true
-      })
-      this.debouncedSearch(value)
     },
 
     search(query: string) {
       try {
+        this.updateInput(query)
         this.$emit("search-result", (this.searchFunction as SearchFunc)(query))
       } catch (e) {
         this.$notify.error("No search key provided.")
