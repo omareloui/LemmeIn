@@ -50,6 +50,12 @@ export default Vue.extend({
   async mounted() {
     this.updateNumber = initUpdateNumber(this.percentage)
     await this.updateNumber.update()
+  },
+
+  watch: {
+    percentage(newValue: number) {
+      this.updateNumber.update(newValue)
+    }
   }
 })
 </script>

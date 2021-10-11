@@ -17,9 +17,12 @@
           size="150px"
         />
 
-        <div class="accounts-summery__total-accounts">
-          <number :number="$accessor.analyze.totalAccounts" /> accounts
-        </div>
+        <number
+          tag="div"
+          class="accounts-summery__total-accounts"
+          :number="$accessor.analyze.totalAccounts"
+          suffix=" accounts"
+        />
       </div>
     </glass-card>
   </div>

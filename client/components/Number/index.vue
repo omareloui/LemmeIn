@@ -21,6 +21,11 @@ export default Vue.extend({
   async mounted() {
     this.updateNumber = initUpdateNumber(this.number, this.speed)
     await this.updateNumber.update()
+  },
+  watch: {
+    number(newValue: number) {
+      this.updateNumber.update(newValue)
+    }
   }
 })
 </script>

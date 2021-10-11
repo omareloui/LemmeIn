@@ -3,17 +3,13 @@ import sleep from "~/assets/utils/sleep"
 export default function initUpdateNumber(number: number, speed = 20) {
   return {
     current: 0,
-    update: async function updateNumber() {
-      if (number === 0) return
-      if (number > 0) {
-        if (this.current >= number) return
-        this.current++
-      } else if (number < 0) {
-        if (this.current <= number) return
-        this.current--
-      }
+    update: async function updateNumber(custom?: number) {
+      const num = custom ?? number
+      if (num === this.current) return
+      if (num > this.current) this.current++
+      if (num < this.current) this.current--
       await sleep(speed)
-      this.update()
+      this.update(num)
     }
   }
 }
