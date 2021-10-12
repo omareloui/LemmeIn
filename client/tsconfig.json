@@ -12,6 +12,7 @@
     "sourceMap": true,
     "noEmit": true,
     "baseUrl": ".",
+    "downlevelIteration": true,
     "paths": {
       "~/*": ["./*"],
       "@/*": ["./*"]

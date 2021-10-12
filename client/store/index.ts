@@ -24,6 +24,7 @@ export const actions = actionTree(
       const { $accessor } = this.app
       $accessor.theme.load()
       await $accessor.auth.setMe()
+      await $accessor.auth.setKeyFromCookie()
       await $accessor.resources.load()
       // Redirect to home if is signed in and going to /
       if (req.url === "/" && $accessor.auth.isSigned) redirect("/home")

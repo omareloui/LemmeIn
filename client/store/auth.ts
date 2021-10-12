@@ -1,4 +1,5 @@
 import { mutationTree, actionTree } from "typed-vuex"
+import createKey from "~/assets/utils/createPBKDF2"
 
 interface RegisterOptions {
   firstName: string
@@ -31,8 +32,10 @@ interface Token {
 
 export const state = () => ({
   AUTH_COOKIE_NAME: "auth",
+  PBKDF2_COOKIE_NAME: "key",
   user: null as User | null,
-  isSigned: false
+  isSigned: false,
+  pbk: null as string | null
 })
 
 export type AuthState = ReturnType<typeof state>
@@ -44,6 +47,10 @@ export const mutations = mutationTree(state, {
 
   updateIsSigned(state, isSigned: boolean) {
     state.isSigned = isSigned
+  },
+
+  setKey(state, key: string | null) {
+    state.pbk = key
   }
 })
 
@@ -52,6 +59,10 @@ export const actions = actionTree(
   {
     getToken({ state }) {
       return this.$cookies.get(state.AUTH_COOKIE_NAME)
+    },
+
+    getKeyFromCookie({ state }) {
+      return this.$cookies.get(state.PBKDF2_COOKIE_NAME)
     },
 
     setToken({ state }, token: Token) {
@@ -66,8 +77,23 @@ export const actions = actionTree(
       })
     },
 
+    setKeyToCookie(
+      { state },
+      { key, expires }: { key: string; expires: Date }
+    ) {
+      this.app.$cookies.set(state.PBKDF2_COOKIE_NAME, key, {
+        sameSite: "lax",
+        path: "/",
+        expires
+      })
+    },
+
     removeToken({ state }) {
       this.app.$cookies.remove(state.AUTH_COOKIE_NAME)
+    },
+
+    removeKeyCookie({ state }) {
+      this.app.$cookies.remove(state.PBKDF2_COOKIE_NAME)
     },
 
     setSignData(
@@ -80,14 +106,25 @@ export const actions = actionTree(
     },
 
     async register({ dispatch }, options: RegisterOptions) {
-      const { data: result } = await this.$axios.post("/auth/register", options)
-      dispatch("setSignData", result)
+      const { data } = await this.$axios.post("/auth/register", options)
+      const result = data as { user: User; token: Token }
+      await dispatch("setSignData", result)
+      await dispatch("createKey", {
+        password: options.password,
+        expires: new Date(result.token.expires)
+      })
       this.$router.push("/")
     },
 
     async signin({ dispatch }, options: SignInOptions) {
-      const { data: result } = await this.$axios.post("/auth/login", options)
-      dispatch("setSignData", result)
+      const { data } = await this.$axios.post("/auth/login", options)
+      const result = data as { user: User; token: Token }
+      await dispatch("setSignData", result)
+      await dispatch("createKey", {
+        password: options.password,
+        expires: new Date(result.token.expires)
+      })
+      this.$router.push("/")
       await this.app.$accessor.resources.load()
       this.$router.push("/")
     },
@@ -125,11 +162,28 @@ export const actions = actionTree(
       }
     },
 
+    async setKeyFromCookie({ commit, dispatch }) {
+      const key = await dispatch("getKeyFromCookie")
+      if (!key) return
+      commit("setKey", key)
+    },
+
     async signOut({ dispatch, commit }) {
       dispatch("removeToken")
       await this.app.$accessor.resources.clear()
       commit("setUser", null)
       commit("updateIsSigned", false)
+      dispatch("removeKeyCookie")
+      commit("setKey", null)
+    },
+
+    async createKey(
+      { commit, dispatch },
+      { password, expires }: { password: string; expires: Date }
+    ) {
+      const key = await createKey(password)
+      dispatch("setKeyToCookie", { key, expires })
+      commit("setKey", key)
     }
   }
 )
