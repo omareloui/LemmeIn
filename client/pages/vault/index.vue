@@ -33,7 +33,7 @@
           v-for="account in searchQuery ? searchResult : accounts"
           :key="account.id"
         >
-          <account-preview v-bind="{ account }" />
+          <account-preview v-bind="{ account }" include-strength />
         </div>
       </transition-group>
     </main>
