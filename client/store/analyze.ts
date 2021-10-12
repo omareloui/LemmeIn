@@ -75,9 +75,6 @@ export const mutations = mutationTree(state, {
     state[oldStrength].counter--
     // Add to the new strength
     state[strength].accounts.push(account)
-    state[strength].accounts.sort(
-      (a, b) => Number(b.createdAt) - Number(a.createdAt)
-    )
     state[strength].counter++
   },
 
@@ -225,7 +222,10 @@ export const actions = actionTree(
     },
 
     editAccount({ state, commit, dispatch }, account: Account) {
-      if (!account.decryptedPassword) return
+      if (!account.decryptedPassword) {
+        dispatch("removeFromAllWithId", account.id)
+        return
+      }
       const findAccount = (x: AccountsType[number]) => x.id === account.id
 
       // Get the account and its old strength
@@ -249,11 +249,17 @@ export const actions = actionTree(
 
       // Update its strength
       const strength = this.$getPasswordStrength(account.decryptedPassword)
-      commit("updateAccountStrength", {
-        account,
-        strength: strength.value,
-        oldStrength
-      })
+      // If there wasn't an old account (meaning it changed from oAuth to native)
+      //  then add it as a new one
+      if (!oldAccount)
+        commit("setAccountStrength", { account, strength: strength.value })
+      // Else update it
+      else
+        commit("updateAccountStrength", {
+          account,
+          strength: strength.value,
+          oldStrength
+        })
 
       // Remove from outdated
       commit("removeFromOutdated", account)
@@ -283,6 +289,20 @@ export const actions = actionTree(
       commit("removeFromStrength", { account, strength: strength.value })
       commit("removeFromDuplicated", account)
       commit("removeFromOutdated", account)
+    },
+
+    async removeFromAllWithId({ dispatch }, accountId) {
+      const account = await dispatch("getCurrentAccount", accountId)
+      dispatch("removeFromAll", account)
+    },
+
+    getCurrentAccount({ state }, accountId) {
+      return [
+        ...state.safe.accounts,
+        ...state.okay.accounts,
+        ...state.weak.accounts,
+        ...state.compromised.accounts
+      ].find(x => x.id === accountId)
     }
   }
 )
