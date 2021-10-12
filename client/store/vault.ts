@@ -11,6 +11,9 @@ export type AccountsState = ReturnType<typeof state>
 
 export const getters = getterTree(state, {
   recentlyUsed(state) {
+    // This won't update with the state 'cause of the cloning
+    // Note that the icon is the only thing showing from this so
+    //   it's not that important
     return take(
       state.accounts
         .filter(x => x.lastUsed)
@@ -24,10 +27,11 @@ export const getters = getterTree(state, {
   },
 
   newlyAdded(state) {
+    // FIXME: this won't update with the state 'cause of the cloning
     return take(
-      state.accounts
-        .map(x => x)
-        .sort((a, b) => Number(b.createdAt) - Number(a.createdAt)),
+      [...state.accounts].sort(
+        (a, b) => Number(b.createdAt) - Number(a.createdAt)
+      ),
       15
     )
   }
@@ -131,7 +135,7 @@ export const actions = actionTree(
         ...response.data,
         decryptedPassword: !options.isOAuth ? options.password : undefined
       } as Account
-      await this.app.$accessor.analyze.analyzeAccount(account)
+      await this.app.$accessor.analyze.addAccount(account)
       this.$notify.success("Created account.")
       commit("unshiftToAccounts", account)
     },
@@ -144,8 +148,9 @@ export const actions = actionTree(
         ...response.data,
         decryptedPassword: !options.isOAuth ? options.password : undefined
       } as Account
-      this.$notify.success("Updated account.")
+      await this.app.$accessor.analyze.editAccount(newAccount)
       commit("updateAccountCache", newAccount)
+      this.$notify.success("Updated account.")
       return newAccount
     },
 

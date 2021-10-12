@@ -50,14 +50,55 @@ export const mutations = mutationTree(state, {
     state.totalAccounts++
   },
 
+  updateAccountStrength(
+    state,
+    {
+      account,
+      oldStrength,
+      strength
+    }: {
+      account: Account
+      oldStrength: PasswordStrengthValues
+      strength: PasswordStrengthValues
+    }
+  ) {
+    if (
+      !account.decryptedPassword ||
+      account.password ||
+      oldStrength === strength
+    )
+      return
+    // Remove from the old strength
+    state[oldStrength].accounts = state[oldStrength].accounts.filter(
+      x => x.id !== account.id
+    )
+    state[oldStrength].counter--
+    // Add to the new strength
+    state[strength].accounts.push(account)
+    state[strength].accounts.sort(
+      (a, b) => Number(b.createdAt) - Number(a.createdAt)
+    )
+    state[strength].counter++
+  },
+
   setAsOutdated(state, account: Account) {
     const { outdated } = state
     outdated.accounts.push(account)
     outdated.counter++
   },
 
-  setAsDuplicated(state, account: Account) {
+  setAsDuplicated(
+    state,
+    { account, duplicatedWith }: { account: Account; duplicatedWith: Account }
+  ) {
     const { duplicated } = state
+    const alreadyExistingDuplication = duplicated.accounts.find(
+      x => x.id === duplicatedWith.id
+    )
+    if (!alreadyExistingDuplication) {
+      duplicated.accounts.push(duplicatedWith)
+      duplicated.counter++
+    }
     duplicated.accounts.push(account)
     duplicated.counter++
   },
@@ -66,7 +107,7 @@ export const mutations = mutationTree(state, {
     if (score >= 0 && score <= 100) state.score = score
   },
 
-  removeFromAll(
+  removeFromStrength(
     state,
     {
       account,
@@ -75,28 +116,53 @@ export const mutations = mutationTree(state, {
   ) {
     // Remove from its strength
     const wantedState = state[strength]
-    const passwordIndexToRemove = wantedState.accounts.findIndex(
+    const accountIndexToRemove = wantedState.accounts.findIndex(
       x => x.id === account.id
     )
-    if (passwordIndexToRemove > -1) {
-      wantedState.accounts.splice(passwordIndexToRemove, 1)
+    if (accountIndexToRemove > -1) {
+      wantedState.accounts.splice(accountIndexToRemove, 1)
       wantedState.counter--
     }
 
     // Remove from total counter
     state.totalAccounts--
+  },
 
-    // Remove from duplicates
-    state.duplicated.accounts = state.duplicated.accounts.filter(
-      x => x.id !== account.id
+  removeFromOutdated(state, account: Account) {
+    const accountIndexToRemove = state.outdated.accounts.findIndex(
+      x => x.id === account.id
     )
-    state.duplicated.counter = state.duplicated.accounts.length
+    if (accountIndexToRemove > -1) {
+      state.outdated.accounts.splice(accountIndexToRemove, 1)
+      state.outdated.counter--
+    }
+  },
 
-    // Remove from outdated
-    state.outdated.accounts = state.outdated.accounts.filter(
-      x => x.id !== account.id
+  removeFromDuplicated(state, account: Account) {
+    const accountToRemove = state.duplicated.accounts.find(
+      x => x.id === account.id
     )
-    state.outdated.counter = state.outdated.accounts.length
+    if (accountToRemove) {
+      const allSamePasswordAccounts = state.duplicated.accounts.filter(
+        x => x.decryptedPassword === accountToRemove.decryptedPassword
+      )
+
+      // Remove the only provided account if it's duplicated with more than one account
+      if (allSamePasswordAccounts.length > 2) {
+        state.duplicated.accounts = state.duplicated.accounts.filter(
+          x => x.id !== account.id
+        )
+        state.duplicated.counter--
+      }
+
+      // Remove both if they're only the duplicated
+      if (allSamePasswordAccounts.length === 2) {
+        state.duplicated.accounts = state.duplicated.accounts.filter(
+          x => x.decryptedPassword !== accountToRemove.decryptedPassword
+        )
+        state.duplicated.counter -= 2
+      }
+    }
   }
 })
 
@@ -135,7 +201,7 @@ export const actions = actionTree(
       commit("setScore", Math.floor((totalScore / nonOAuthAccountsTotal) * 100))
     },
 
-    analyzeAccount({ state, commit, dispatch }, account: Account) {
+    addAccount({ state, commit, dispatch }, account: Account) {
       if (!account.decryptedPassword) return
       // Set its strength
       const strength = this.$getPasswordStrength(account.decryptedPassword)
@@ -149,20 +215,74 @@ export const actions = actionTree(
       // Set if duplicated
       const duplicatedWith = this.app.$accessor.vault.accounts.find(
         x =>
-          x.decryptedPassword &&
+          x.id !== account.id &&
           x.decryptedPassword === account.decryptedPassword
       )
-      if (duplicatedWith) commit("setAsDuplicated", account)
+      if (duplicatedWith) commit("setAsDuplicated", { account, duplicatedWith })
 
       // Recalculate the score
       dispatch("recalculateScore")
     },
 
-    removeAccount({ commit, dispatch }, account: Account) {
+    editAccount({ state, commit, dispatch }, account: Account) {
+      if (!account.decryptedPassword) return
+      const findAccount = (x: AccountsType[number]) => x.id === account.id
+
+      // Get the account and its old strength
+      let oldStrength = "safe" as PasswordStrengthValues
+      let oldAccount = state.safe.accounts.find(findAccount)
+      if (!oldAccount) {
+        oldAccount = state.okay.accounts.find(findAccount)
+        oldStrength = "okay"
+      }
+      if (!oldAccount) {
+        oldAccount = state.weak.accounts.find(findAccount)
+        oldStrength = "weak"
+      }
+      if (!oldAccount) {
+        oldAccount = state.compromised.accounts.find(findAccount)
+        oldStrength = "compromised"
+      }
+
+      // Return if the password's the same
+      if (oldAccount?.decryptedPassword === account.decryptedPassword) return
+
+      // Update its strength
+      const strength = this.$getPasswordStrength(account.decryptedPassword)
+      commit("updateAccountStrength", {
+        account,
+        strength: strength.value,
+        oldStrength
+      })
+
+      // Remove from outdated
+      commit("removeFromOutdated", account)
+
+      // Duplicated
+      commit("removeFromDuplicated", account)
+      const duplicatedWith = this.app.$accessor.vault.accounts.find(
+        x =>
+          x.id !== account.id &&
+          x.decryptedPassword === account.decryptedPassword
+      )
+      if (duplicatedWith) commit("setAsDuplicated", { account, duplicatedWith })
+
+      // Recalculate the score
+      dispatch("recalculateScore")
+    },
+
+    removeAccount({ dispatch }, account: Account) {
+      if (!account.decryptedPassword) return
+      dispatch("removeFromAll", account)
+      dispatch("recalculateScore")
+    },
+
+    removeFromAll({ commit }, account: Account) {
       if (!account.decryptedPassword) return
       const strength = this.$getPasswordStrength(account.decryptedPassword)
-      commit("removeFromAll", { account, strength: strength.value })
-      dispatch("recalculateScore")
+      commit("removeFromStrength", { account, strength: strength.value })
+      commit("removeFromDuplicated", account)
+      commit("removeFromOutdated", account)
     }
   }
 )
