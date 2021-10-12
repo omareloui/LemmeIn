@@ -113,6 +113,7 @@
             no-date
             no-tags
             include-strength
+            no-copy-password
           />
         </div>
       </section>

@@ -45,7 +45,7 @@
         </div>
 
         <icon
-          v-if="account.isNative"
+          v-if="account.isNative && !noCopyPassword"
           class="info__copy"
           name="copy"
           size="25px"
@@ -93,6 +93,7 @@ export default Vue.extend({
     noDate: { type: Boolean, default: false },
     noTags: { type: Boolean, default: false },
     noCopyAccountIdentifier: { type: Boolean, default: false },
+    noCopyPassword: { type: Boolean, default: false },
     includeStrength: { type: Boolean, default: false }
   },
 
