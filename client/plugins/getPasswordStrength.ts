@@ -17,7 +17,7 @@ function calculateScore(password: string): PasswordScore {
     else if (length >= 8) score += 3
     else if (length >= 6) score += 2
     else if (length >= 4) score += 1
-    suggestions.push("Make it longer")
+    suggestions.push("Make it 16 characters long")
   }
   const DIVERSITIES = ["lowercase", "uppercase", "number", "symbol"] as const
   const diversity = [] as typeof DIVERSITIES[number][]
@@ -29,7 +29,25 @@ function calculateScore(password: string): PasswordScore {
   // Calc score if diversity
   DIVERSITIES.forEach(x => {
     if (diversity.indexOf(x) > -1) score++
-    else suggestions.push(`Add ${x}`)
+    else {
+      const add = (sug: string) => suggestions.push(sug)
+      switch (x) {
+        case "lowercase":
+          add("Add a lowercase letter")
+          break
+        case "uppercase":
+          add("Add an uppercase letter")
+          break
+        case "number":
+          add("Add a number")
+          break
+        case "symbol":
+          add("Add a symbol")
+          break
+        default:
+          break
+      }
+    }
   })
 
   // Define max score

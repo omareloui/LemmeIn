@@ -91,6 +91,29 @@
         <marked :content="account.note" class="note" />
       </section>
 
+      <section class="make-better" v-if="notOAuth && suggestions.length > 0">
+        <h3>How to make the password better</h3>
+        <ul class="suggestions">
+          <li v-for="suggestion in suggestions" :key="suggestion">
+            {{ suggestion }}
+          </li>
+        </ul>
+      </section>
+
+      <section class="duplicated" v-if="notOAuth && duplications.length > 0">
+        <h3>Duplicated with</h3>
+        <div class="duplications">
+          <account-preview
+            v-for="duplication in duplications"
+            :key="duplication.id"
+            :account="duplication"
+            no-date
+            no-tags
+            include-strength
+          />
+        </div>
+      </section>
+
       <section class="edit-buttons">
         <button-main large block color="info" @click="showUpdateAccount">
           Edit
@@ -149,6 +172,21 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
   computed: {
     notOAuth(): boolean {
       return !this.account.password
+    },
+
+    suggestions(): string[] | null {
+      if (!this.notOAuth) return null
+      return this.$getPasswordStrength(this.account.decryptedPassword!)
+        .suggestions
+    },
+
+    duplications(): Account[] | null {
+      if (!this.notOAuth) return null
+      return this.$accessor.analyze.duplicated.accounts.filter(
+        x =>
+          x.id !== this.account.id &&
+          x.decryptedPassword === this.account.decryptedPassword
+      )
     }
   },
 
@@ -267,6 +305,17 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
     +my(30px)
     +lt-mobile
       grid-template-columns: 1fr 1fr
+
+  section.make-better
+    .suggestions
+      +ml(40px)
+      +mt(10px)
+      +fnt-lg
+
+  section.duplicated
+    .duplications
+      +grid($gap: 20px)
+      +mt(10px)
 
   .dialogue-content
     +pos-r
