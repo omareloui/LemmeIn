@@ -81,14 +81,14 @@ export const actions = actionTree(
         delete options.id
         const dNote = await dispatch("encryptNote", { ...options })
         const response = await this.$axios.put(`/notes/${id}`, dNote)
-        const newNote = response.data as Note
-        this.$notify.success("Updated note")
-        commit("updateNoteCache", {
-          ...newNote,
+        const newNote = {
+          ...response.data,
           body: options.body,
           title: options.title
-        })
-        return options as Note
+        } as Note
+        this.$notify.success("Updated note")
+        commit("updateNoteCache", newNote)
+        return newNote
       } catch (e) {
         this.$notify.error(e.response ? e.response.data.message : e.message)
         return false
