@@ -225,11 +225,15 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
       this.account = await this.$accessor.vault.getAccount(newAccount.id)
     },
 
-    deleteAccount() {
-      this.$accessor.vault.deleteAccount({
-        accountId: this.account.id,
-        accountName: this.account.app
-      })
+    async deleteAccount() {
+      try {
+        await this.$accessor.vault.deleteAccount({
+          accountId: this.account.id,
+          accountName: this.account.app
+        })
+      } catch (e) {
+        this.$notify.error(e.message, { duration: 4000 })
+      }
     }
   }
 })
