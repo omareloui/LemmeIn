@@ -49,11 +49,12 @@ const nuxt: NuxtConfig = {
   ],
   plugins: [
     { src: "~/plugins/axios" },
-    { src: "~/plugins/swiper" },
+    { src: "~/plugins/cypher" },
+    { src: "~/plugins/getPasswordStrength" },
+    { src: "~/plugins/swiper", mode: "client" },
     { src: "~/plugins/notify", mode: "client" },
     { src: "~/plugins/copy", mode: "client" },
-    { src: "~/plugins/confirm", mode: "client" },
-    { src: "~/plugins/getPasswordStrength" }
+    { src: "~/plugins/confirm", mode: "client" }
   ],
   components: true,
   buildModules: ["@nuxt/typescript-build", "nuxt-typed-vuex", "@nuxtjs/moment"],

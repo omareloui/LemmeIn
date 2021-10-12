@@ -65,6 +65,10 @@ export const actions = actionTree(
       return this.$cookies.get(state.PBKDF2_COOKIE_NAME)
     },
 
+    getKey({ state }) {
+      return state.pbk
+    },
+
     setToken({ state }, token: Token) {
       const expires =
         typeof token.expires === "string"

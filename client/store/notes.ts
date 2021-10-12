@@ -41,50 +41,55 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, mutations },
   {
-    async getNotes({ commit }) {
+    async getNotes({ dispatch }) {
       if (!this.app.$accessor.auth.isSigned) return
       const { data: notes } = (await this.$axios.get("/notes")) as {
         data: Note[]
       }
-      commit("setNotes", notes)
+      dispatch("decryptAndSetNotes", notes)
     },
 
-    async getNote({ state }, noteId: string) {
+    async getNote({ state, dispatch }, noteId: string) {
       const note = state.notes.find(x => x.id === noteId)
       if (note) return note
-      const { data } = (await this.$axios.get(`/notes/${noteId}`)) as {
-        data: Note
-      }
-      return data
+      const { data } = await this.$axios.get(`/notes/${noteId}`)
+      const dNote = await dispatch("decryptNote", data)
+      return dNote
     },
 
-    async addNote({ commit }, options: AddNote) {
+    async addNote({ commit, dispatch }, options: AddNote) {
       try {
         if (!options.body && !options.title)
           throw new Error(`"note" and "title" can't be both empty`)
-        const response = await this.$axios.post("/notes", options)
+        const eNote = await dispatch("encryptNote", { ...options })
+        const response = await this.$axios.post("/notes", eNote)
         const note = response.data as Note
+        note.title = options.title
+        note.body = options.body
         this.$notify.success("Created note")
         commit("unshiftToNotes", note)
         return true
       } catch (e) {
-        // @ts-ignore
         this.$notify.error(e.response ? e.response.data.message : e.message)
         return false
       }
     },
 
-    async updateNote({ commit }, options: UpdateNote) {
+    async updateNote({ commit, dispatch }, options: UpdateNote) {
       try {
         const { id } = options
         delete options.id
-        const response = await this.$axios.put(`/notes/${id}`, options)
+        const dNote = await dispatch("encryptNote", { ...options })
+        const response = await this.$axios.put(`/notes/${id}`, dNote)
         const newNote = response.data as Note
         this.$notify.success("Updated note")
-        commit("updateNoteCache", newNote)
-        return newNote
+        commit("updateNoteCache", {
+          ...newNote,
+          body: options.body,
+          title: options.title
+        })
+        return options as Note
       } catch (e) {
-        // @ts-ignore
         this.$notify.error(e.response ? e.response.data.message : e.message)
         return false
       }
@@ -102,10 +107,30 @@ export const actions = actionTree(
         this.$notify.success("Removed note.")
         return true
       } catch (e) {
-        // @ts-ignore
         this.$notify.error(e.response ? e.response.data.message : e.message)
         return false
       }
+    },
+
+    async encryptNote(_store, note: Note) {
+      const { title, body } = note
+      note.title = title ? await this.$cypher.encrypt(title) : ""
+      note.body = body ? await this.$cypher.encrypt(body) : ""
+      return note
+    },
+
+    async decryptNote(_store, note: Note) {
+      const { title, body } = note
+      note.title = title ? await this.$cypher.decrypt(title) : title
+      note.body = body ? await this.$cypher.decrypt(body) : body
+      return note
+    },
+
+    async decryptAndSetNotes({ commit, dispatch }, notes: Note[]) {
+      const dNotes = await Promise.all(
+        notes.map(x => dispatch("decryptNote", x))
+      )
+      commit("setNotes", dNotes)
     }
   }
 )

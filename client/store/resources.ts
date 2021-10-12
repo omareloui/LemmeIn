@@ -15,7 +15,7 @@ export const actions = actionTree(
         const { accounts, notes, tags, analyzes } = response.data as Resources
 
         await $accessor.vault.setAccounts(accounts)
-        await $accessor.notes.setNotes(notes)
+        await $accessor.notes.decryptAndSetNotes(notes)
         await $accessor.tags.setTags(tags)
         await $accessor.analyze.setData(analyzes)
       }
