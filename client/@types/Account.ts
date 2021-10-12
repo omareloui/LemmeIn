@@ -3,7 +3,8 @@ import { Tag } from "."
 export interface Account {
   id: string
   user: string
-  password?: Account | string
+  password: Account | string
+  isNative: boolean
   app: string
   accountIdentifier?: string
   site?: string
@@ -13,13 +14,11 @@ export interface Account {
   lastPasswordUpdate: Date
   createdAt: Date
   updatedAt: Date
-
-  decryptedPassword?: string
 }
 
 export interface AddAccountReceivedData {
   app: string
-  password: { value: string; isOAuth: boolean }
+  password: { value: string; isNative: boolean }
   accountIdentifier?: string
   site?: string
   note?: string
@@ -29,7 +28,7 @@ export interface AddAccountReceivedData {
 export interface AddAccount {
   app: string
   password: string
-  isOAuth: boolean
+  isNative: boolean
   accountIdentifier?: string
   site?: string
   note?: string
@@ -40,7 +39,7 @@ export interface UpdateAccount {
   id: string
   app: string
   password: string
-  isOAuth: boolean
+  isNative: boolean
   accountIdentifier?: string
   site?: string
   note?: string

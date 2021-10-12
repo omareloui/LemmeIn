@@ -147,9 +147,8 @@ export default (Vue as ExtendVueRefs<Record<string, unknown>>).extend({
           if (passwordComponent.hasOAuth) {
             const passwordResult: PasswordValue = {
               value: x.value as string,
-              isOAuth: false
+              isNative: passwordComponent.isNative
             }
-            if (passwordComponent.isOAuth) passwordResult.isOAuth = true
             result[x.id] = passwordResult
           } else result[x.id] = x.value
         }

@@ -1,18 +1,12 @@
-import { ObjectId, Document } from "../deps.ts";
 import type {
   Doc,
   Account as AccountType,
   CreateAccountOptions,
   UpdateAccountOptions,
-  InsertionData,
 } from "../@types/index.ts";
 
 import { mongoIdRegExp, compareArrays } from "../utils/index.ts";
-import {
-  EncryptionHelper,
-  CollectionHelper,
-  ErrorHelper,
-} from "../helpers/index.ts";
+import { CollectionHelper, ErrorHelper } from "../helpers/index.ts";
 
 import { Account, AccountSchema, TagSchema } from "../models/index.ts";
 import { BaseService, TagService } from "./index.ts";
@@ -20,15 +14,13 @@ import { BaseService, TagService } from "./index.ts";
 const AccountHelper = new CollectionHelper(Account);
 const accountErrorHelper = new ErrorHelper("account");
 
-const ENCRYPTED_PASSWORD_REG_EXP = /[\da-f]{32}\.[\da-f]/;
-
 export class AccountService extends BaseService {
   public static async createMine(
     data: CreateAccountOptions,
     userId: string
   ): Promise<AccountType> {
     const currentDate = new Date();
-    const insertionData: InsertionData = {
+    const insertionData = {
       ...data,
       user: userId,
       lastUsed: null,
@@ -36,11 +28,6 @@ export class AccountService extends BaseService {
       createdAt: currentDate,
       updatedAt: currentDate,
     };
-    if (!data.isOAuth) {
-      const encryptHelper = new EncryptionHelper();
-      insertionData.password = encryptHelper.encrypt(data.password);
-    }
-    delete insertionData.isOAuth;
     const account = await AccountHelper.createOne(insertionData);
     if (!account) return accountErrorHelper.badRequest({ action: "create" });
     return this.populate(account, userId);
@@ -77,18 +64,6 @@ export class AccountService extends BaseService {
     return [];
   }
 
-  public static async decrypt(id: string, userId: string) {
-    const account = await AccountHelper.findOne({
-      _id: new ObjectId(id),
-      user: userId,
-      password: ENCRYPTED_PASSWORD_REG_EXP,
-    });
-    if (!account) return accountErrorHelper.notFound();
-    const encryptionHelper = new EncryptionHelper();
-    const password = encryptionHelper.decrypt(account.password);
-    return password;
-  }
-
   public static async updateLastUsed(id: string, userId: string) {
     const account = await AccountHelper.findMineById(id, userId);
     if (!account) return accountErrorHelper.notFound();
@@ -102,7 +77,7 @@ export class AccountService extends BaseService {
       app,
       password,
       accountIdentifier,
-      isOAuth,
+      isNative,
       note,
       site,
       tags,
@@ -112,26 +87,21 @@ export class AccountService extends BaseService {
     const originalDoc = await AccountHelper.findMineById(id, userId);
     if (!originalDoc) return accountErrorHelper.notFound();
 
-    const fieldsToUpdate: Partial<InsertionData> = {};
+    const fieldsToUpdate: UpdateAccountOptions = {};
     const currentDate = new Date();
 
     // Check updating the password
     if (password) {
       // Set the original password
-      const encryptionHelper = new EncryptionHelper();
-      const isOriginalOAuth = this.checkIfPasswordOAuth(originalDoc.password);
-      let originalPassword = originalDoc.password;
-      // Decrypt the password if it's not oauth
-      if (!isOriginalOAuth)
-        originalPassword = encryptionHelper.decrypt(originalPassword);
+      const originalPassword = originalDoc.password;
 
       // Update if it's new password
       if (password !== originalPassword) {
-        // Encrypt the password if it's not oauth
-        if (password && !isOAuth) {
-          const encryption = encryptionHelper.encrypt(password);
-          fieldsToUpdate.password = encryption;
-        } else if (password && isOAuth) {
+        // If native add it directly
+        if (isNative) {
+          fieldsToUpdate.password = password;
+          fieldsToUpdate.isNative = true;
+        } else if (!isNative) {
           // Making sure it's a valid password id to update to
           if (!password.match(mongoIdRegExp))
             return accountErrorHelper.badRequest({
@@ -157,9 +127,9 @@ export class AccountService extends BaseService {
             password,
             userId
           );
-          let currPass: AccountType | undefined =
+          let currPass: AccountType | string =
             optimizedPasswordToUpdateTo.password;
-          while (currPass) {
+          while (typeof currPass !== "string") {
             if (currPass.id.toString() === id)
               return accountErrorHelper.badRequest({
                 message:
@@ -169,6 +139,7 @@ export class AccountService extends BaseService {
           }
 
           fieldsToUpdate.password = password;
+          fieldsToUpdate.isNative = false;
         }
         // Update password's last update date
         if (Object.hasOwn(fieldsToUpdate, "password"))
@@ -188,7 +159,11 @@ export class AccountService extends BaseService {
       accountIdentifier !== originalDoc.accountIdentifier
     )
       fieldsToUpdate.accountIdentifier = accountIdentifier;
-    if (tags !== undefined && !compareArrays(tags, originalDoc.tags))
+    if (
+      tags !== undefined &&
+      originalDoc.tags &&
+      !compareArrays(tags, originalDoc.tags)
+    )
       fieldsToUpdate.tags = tags;
 
     // Return without saving if nothing to change
@@ -238,18 +213,15 @@ export class AccountService extends BaseService {
     doc: Doc<AccountSchema>,
     userId: string
   ): Promise<AccountType> {
-    const isOAuth = this.checkIfPasswordOAuth(doc.password);
+    const { isNative } = doc;
     // @ts-ignore accept the password type as virtual password
     const result = { ...doc } as VirtualPasswordSchema;
     // Set password
-    if (!isOAuth) {
-      result.encryptedPassword = result.password;
-      delete (result as { password?: string }).password;
-    } else {
+    if (!isNative) {
       result.password = await this.getOneMine(result.password, userId);
     }
     // Set tags
-    result.tags = await this.getMyAccountTags(doc.tags, userId);
+    result.tags = doc.tags && (await this.getMyAccountTags(doc.tags, userId));
     return result;
   }
 
@@ -261,10 +233,6 @@ export class AccountService extends BaseService {
       docs.map((x) => this.populate(x, userId))
     );
     return this.sort(populated);
-  }
-
-  private static checkIfPasswordOAuth(password: string | Document) {
-    return !!password.toString().match(mongoIdRegExp);
   }
 
   private static sort(docs: AccountType[]): AccountType[] {

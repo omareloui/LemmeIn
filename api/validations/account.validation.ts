@@ -9,11 +9,11 @@ const createAndUpdateAccountBody = {
     .max(256)
     .trim()
     .required(`Field "password" is required`),
+  isNative: yup.boolean().required(),
   accountIdentifier: yup.string().trim(),
   note: yup.string().trim(),
-  site: yup.string().url().trim(),
+  site: yup.string().trim(),
   tags: yup.array().of(yup.string()),
-  isOAuth: yup.boolean(),
 };
 
 export const createAccountValidation = {
@@ -25,10 +25,6 @@ export const getAccountValidation = {
 };
 
 export const getAccountsValidation = {};
-
-export const decryptAccountValidation = {
-  params: yup.object({ id: requiredId }),
-};
 
 export const updateAccountValidation = {
   params: yup.object({ id: requiredId }),

@@ -4,11 +4,12 @@ export interface AccountSchema {
   _id: string;
   user: string;
   password: string;
+  isNative: boolean; // AKA notOAuth
   app: string;
-  accountIdentifier: string;
-  site: string;
-  note: string;
-  tags: string[];
+  accountIdentifier?: string;
+  site?: string;
+  note?: string;
+  tags?: string[];
   lastUsed: Date | null;
   lastPasswordUpdate: Date;
   createdAt: Date;

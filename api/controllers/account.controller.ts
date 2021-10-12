@@ -16,10 +16,6 @@ export class AccountController {
     response.body = await AccountService.getOneMine(params.id!, state.user.id);
   }
 
-  public static async decrypt({ params, response, state }: RouterContext) {
-    response.body = await AccountService.decrypt(params.id!, state.user.id);
-  }
-
   public static async updateOneMine({
     request,
     params,

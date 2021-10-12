@@ -61,17 +61,6 @@ export const mutations = mutationTree(state, {
     state.accounts = state.accounts.filter(x => x.id !== accountId)
   },
 
-  cacheDecryption(
-    state,
-    { passId, decryptedPass }: { passId: string; decryptedPass: string }
-  ) {
-    const acc = state.accounts.find(x => x.id === passId)
-    if (!acc) throw new Error("Can't find the account to update last used")
-    if (acc.password)
-      throw new Error("Can't update an oAuth account's decryption cache")
-    acc.decryptedPassword = decryptedPass
-  },
-
   updateAccountCache(state, account) {
     const accIndex = state.accounts.findIndex(x => x.id === account.id)
     if (accIndex === -1)
@@ -79,13 +68,10 @@ export const mutations = mutationTree(state, {
     state.accounts[accIndex] = account
   },
 
-  clearDecryptionsCache(state) {
-    state.accounts.forEach(x => delete x.decryptedPassword)
-  },
-
   removeTagFromAccounts(state, tagId: string) {
     state.accounts = state.accounts.map(acc => {
-      if (acc.tags) acc.tags = acc.tags.filter(x => x.id !== tagId)
+      if (acc.tags && acc.tags.length > 0)
+        acc.tags = acc.tags.filter(x => x.id !== tagId)
       return acc
     })
   }
@@ -94,9 +80,10 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, mutations },
   {
-    async updateAccountsCache({ commit }) {
+    async updateAccountsCache({ dispatch }) {
       const { data } = await this.$axios.get("/accounts")
-      commit("setAccounts", data as Account[])
+      const accounts = data as Account[]
+      dispatch("decryptAndSetAccounts", accounts)
     },
 
     async getAccounts({ dispatch }) {
@@ -108,20 +95,13 @@ export const actions = actionTree(
       try {
         // Check first from cache
         let acc = state.accounts.find(x => x.id === accountId)
-
         // Get the account if not in cache
         if (!acc) {
-          const { data: account } = await this.$axios.get(
-            `/accounts/${accountId}`
-          )
-          acc = account
+          const { data } = await this.$axios.get(`/accounts/${accountId}`)
+          const account = data as Account
+          acc = await dispatch("decryptAccount", account)
         }
-
         if (!acc) throw new Error("Can't find the account")
-
-        // Decrypt the password if it's not decrypted
-        if (!acc.password && !acc.decryptedPassword)
-          acc.decryptedPassword = await dispatch("decryptPassword", accountId)
         return acc
       } catch (e) {
         // @ts-ignore
@@ -129,33 +109,29 @@ export const actions = actionTree(
       }
     },
 
-    async addAccount({ commit }, options: AddAccount) {
-      const response = await this.$axios.post("/accounts", options)
-      const account = {
-        ...response.data,
-        decryptedPassword: !options.isOAuth ? options.password : undefined
-      } as Account
-      await this.app.$accessor.analyze.addAccount(account)
+    async addAccount({ commit, dispatch }, options: AddAccount) {
+      await dispatch("encryptAccount", options)
+      const { data } = await this.$axios.post("/accounts", options)
+      const account = (await dispatch("decryptAccount", data)) as Account
+      // TODO: await this.app.$accessor.analyze.addAccount(account)
       this.$notify.success("Created account.")
       commit("unshiftToAccounts", account)
     },
 
-    async editAccount({ commit }, options: UpdateAccount) {
+    async editAccount({ commit, dispatch }, options: UpdateAccount) {
       const { id } = options
       delete (options as { id?: string }).id
-      const response = await this.$axios.put(`/accounts/${id}`, options)
-      const newAccount = {
-        ...response.data,
-        decryptedPassword: !options.isOAuth ? options.password : undefined
-      } as Account
-      await this.app.$accessor.analyze.editAccount(newAccount)
+      await dispatch("encryptAccount", options)
+      const { data } = await this.$axios.put(`/accounts/${id}`, options)
+      const newAccount = (await dispatch("decryptAccount", data)) as Account
+      // TODO: await this.app.$accessor.analyze.editAccount(newAccount)
       commit("updateAccountCache", newAccount)
       this.$notify.success("Updated account.")
       return newAccount
     },
 
     async deleteAccount(
-      { commit, dispatch },
+      { commit },
       {
         accountId,
         accountName,
@@ -170,8 +146,8 @@ export const actions = actionTree(
         if (!confirmed) return
         await this.$axios.delete(`/accounts/${accountId}`)
 
-        const account = await dispatch("getAccount", accountId)
-        await this.app.$accessor.analyze.removeAccount(account)
+        // const account = await dispatch("getAccount", accountId)
+        // TODO: await this.app.$accessor.analyze.removeAccount(account)
 
         commit("removeAccount", accountId)
         this.$notify.success("Deleted account successfully")
@@ -182,32 +158,39 @@ export const actions = actionTree(
       }
     },
 
-    async decryptPassword(
-      { state, commit },
-      accountId: string
-    ): Promise<string> {
-      // Get the account
-      try {
-        // See if the decryption is cached
-        const acc = state.accounts.find(x => x.id === accountId)
-        if (acc && acc.decryptedPassword) return acc.decryptedPassword
+    async decryptAccount({ dispatch }, account: Account): Promise<Account> {
+      account.app = await this.app.$cypher.decrypt(account.app)
+      account.accountIdentifier =
+        account.accountIdentifier &&
+        (await this.app.$cypher.decrypt(account.accountIdentifier))
+      account.site =
+        account.site && (await this.app.$cypher.decrypt(account.site))
+      account.note =
+        account.note && (await this.app.$cypher.decrypt(account.note))
 
-        // If the account isn't cached
-        let { data: decryptedPass } = await this.$axios.get(
-          `/accounts/decrypt/${accountId}`
+      if (account.isNative)
+        account.password = await this.app.$cypher.decrypt(
+          account.password as string
         )
+      else account.password = await dispatch("decryptAccount", account.password)
 
-        // Stringify it if it's a number
-        decryptedPass = decryptedPass.toString()
+      return account
+    },
 
-        // Cache the account
-        commit("cacheDecryption", { passId: accountId, decryptedPass })
-
-        return decryptedPass
-      } catch (e) {
-        // @ts-ignore
-        return this.$notify.error(e.response.data.message)
-      }
+    async encryptAccount(_store, account: Account): Promise<Account> {
+      account.app = await this.app.$cypher.encrypt(account.app)
+      if (account.isNative)
+        account.password = await this.app.$cypher.encrypt(
+          account.password as string
+        )
+      account.accountIdentifier =
+        account.accountIdentifier &&
+        (await this.app.$cypher.encrypt(account.accountIdentifier))
+      account.site =
+        account.site && (await this.app.$cypher.encrypt(account.site))
+      account.note =
+        account.note && (await this.app.$cypher.encrypt(account.note))
+      return account
     },
 
     async updateLastUsed({ commit }, accountId: string) {
@@ -217,12 +200,19 @@ export const actions = actionTree(
 
     async copy({ dispatch }, accountId: string) {
       // Get the account
-      const pass = await dispatch("decryptPassword", accountId)
-      if (!pass) return
+      const acc = (await dispatch("getAccount", accountId)) as Account
+      if (!acc || !acc.isNative) return
       // Update it's last used
       await dispatch("updateLastUsed", accountId)
       // Copy the account
-      this.$copy(pass, "Copied password!")
+      this.$copy(acc.password as string, "Copied password!")
+    },
+
+    async decryptAndSetAccounts({ commit, dispatch }, accounts: Account[]) {
+      const dAccounts = await Promise.all(
+        accounts.map(x => dispatch("decryptAccount", x))
+      )
+      commit("setAccounts", dAccounts)
     }
   }
 )

@@ -12,12 +12,13 @@ export const actions = actionTree(
       const { $accessor, $axios } = this.app
       if ($accessor.auth.isSigned) {
         const response = await $axios.get("/resources")
-        const { accounts, notes, tags, analyzes } = response.data as Resources
+        const { accounts, notes, tags } = response.data as Resources
 
-        await $accessor.vault.setAccounts(accounts)
+        await $accessor.vault.decryptAndSetAccounts(accounts)
         await $accessor.notes.decryptAndSetNotes(notes)
         await $accessor.tags.setTags(tags)
-        await $accessor.analyze.setData(analyzes)
+
+        // TODO: await $accessor.analyze.allAccounts()
       }
     },
 

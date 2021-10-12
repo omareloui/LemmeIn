@@ -9,5 +9,5 @@ export interface InputText extends Vue {
 
 export interface InputPassword extends InputText {
   hasOAuth: boolean
-  isOAuth: boolean
+  isNative: boolean
 }

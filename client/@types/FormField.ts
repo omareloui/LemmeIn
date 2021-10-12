@@ -12,7 +12,7 @@ export type InputTypes =
   | "tags"
   | "textarea"
 
-export type PasswordValue = { value: string; isOAuth: boolean } | string
+export type PasswordValue = { value: string; isNative: boolean } | string
 export type AcceptableFormValues =
   | string
   | string[]

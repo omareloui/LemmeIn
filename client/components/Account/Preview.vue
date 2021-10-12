@@ -13,7 +13,7 @@
           shape="dot"
           dot-size="10px"
           hide-score-text
-          :decrypted-password="account.decryptedPassword"
+          :decrypted-password="account.password"
         />
 
         <icon
@@ -45,7 +45,7 @@
         </div>
 
         <icon
-          v-if="notOAuth"
+          v-if="account.isNative"
           class="info__copy"
           name="copy"
           size="25px"
@@ -104,15 +104,7 @@ export default Vue.extend({
 
   computed: {
     showStrength(): boolean {
-      return (
-        this.includeStrength &&
-        this.notOAuth &&
-        !!this.account.decryptedPassword
-      )
-    },
-
-    notOAuth(): boolean {
-      return !this.account.password
+      return this.includeStrength && this.account.isNative
     }
   },
 

@@ -26,8 +26,11 @@ export default Vue.extend({
   props: {
     id: { type: String, required: true },
     app: { type: String, required: true },
-    password: { type: Object as PropType<Account> },
-    decryptedPassword: { type: String },
+    isNative: { type: Boolean, required: true },
+    password: {
+      type: [Object, String] as PropType<Account | string>,
+      required: true
+    },
     accountIdentifier: { type: String },
     note: { type: String },
     site: { type: String },
@@ -44,15 +47,8 @@ export default Vue.extend({
 
   methods: {
     setFormFields() {
-      const {
-        app,
-        decryptedPassword,
-        accountIdentifier,
-        note,
-        site,
-        tags,
-        password
-      } = this
+      const { app, accountIdentifier, note, site, tags, password, isNative } =
+        this
 
       this.formFields = [
         {
@@ -65,13 +61,13 @@ export default Vue.extend({
         {
           id: "password",
           type: "password",
-          value: decryptedPassword || password.id,
+          value: (isNative ? password : (password as Account).id) as string,
           props: {
             noIcon: true,
             minLength: 3,
             hasOAuth: true,
             showPasswordStrength: true,
-            isOAuthDefault: !!password
+            isOAuthDefault: !isNative
           }
         },
         "gap",
@@ -92,7 +88,11 @@ export default Vue.extend({
           value: site ?? "",
           props: {
             hint: "https://google.com",
-            notRequired: true
+            notRequired: true,
+            pattern:
+              // eslint-disable-next-line no-useless-escape
+              /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/,
+            invalidPatternMessage: "The link has to be a valid url"
           }
         },
         {
@@ -123,7 +123,7 @@ export default Vue.extend({
         id: this.id,
         app,
         password: password.value,
-        isOAuth: password?.isOAuth,
+        isNative: password.isNative,
         accountIdentifier,
         site,
         note,

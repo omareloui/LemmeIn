@@ -5,7 +5,7 @@ import authRouter from "./auth.router.ts";
 import tagRouter from "./tag.router.ts";
 import noteRouter from "./note.router.ts";
 import accountRouter from "./account.router.ts";
-import analyzeAccountsRouter from "./analyze-accounts.router.ts";
+// import analyzeAccountsRouter from "./analyze-accounts.router.ts";
 import resourcesRouter from "./resources.router.ts";
 
 const init = (app: Application) => {
@@ -14,7 +14,7 @@ const init = (app: Application) => {
     tagRouter,
     noteRouter,
     accountRouter,
-    analyzeAccountsRouter,
+    // analyzeAccountsRouter,
     resourcesRouter,
     defaultRouter,
   ].forEach((router) => {

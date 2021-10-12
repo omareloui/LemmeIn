@@ -8,7 +8,7 @@
   >
     <transition name="fade" mode="out-in">
       <input-text
-        v-if="!isOAuth"
+        v-if="isNative"
         ref="input"
         class="input-password__text"
         v-bind="{
@@ -35,7 +35,7 @@
       />
 
       <input-select
-        v-if="isOAuth && hasOtherPasswords"
+        v-if="!isNative && hasOtherPasswords"
         ref="input"
         class="input-password__select"
         label="OAuth password"
@@ -50,7 +50,7 @@
 
     <transition name="fade">
       <password-strength
-        v-if="showPasswordStrength && !isOAuth"
+        v-if="showPasswordStrength && isNative"
         class="input-password__strength"
         line-height="10px"
         hide-score-text
@@ -63,7 +63,7 @@
       class="input-password__oauth-button"
       @click="toggleOAuth"
     >
-      {{ isOAuth ? "Insert password?" : "Connect with another account?" }}
+      {{ !isNative ? "Insert password?" : "Connect with another account?" }}
     </button-base>
   </div>
 </template>
@@ -94,12 +94,12 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
   },
 
   created() {
-    if (this.isOAuthDefault) this.isOAuth = true
+    if (this.isOAuthDefault) this.isNative = false
   },
 
   data: () => ({
     isShown: false,
-    isOAuth: false,
+    isNative: true,
     isErred: false,
     tempPassword: ""
   }),
@@ -155,7 +155,7 @@ export default (Vue as ExtendVueRefs<{ input: InputText }>).extend({
 
     async toggleOAuth() {
       this.storeAndRestorePassword()
-      this.isOAuth = !this.isOAuth
+      this.isNative = !this.isNative
       this.clearError()
     }
   }

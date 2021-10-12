@@ -11,7 +11,6 @@ import {
   getAccountValidation,
   updateAccountValidation,
   updateAccountLastUsedValidation,
-  decryptAccountValidation,
 } from "../validations/index.ts";
 
 const router = new Router();
@@ -28,13 +27,6 @@ router.post(
   validate(createAccountValidation),
   auth("manageMyAccounts"),
   AccountController.create
-);
-
-router.get(
-  "/accounts/decrypt/:id",
-  validate(decryptAccountValidation),
-  auth("manageMyAccounts"),
-  AccountController.decrypt
 );
 
 router.get(

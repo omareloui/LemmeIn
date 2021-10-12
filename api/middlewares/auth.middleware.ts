@@ -33,7 +33,8 @@ export function auth(...requiredRights: Rights) {
     const data = await JwtHelper.getPayload(token);
 
     const user = await UserService.getOne(data.id as string);
-    if (user && checkRights(requiredRights, user)) ctx.state.user = user;
+    if (user && checkRights(requiredRights, user))
+      ctx.state.user = { ...user, id: user.id.toString() };
     await next();
   };
 }

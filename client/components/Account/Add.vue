@@ -36,7 +36,10 @@ export default Vue.extend({
           type: "text",
           value: "",
           label: "App or Website",
-          props: { hint: "Facebook", focusOnMount: true }
+          props: {
+            hint: "Facebook",
+            focusOnMount: true
+          }
         },
         {
           id: "password",
@@ -70,7 +73,11 @@ export default Vue.extend({
               value: "",
               props: {
                 hint: "https://google.com",
-                notRequired: true
+                notRequired: true,
+                pattern:
+                  // eslint-disable-next-line no-useless-escape
+                  /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/,
+                invalidPatternMessage: "The link has to be a valid url"
               }
             },
             {
@@ -102,7 +109,7 @@ export default Vue.extend({
       const options: AddAccount = {
         app,
         password: password.value,
-        isOAuth: password?.isOAuth,
+        isNative: password.isNative,
         accountIdentifier,
         site,
         note,

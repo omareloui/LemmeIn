@@ -4,7 +4,7 @@
     <main>
       <section
         class="primal-info"
-        :class="{ 'primal-info--is-oauth': !notOAuth }"
+        :class="{ 'primal-info--is-oauth': !account.isNative }"
       >
         <icon
           :name="`app-${icon.name}`"
@@ -34,16 +34,13 @@
           </div>
         </div>
 
-        <button-base v-if="notOAuth" @click="showQR" class="show-qr">
+        <button-base v-if="account.isNative" @click="showQR" class="show-qr">
           <icon name="q-r" size="40px" />
         </button-base>
       </section>
 
-      <section v-if="notOAuth" class="password">
-        <password-reveal
-          class="password-reveal"
-          :password="account.decryptedPassword"
-        />
+      <section v-if="account.isNative" class="password">
+        <password-reveal class="password-reveal" :password="account.password" />
         <icon
           name="copy"
           class="copy"
@@ -57,11 +54,11 @@
           class="strength"
           line-height="10px"
           hide-score-text
-          :decrypted-password="account.decryptedPassword"
+          :decrypted-password="account.password"
         />
       </section>
 
-      <section v-if="!notOAuth" class="oauth">
+      <section v-if="!account.isNative" class="oauth">
         <h3>Connected with</h3>
         <account-preview
           :account="account.password"
@@ -91,7 +88,10 @@
         <marked :content="account.note" class="note" />
       </section>
 
-      <section class="make-better" v-if="notOAuth && suggestions.length > 0">
+      <section
+        class="make-better"
+        v-if="account.isNative && suggestions.length > 0"
+      >
         <h3>How to make the password better</h3>
         <ul class="suggestions">
           <li v-for="suggestion in suggestions" :key="suggestion">
@@ -100,7 +100,10 @@
         </ul>
       </section>
 
-      <section class="duplicated" v-if="notOAuth && duplications.length > 0">
+      <section
+        class="duplicated"
+        v-if="account.isNative && duplications.length > 0"
+      >
         <h3>Duplicated with</h3>
         <div class="duplications">
           <account-preview
@@ -126,7 +129,7 @@
 
     <dialogue :is-shown="isQRShown" @close="closeQR">
       <div class="dialogue-content">
-        <qr :text="account.decryptedPassword" />
+        <qr :text="account.password" />
       </div>
     </dialogue>
     <dialogue :is-shown="isUpdateAccountShown" @close="closeUpdateAccount">
@@ -170,22 +173,16 @@ export default (Vue as ExtendVue<AsyncDataReturn>).extend({
   }),
 
   computed: {
-    notOAuth(): boolean {
-      return !this.account.password
-    },
-
     suggestions(): string[] | null {
-      if (!this.notOAuth) return null
-      return this.$getPasswordStrength(this.account.decryptedPassword!)
+      if (!this.account.isNative) return null
+      return this.$getPasswordStrength(this.account.password as string)
         .suggestions
     },
 
     duplications(): Account[] | null {
-      if (!this.notOAuth) return null
+      if (!this.account.isNative) return null
       return this.$accessor.analyze.duplicated.accounts.filter(
-        x =>
-          x.id !== this.account.id &&
-          x.decryptedPassword === this.account.decryptedPassword
+        x => x.id !== this.account.id && x.password === this.account.password
       )
     }
   },
