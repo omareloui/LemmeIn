@@ -113,7 +113,7 @@ export const actions = actionTree(
       await dispatch("encryptAccount", options)
       const { data } = await this.$axios.post("/accounts", options)
       const account = (await dispatch("decryptAccount", data)) as Account
-      // TODO: await this.app.$accessor.analyze.addAccount(account)
+      await this.app.$accessor.analyze.addAccount(account)
       this.$notify.success("Created account.")
       commit("unshiftToAccounts", account)
     },
@@ -124,14 +124,14 @@ export const actions = actionTree(
       await dispatch("encryptAccount", options)
       const { data } = await this.$axios.put(`/accounts/${id}`, options)
       const newAccount = (await dispatch("decryptAccount", data)) as Account
-      // TODO: await this.app.$accessor.analyze.editAccount(newAccount)
+      await this.app.$accessor.analyze.editAccount(newAccount)
       commit("updateAccountCache", newAccount)
       this.$notify.success("Updated account.")
       return newAccount
     },
 
     async deleteAccount(
-      { commit },
+      { commit, dispatch },
       {
         accountId,
         accountName,
@@ -146,8 +146,8 @@ export const actions = actionTree(
         if (!confirmed) return
         await this.$axios.delete(`/accounts/${accountId}`)
 
-        // const account = await dispatch("getAccount", accountId)
-        // TODO: await this.app.$accessor.analyze.removeAccount(account)
+        const account = await dispatch("getAccount", accountId)
+        await this.app.$accessor.analyze.removeAccount(account)
 
         commit("removeAccount", accountId)
         this.$notify.success("Deleted account successfully")

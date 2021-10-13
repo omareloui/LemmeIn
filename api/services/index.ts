@@ -1,5 +1,4 @@
 export * from "./account.service.ts";
-export * from "./analyze-accounts.service.ts";
 export * from "./auth.service.ts";
 export * from "./base.service.ts";
 export * from "./note.service.ts";

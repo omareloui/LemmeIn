@@ -5,5 +5,4 @@ export * from "./Auth.ts";
 export * from "./Account.ts";
 export * from "./Tag.ts";
 export * from "./Note.ts";
-export * from "./Analyze.ts";
 export * from "./Resources.ts";

@@ -1,5 +1,4 @@
 export * from "./account.validation.ts";
-export * from "./analyze-accounts.validation.ts";
 export * from "./auth.validation.ts";
 export * from "./note.validation.ts";
 export * from "./tag.validation.ts";

@@ -6,10 +6,16 @@ export type DuplicatedPasswords = {
 
 export interface AnalyzeValue {
   counter: number
-  accounts: Omit<Account, "password">[]
+  accounts: Account[]
 }
 
 export type AnalyzeKeys = PasswordStrengthValues | "outdated" | "duplicated"
+
+export type BuildAnalyzesOptions = {
+  [key in AnalyzeKeys]: Account[]
+} & {
+  totalAccounts: number
+}
 
 export type Analyze = {
   [key in AnalyzeKeys]: AnalyzeValue

@@ -17,8 +17,7 @@ export const actions = actionTree(
         await $accessor.vault.decryptAndSetAccounts(accounts)
         await $accessor.notes.decryptAndSetNotes(notes)
         await $accessor.tags.setTags(tags)
-
-        // TODO: await $accessor.analyze.allAccounts()
+        await $accessor.analyze.init()
       }
     },
 
