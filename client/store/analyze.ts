@@ -353,6 +353,7 @@ export const actions = actionTree(
 
     async removeFromAllWithId({ dispatch }, accountId) {
       const account = await dispatch("getCurrentAccount", accountId)
+      if (!account) return
       dispatch("removeFromAll", account)
     },
 
