@@ -116,7 +116,7 @@ export default Vue.extend({
         tags
       }
       try {
-        this.$accessor.vault.addAccount(options)
+        await this.$accessor.vault.addAccount(options)
         this.$emit("close-dialogue")
       } catch (e) {
         this.$notify.error(e.response.data.message)
