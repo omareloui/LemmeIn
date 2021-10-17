@@ -1,6 +1,9 @@
 import { Plugin } from "@nuxt/types"
 
-type CopyFunction = (textToCopy: string, successMessage?: string) => void
+type CopyFunction = (
+  textToCopy: string,
+  successMessage?: string
+) => Promise<void>
 
 declare module "vue/types/vue" {
   interface Vue {
@@ -23,9 +26,13 @@ declare module "vuex/types/index" {
 }
 
 const copyPlugin: Plugin = ({ $notify }, inject) => {
-  function copy(textToCopy: string, successMessage?: string): void {
-    navigator.clipboard.writeText(textToCopy)
-    $notify.success(successMessage || "Copied!")
+  const copy: CopyFunction = async (textToCopy, successMessage) => {
+    try {
+      await navigator.clipboard.writeText(textToCopy)
+      $notify.success(successMessage || "Copied!")
+    } catch (e) {
+      $notify.error("Couldn't copy for unknown reason, try again later")
+    }
   }
 
   inject("copy", copy)
