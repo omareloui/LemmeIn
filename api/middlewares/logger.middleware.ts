@@ -6,8 +6,8 @@ export function loggerMiddleware(app: Application) {
     await next();
     const responseTime = response.headers.get("X-Response-Time");
     const { status } = response;
-    const { method, url } = request;
-    const message = `${method} [${status}] ${url} - ${responseTime}`;
+    const { method, url, ip } = request;
+    const message = `${method} [${status}] (${ip}) ${url} - ${responseTime}`;
 
     // Set the log function
     if (status < 400) log.info(message);
