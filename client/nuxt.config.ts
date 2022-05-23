@@ -4,6 +4,11 @@ const nuxt: NuxtConfig = {
   target: "server",
   telemetry: false,
 
+  server: {
+    host: "0.0.0.0",
+    port: 1111,
+  },
+
   head: {
     title: "Lemme In",
 
@@ -63,7 +68,7 @@ const nuxt: NuxtConfig = {
   modules: ["@nuxtjs/axios", "cookie-universal-nuxt"],
 
   axios: {
-    baseURL: "http://localhost:8000"
+    baseURL: "http://192.168.1.6:8000"
   }
 }
 

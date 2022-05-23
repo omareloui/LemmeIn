@@ -8,12 +8,12 @@ import { log } from "./utils/index.ts";
 import { config } from "./config/index.ts";
 import router from "./routers/index.ts";
 
-const { url, port, clientUrl } = config;
+const { url, port, host } = config;
 
 const app = new Application();
 
 const corsOptions = {
-  origin: clientUrl,
+  origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   preflightContinue: false,
   optionsSuccessStatus: 200,
@@ -32,7 +32,7 @@ app.addEventListener("listen", () => {
 });
 
 if (import.meta.main) {
-  await app.listen({ port });
+  await app.listen({ port, hostname: host });
 }
 
 export { app };
