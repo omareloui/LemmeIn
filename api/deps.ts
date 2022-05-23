@@ -4,8 +4,9 @@ export {
   getLogger,
   handlers,
   setup,
-  LogRecord,
 } from "https://deno.land/std@0.109.0/log/mod.ts";
+export type { LogRecord } from "https://deno.land/std@0.109.0/log/mod.ts"
+
 export {
   assert,
   assertMatch,
